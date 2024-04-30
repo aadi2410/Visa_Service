@@ -70,6 +70,12 @@ function ProfilePage(props) {
                         </Link>
                     </ListItem>
                     <ListItem disablePadding>
+                        <Link to='/dashboard' className="sidebar_item" >
+                            <SwipeRightAltIcon />
+                            <Typography>Apply for Visa</Typography>
+                        </Link>
+                    </ListItem>
+                    <ListItem disablePadding>
                         <Link to='/privacypolicy' className="sidebar_item">
                             <SwipeRightAltIcon />
                             <Typography>Privacy Policy</Typography>
@@ -116,7 +122,7 @@ function ProfilePage(props) {
                     </IconButton>
                     <Box style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
                         <Typography variant="h6" noWrap component="div">
-                            Privacy Policy
+                            Profile
                         </Typography>
                         <Box sx={{ flexGrow: 0 }}>
                             <Tooltip title="Open settings">

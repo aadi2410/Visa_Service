@@ -140,7 +140,7 @@ function HeaderNavbar({children}) {
               onClose={handleCloseUserMenu}
             >
             <MenuItem style={{alignItems: 'baseline'}} onClick={handleCloseUserMenu}>
-              <Link style={{textDecoration: 'none', color: 'black', textAlign: 'left'}} to='/dashboard'>Dashboard</Link>
+              <Link to='/dashboard' style={{textDecoration: 'none', color: 'black', textAlign: 'left'}}>Dashboard</Link>
             </MenuItem>
             <MenuItem style={{alignItems: 'baseline'}} onClick={()=>
               {

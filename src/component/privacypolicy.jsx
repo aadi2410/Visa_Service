@@ -70,6 +70,12 @@ function Privacypolicy(props) {
                         </Link>
                     </ListItem>
                     <ListItem disablePadding>
+                        <Link to='/dashboard' className="sidebar_item" >
+                            <SwipeRightAltIcon />
+                            <Typography>Apply for Visa</Typography>
+                        </Link>
+                    </ListItem>
+                    <ListItem disablePadding>
                         <Link to='/privacypolicy' className="sidebar_item active">
                             <SwipeRightAltIcon />
                             <Typography>Privacy Policy</Typography>
