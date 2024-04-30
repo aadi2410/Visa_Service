@@ -1,24 +1,26 @@
-import logo from './logo.svg';
-import './App.css';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'; import './App.css';
+import LandingPage from './component/landing-page';
+import SignUp from './component/signup';
+import Login from './component/login';
+import Dashboard from './component/dashboard';
+import LoginLandingPage from './component/afterloginlanding';
+import Privacypolicy from './component/privacypolicy.';
+import ProfilePage from './component/profile';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+      <Router>
+        <Routes>
+          <Route path="/" element={<LandingPage/>} />
+          <Route path="/signup" element={<SignUp/>} />
+          <Route path="/login" element={<Login/>} />
+          <Route path="/dashboard" element={<Dashboard/>} />
+          <Route path="/homeloginpage" element={<LoginLandingPage/>} />
+          <Route path="/privacypolicy" element={<Privacypolicy/>} />
+          <Route path="/profilepage" element={<ProfilePage/>} />
+        </Routes>
+      </Router>
+     
   );
 }
 
