@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { TextField, Typography, Grid } from '@mui/material';
+import { TextField, Typography, Grid, Button } from '@mui/material';
 import About_img from '../assets/about.png';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
 
 const SignUp = () => {
+  const navigate=useNavigate();
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -23,6 +24,9 @@ const SignUp = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log(formData); // You can handle form submission logic here
+  
+   localStorage.setItem('userData',JSON.stringify(formData));
+   navigate('/login')
   };
 
   return (
@@ -38,11 +42,12 @@ const SignUp = () => {
           <Typography variant="h4" align="center" gutterBottom fontWeight={700} mb={5}>
             Sign Up
           </Typography>
-          <form onSubmit={handleSubmit} style={{maxWidth: 450, margin: 'auto'}}>
+          <form onSubmit={handleSubmit} style={{maxWidth: 450, margin: 'auto', paddingInline: 12}}>
             <Grid container spacing={2}>
               <Grid item xs={12}>
                 <TextField
                   fullWidth
+                  required
                   label="First Name"
                   name="firstName"
                   value={formData.firstName}
@@ -51,6 +56,8 @@ const SignUp = () => {
               </Grid>
               <Grid item xs={12}>
                 <TextField
+                  required
+
                   fullWidth
                   label="Last Name"
                   name="lastName"
@@ -60,6 +67,8 @@ const SignUp = () => {
               </Grid>
               <Grid item xs={12}>
                 <TextField
+                  required
+
                   fullWidth
                   type="email"
                   label="Email"
@@ -71,6 +80,8 @@ const SignUp = () => {
               <Grid item xs={12}>
                 <TextField
                   fullWidth
+                  required
+
                   type="password"
                   label="Password"
                   name="password"
@@ -79,11 +90,11 @@ const SignUp = () => {
                 />
               </Grid>
             </Grid>
-            <Link to='/homeloginpage' className='login_btn' type="submit">
+            <Button variant='contained' sx={{marginTop:2}} className='login_btn' type="submit">
               Sign Up
-            </Link>
+            </Button>
             <Typography style={{textAlign: 'center'}} mt={4} mb={3}>OR</Typography>
-            <Typography style={{textAlign: 'center'}}>Already have an Account <Link style={{textDecoration: 'none', color: '#1976d2', fontWeight: 600}} to='/login'>Login</Link></Typography>
+            <Typography style={{textAlign: 'center', paddingBottom: 50}}>Already have an Account <Link style={{textDecoration: 'none', color: '#1976d2', fontWeight: 600}} to='/login'>Login</Link></Typography>
           </form>
         </Grid>
       </Grid>

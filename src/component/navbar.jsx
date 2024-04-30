@@ -1,22 +1,42 @@
 import * as React from 'react';
-import {AppBar,Drawer,List, Box, Toolbar,ListItem,ListItemButton,ListItemIcon,ListItemText, IconButton, Typography, Menu, Container, Button, MenuItem} from '@mui/material';
+import {AppBar,Drawer,List, Box, Toolbar,ListItem,ListItemButton,ListItemIcon,ListItemText, IconButton, Typography, Menu, Container, Avatar, Button, Tooltip, MenuItem} from '@mui/material';
 import Logo from '../assets/logo.png';
 import '../component/custom.css';
 import MenuIcon from '@mui/icons-material/Menu';
 import MailIcon from '@mui/icons-material/Mail';
 import InboxIcon from '@mui/icons-material/MoveToInbox';
 import Footer from './footer';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const pages = ['Home', 'Apply for Visa', 'Blog', 'About Us', 'Contact Us'];
 
 function HeaderNavbar({children}) {
+  const navigate=useNavigate();
   const [anchorElNav, setAnchorElNav] = React.useState(null);
+  const [anchorElUser, setAnchorElUser] = React.useState(null);
+
+  const [isLogin,setIsLogin]=React.useState(false)
+  React.useEffect(()=>{
+   let login= localStorage.getItem('loginData')||null;
+  if(login){
+
+    setIsLogin(true);
+  }else{
+    setIsLogin(false)
+  }
+
+  },[])
+  const handleOpenUserMenu = (event) => {
+    setAnchorElUser(event.currentTarget);
+  };
 
   const handleCloseNavMenu = () => {
     setAnchorElNav(null);
   };
 
+  const handleCloseUserMenu = () => {
+    setAnchorElUser(null);
+  };
   const [open, setOpen] = React.useState(false);
 
   const toggleDrawer = (newOpen) => () => {
@@ -97,7 +117,39 @@ function HeaderNavbar({children}) {
             ))}
           </Box>
           <Box sx={{ flexGrow: 0 }}>
-            <Link to='/signup' className='login-btn'>Login / Sign Up</Link>
+            
+            {isLogin?<><Tooltip title="Open settings">
+              <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                <Avatar alt="Aditya" src="/static/images/avatar/2.jpg" />
+              </IconButton>
+            </Tooltip>
+            <Menu
+              sx={{ mt: '45px' }}
+              id="menu-appbar"
+              anchorEl={anchorElUser}
+              anchorOrigin={{
+                vertical: 'top',
+                horizontal: 'right',
+              }}
+              keepMounted
+              transformOrigin={{
+                vertical: 'top',
+                horizontal: 'right',
+              }}
+              open={Boolean(anchorElUser)}
+              onClose={handleCloseUserMenu}
+            >
+            <MenuItem style={{alignItems: 'baseline'}} onClick={handleCloseUserMenu}>
+              <Link style={{textDecoration: 'none', color: 'black', textAlign: 'left'}} to='/dashboard'>Dashboard</Link>
+            </MenuItem>
+            <MenuItem style={{alignItems: 'baseline'}} onClick={()=>
+              {
+                localStorage.removeItem('loginData');
+                navigate('/login')
+
+              }}>
+Logout         </MenuItem>
+            </Menu></>:<Link to='/signup' className='login-btn'>Login / Sign Up</Link>}
           </Box>
           <Drawer open={open} onClose={toggleDrawer(false)}>
             {DrawerList}

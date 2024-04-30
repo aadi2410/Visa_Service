@@ -14,7 +14,7 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Logo from '../assets/logo.png';
 import SwipeRightAltIcon from '@mui/icons-material/SwipeRightAlt';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const drawerWidth = 240;
 
@@ -93,7 +93,7 @@ function ResponsiveDrawer(props) {
 
     // Remove this const when copying and pasting into your project.
     const container = window !== undefined ? () => window().document.body : undefined;
-
+const navigate=useNavigate()
     return (
         <Box sx={{ display: 'flex' }}>
             <CssBaseline />
@@ -119,7 +119,7 @@ function ResponsiveDrawer(props) {
                             Dashboard
                         </Typography>
                         <Box sx={{ flexGrow: 0 }}>
-                            <Tooltip title="Open settings">
+                            <Tooltip title="Open profile">
                                 <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                                     <Avatar alt="Aditya" src="/static/images/avatar/2.jpg" />
                                 </IconButton>
@@ -141,7 +141,7 @@ function ResponsiveDrawer(props) {
                                 onClose={handleCloseUserMenu}
                             >
                                 <MenuItem style={{ alignItems: 'baseline' }} onClick={handleCloseUserMenu}>
-                                    <Link style={{ textDecoration: 'none', color: 'black', textAlign: 'left' }} to='/homeloginpage'>Home</Link>
+                                    <Link style={{ textDecoration: 'none', color: 'black', textAlign: 'left' }} to='/'>Home</Link>
                                 </MenuItem>
                                 <MenuItem style={{ alignItems: 'baseline' }} onClick={handleCloseUserMenu}>
                                     <Link style={{ textDecoration: 'none', color: 'black', textAlign: 'left' }} to='/'>About Us</Link>
@@ -149,7 +149,8 @@ function ResponsiveDrawer(props) {
                                 <MenuItem style={{ alignItems: 'baseline' }} onClick={handleCloseUserMenu}>
                                     <Link style={{ textDecoration: 'none', color: 'black', textAlign: 'left' }} to='/'>Contact Us</Link>
                                 </MenuItem>
-                                <MenuItem style={{ alignItems: 'baseline' }} onClick={handleCloseUserMenu}>
+                                <MenuItem style={{ alignItems: 'baseline' }} onClick={()=>{localStorage.removeItem('loginData');
+                navigate('/login')}}>
                                     <Link style={{ textDecoration: 'none', color: 'black', textAlign: 'left' }} to='/'>Logout</Link>
                                 </MenuItem>
                             </Menu>
@@ -196,19 +197,19 @@ function ResponsiveDrawer(props) {
             >
                 <Toolbar />
                 <Box style={{display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 12, marginBottom: 30, marginTop: 10}}>
-                    <Box style={{padding: '10px 20px', border: '1px solid #dcdcdc', borderRadius: '8px', flex: 1}}>
+                    <Box style={{padding: '10px 20px', minWidth: 290, border: '1px solid #dcdcdc', borderRadius: '8px', flex: 1}}>
                         <Typography variant='h6'>Total Documents Need</Typography>
                         <Typography variant='h4' mt={3} style={{fontWeight: 900}}>10</Typography>
                     </Box>
-                    <Box style={{padding: '10px 20px', border: '1px solid #dcdcdc', borderRadius: '8px', flex: 1}}>
+                    <Box style={{padding: '10px 20px', minWidth: 290, border: '1px solid #dcdcdc', borderRadius: '8px', flex: 1}}>
                         <Typography variant='h6'>Total Documents Uploaded</Typography>
                         <Typography variant='h4' mt={3} style={{fontWeight: 900}}>8</Typography>
                     </Box>
-                    <Box style={{padding: '10px 20px', border: '1px solid #dcdcdc', borderRadius: '8px', flex: 1}}>
+                    <Box style={{padding: '10px 20px', minWidth: 290, border: '1px solid #dcdcdc', borderRadius: '8px', flex: 1}}>
                         <Typography variant='h6'>Varification </Typography>
                         <Typography variant='h4' mt={3} style={{fontWeight: 900, color: 'yellow'}}>Pending</Typography>
                     </Box>
-                    <Box style={{padding: '10px 20px', border: '1px solid #dcdcdc', borderRadius: '8px', flex: 1}}>
+                    <Box style={{padding: '10px 20px', minWidth: 290, border: '1px solid #dcdcdc', borderRadius: '8px', flex: 1}}>
                         <Typography variant='h6'>Visa Application</Typography>
                         <Typography variant='h4' mt={3} style={{fontWeight: 900, color: 'green'}}>Success</Typography>
                     </Box>

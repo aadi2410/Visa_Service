@@ -1,26 +1,54 @@
 import React, { useState } from 'react';
-import { TextField, Typography, Grid } from '@mui/material';
+import { TextField, Typography, Grid, Button } from '@mui/material';
 import About_img from '../assets/about.png';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
+import {  toast } from 'react-toastify';
 
 const Login = () => {
-//   const [formData, setFormData] = useState({
-//     email: '',
-//     password: '',
-//   });
+  const navigate=useNavigate();
+
+  const [formData, setFormData] = useState({
+    email: '',
+    password: '',
+  });
 
   const handleChange = (e) => {
-    // const { name, value } = e.target;
-    // setFormData({
-    //   ...formData,
-    //   [name]: value,
-    // });
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
   };
 
   const handleSubmit = (e) => {
-    // e.preventDefault();
-    // console.log(formData); 
+    e.preventDefault();
+    let get=localStorage.getItem('userData')|| null;
+   
+    if(get){
+      let parseItem=JSON.parse(localStorage.getItem('userData'));
+      let {email,password}=parseItem;
+      console.log({parseItem,formData});
+      console.log(email===formData.email&&password===formData.password)
+
+      if(email===formData.email&&password===formData.password){
+
+        localStorage.setItem('loginData',JSON.stringify(formData));
+        toast.success("Successfull login");
+
+        navigate('/')
+      }else if(email!=formData.email){
+        toast.error("Email Not Registered please signup");
+        navigate('/signup')
+
+      }
+      else if(password!=formData.password){
+        toast.error("Password does't match");
+      }
+    }else{
+      toast.error("Account not registered Please signup");
+      navigate('/signup')
+    }
   };
 
   return (
@@ -36,7 +64,7 @@ const Login = () => {
           <Typography variant="h4" align="center" gutterBottom fontWeight={700} mb={5}>
             Login
           </Typography>
-          <form onSubmit={handleSubmit} style={{maxWidth: 450, margin: 'auto'}}>
+          <form onSubmit={handleSubmit} style={{maxWidth: 450, margin: 'auto', paddingInline: 12}}>
             <Grid container spacing={2}>
               <Grid item xs={12}>
                 <TextField
@@ -44,8 +72,10 @@ const Login = () => {
                   type="email"
                   label="Email"
                   name="email"
-                //   value={formData.email}
+                  value={formData.email}
                   onChange={handleChange}
+                  required
+
                 />
               </Grid>
               <Grid item xs={12}>
@@ -54,16 +84,18 @@ const Login = () => {
                   type="password"
                   label="Password"
                   name="password"
-                //   value={formData.password}
+                  value={formData.password}
                   onChange={handleChange}
+                  required
+
                 />
               </Grid>
             </Grid>
-            <Link to='/homeloginpage' className='login_btn' type="submit">
+            <Button variant='contained'   sx={{marginTop:2}}   className='login_btn' type="submit">
               Login
-            </Link>
+            </Button>
             <Typography style={{textAlign: 'center'}} mt={4} mb={3}>OR</Typography>
-            <Typography style={{textAlign: 'center'}}>Don't have an Account <Link style={{textDecoration: 'none', color: '#1976d2', fontWeight: 600}} to='/signup'>Sign Up</Link></Typography>
+            <Typography style={{textAlign: 'center', paddingBottom: 50}}>Don't have an Account <Link style={{textDecoration: 'none', color: '#1976d2', fontWeight: 600}} to='/signup'>Sign Up</Link></Typography>
           </form>
         </Grid>
       </Grid>
