@@ -16,6 +16,8 @@ import Typography from '@mui/material/Typography';
 import Logo from '../assets/logo.png';
 import SwipeRightAltIcon from '@mui/icons-material/SwipeRightAlt';
 import { Link } from 'react-router-dom';
+import PdfUploadAndViewer from './pdfUpload';
+
 const CustomBox = styled(Box)({
     width: '100%',
     '& .file_name': {
@@ -239,6 +241,11 @@ function DocumentPage(props) {
                 <Grid container spacing={3}>
                     <Grid item xs={12} sm={6} md={4} lg={3}>
                         <Box style={{ width: '100%', borderRadius: 12, minHeight: '315px', padding: 20, boxShadow: '0px 0px 10px #dcdcdc', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <PdfUploadAndViewer />
+                        </Box>
+                    </Grid>
+                    <Grid item xs={12} sm={6} md={4} lg={3}>
+                        <Box style={{ width: '100%', borderRadius: 12, minHeight: '315px', padding: 20, boxShadow: '0px 0px 10px #dcdcdc', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                             <CustomBox>
                                 <Input
                                     type="file"
@@ -262,6 +269,7 @@ function DocumentPage(props) {
                             </CustomBox>
                         </Box>
                     </Grid>
+                    
                     <Grid item xs={12} sm={6} md={4} lg={3}>
                         <Box style={{ width: '100%', borderRadius: 12, minHeight: '315px', padding: 20, boxShadow: '0px 0px 10px #dcdcdc', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                             <CustomBox>
