@@ -1,40 +1,63 @@
 import * as React from 'react';
+import { useState } from 'react';
 import PropTypes from 'prop-types';
 import AppBar from '@mui/material/AppBar';
-import { Box, MenuItem, Menu, Avatar, Tooltip, Grid, styled, Button, TextField, TextareaAutosize } from '@mui/material';
+import { Box, MenuItem, Menu, Avatar, Tooltip, Grid, styled, Button, TextField, TextareaAutosize, Card, CardMedia, Input } from '@mui/material';
 import CssBaseline from '@mui/material/CssBaseline';
 import Divider from '@mui/material/Divider';
 import Drawer from '@mui/material/Drawer';
 import IconButton from '@mui/material/IconButton';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
-import ProfileImage from '../assets/profile.png';
+import ListItemButton from '@mui/material/ListItemButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Logo from '../assets/logo.png';
 import SwipeRightAltIcon from '@mui/icons-material/SwipeRightAlt';
 import { Link } from 'react-router-dom';
-import EditIcon from '@mui/icons-material/Edit';
-
-const ProfileGrid = styled(Grid)({
-    '@media(max-width: 767px)': {
-        '& .profile_left_box': {
-            order: 1,
-        },
-        '& .profile_left_box  form': {
-            flexDirection: 'column'
-        },
+const CustomBox = styled(Box)({
+    width: '100%',
+    '& .file_name': {
+        display: '-webkit-box',
+        WebkitLineClamp: 1,
+        '-webkit-box-orient': 'vertical',  
+        overflow: 'hidden',
+        height: '30px'
     }
 })
-
 const drawerWidth = 240;
 
-function ProfilePage(props) {
+function DocumentPage(props) {
     const { window } = props;
     const [mobileOpen, setMobileOpen] = React.useState(false);
     const [isClosing, setIsClosing] = React.useState(false);
     const [anchorElUser, setAnchorElUser] = React.useState(null);
+    const [selectedFile, setSelectedFile] = useState(null);
+    const [selectedFile2, setSelectedFile2] = useState(null);
+    const [selectedFile3, setSelectedFile3] = useState(null);
+    const [imageUrl, setImageUrl] = React.useState(null);
+    const [imageUrl2, setImageUrl2] = React.useState(null);
+    const [imageUrl3, setImageUrl3] = React.useState(null);
+  
+    const handleFileChange = (event) => {
+      setSelectedFile(event.target.files[0]);
+      const fileUrl = URL.createObjectURL(event.target.files[0]);
+      setImageUrl(fileUrl);
+    };
+  
+    const handleFileChange2 = (event) => {
+      setSelectedFile2(event.target.files[0]);
+      const fileUrl2 = URL.createObjectURL(event.target.files[0]);
+      setImageUrl2(fileUrl2);
+    };
+  
+    const handleFileChange3 = (event) => {
+      setSelectedFile3(event.target.files[0]);
+      const fileUrl3 = URL.createObjectURL(event.target.files[0]);
+      setImageUrl3(fileUrl3);
+    };
+
     const handleCloseUserMenu = () => {
         setAnchorElUser(null);
     };
@@ -70,13 +93,13 @@ function ProfilePage(props) {
                     </Link>
                 </ListItem>
                 <ListItem disablePadding>
-                    <Link to='/profilepage' className="sidebar_item active">
+                    <Link to='/profilepage' className="sidebar_item">
                         <SwipeRightAltIcon />
                         <Typography>Profile</Typography>
                     </Link>
                 </ListItem>
                 <ListItem disablePadding>
-                    <Link to='/document' className="sidebar_item">
+                    <Link to='/document' className="sidebar_item active">
                         <SwipeRightAltIcon />
                         <Typography>Documents</Typography>
                     </Link>
@@ -213,88 +236,90 @@ function ProfilePage(props) {
                 sx={{ flexGrow: 1, p: 3, width: { sm: `calc(100% - ${drawerWidth}px)` } }}
             >
                 <Toolbar />
-                <ProfileGrid container spacing={5}>
-                    <Grid className='profile_left_box' item xs={12} md={7} lg={9}>
-                         <form style={{display: 'flex', gap: 20, flexWrap: 'wrap'}}>
-                         <Box style={{flex: 1, minWidth: '45%', display: 'flex', flexDirection: 'column', gap: 5}}>
-                            <label>First Name</label>
-                            <TextField placeholder='Enter your name' type="text" variant='outlined' />
-                         </Box>
-                         <Box style={{flex: 1, minWidth: '45%', display: 'flex', flexDirection: 'column', gap: 5}}>
-                            <label>Last Name</label>
-                            <TextField placeholder='Enter your name' type="text" variant='outlined' />
-                         </Box>
-                         <Box style={{flex: 1, minWidth: '45%', display: 'flex', flexDirection: 'column', gap: 5}}>
-                            <label>Email Address</label>
-                            <TextField placeholder='Enter your email' type="email" variant='outlined' />
-                         </Box>
-                         <Box style={{flex: 1, minWidth: '45%', display: 'flex', flexDirection: 'column', gap: 5}}>
-                            <label>Phone Number</label>
-                            <TextField placeholder='Enter your number' type="number" variant='outlined' />
-                         </Box>
-                         <Box style={{flex: 1, minWidth: '45%', display: 'flex', flexDirection: 'column', gap: 5}}>
-                            <label>Pan Number</label>
-                            <TextField placeholder='Enter your PAN' type="text" variant='outlined' />
-                         </Box>
-                         <Box style={{flex: 1, minWidth: '45%', display: 'flex', flexDirection: 'column', gap: 5}}>
-                            <label>Passport</label>
-                            <TextField placeholder='Enter your passport no' type="text" variant='outlined' />
-                         </Box>
-                         <Box style={{flex: 1, minWidth: '45%', display: 'flex', flexDirection: 'column', gap: 5}}>
-                            <label>Aadhar Number</label>
-                            <TextField placeholder='Enter your name' type="text" variant='outlined' />
-                         </Box>
-                         <Box style={{flex: 1, minWidth: '45%', display: 'flex', flexDirection: 'column', gap: 5}}>
-                            <label>Country</label>
-                            <TextField placeholder='Enter your Aadhar' type="text" variant='outlined' />
-                         </Box>
-                         <Box style={{flex: 1, minWidth: '45%', display: 'flex', flexDirection: 'column', gap: 5}}>
-                            <label>Pin Code</label>
-                            <TextField placeholder='Enter your pincode' type="number" variant='outlined' />
-                         </Box>
-                         <Box style={{flex: 1, minWidth: '45%', display: 'flex', flexDirection: 'column', gap: 5}}>
-                            <label>Address Line 1</label>
-                            <TextField placeholder='Enter your address' type="text" variant='outlined' />
-                         </Box>
-                         <Box style={{flex: 1, minWidth: '45%', display: 'flex', flexDirection: 'column', gap: 5}}>
-                            <label>Address Line 2</label>
-                            <TextField placeholder='Enter your address' type="text" variant='outlined' />
-                         </Box>
-                         <Box style={{flex: 1, minWidth: '45%', display: 'flex', flexDirection: 'column', gap: 5}}>
-                            <label>Address Line 3</label>
-                            <TextField placeholder='Enter your address' type="text" variant='outlined' />
-                         </Box>
-                         <Box style={{flex: 1, minWidth: '45%', display: 'flex', flexDirection: 'column', gap: 5}}>
-                            <label>Present Address</label>
-                            <TextareaAutosize minRows={4} type="text" variant='outlined' />
-                         </Box>
-                         </form>
-                         <Box style={{textAlign: 'center', marginTop: 20}}>
-                         <Button variant='contained' style={{minWidth: 200, minHeight: 48}}>Submit</Button>
-                         </Box>
-                    </Grid>
-                    <Grid item xs={12} md={5} lg={3}>
-                        <Box style={{ textAlign: 'left', padding: 20, boxShadow: '0px 0px 10px #dcdcdc', width: '100%', borderRadius: 12, display: 'flex', alignItems: 'center', flexDirection: 'column', textAlign:  'center' }}>
-                            <Box style={{ position: 'relative' }}>
-                                <img src={ProfileImage} alt="" style={{ maxWidth: 250, width: '100%', borderRadius: '50%', objectFit: 'cover', background: 'lightgray' }} />
-                                <EditIcon style={{ cursor: 'pointer', position: 'absolute', right: 20, bottom: 20, boxShadow: '0px 0px 10px #dcdcdc', color: '#1976d2', background: 'white', padding: 8, borderRadius: '50%', fontSize: 40 }} />
-                            </Box>
-                            <Box style={{textAlign: 'center', marginTop: 20}}>
-                            <Typography style={{textAlign: 'center', marginTop: 5}}><b>Name:</b> Jash Jeff</Typography> 
-                            <Typography style={{textAlign: 'center', marginTop: 5}}><b>Email:</b> asdfg@gmail.com </Typography>
-                            <Typography style={{textAlign: 'center', marginTop: 5}}><b>Number:</b> 9876543210</Typography>
-                            <Typography style={{textAlign: 'center', marginTop: 5}}><b>Address:</b> asdefrgtyh, zsws, India (123456)</Typography>
-                            </Box>
+                <Grid container spacing={3}>
+                    <Grid item xs={12} sm={6} md={4} lg={3}>
+                        <Box style={{ width: '100%', borderRadius: 12, minHeight: '315px', padding: 20, boxShadow: '0px 0px 10px #dcdcdc', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                            <CustomBox>
+                                <Input
+                                    type="file"
+                                    onChange={handleFileChange}
+                                    style={{ display: 'none' }}
+                                    inputProps={{ accept: 'image/*' }}
+                                    id="file-upload"
+                                />
+                                {selectedFile && <p className='file_name' style={{ paddingBottom: 10 }}>File Name: {selectedFile.name}</p>}
+                                {imageUrl && (
+                                    <Card sx={{ width: '100%' }}>
+                                        <CardMedia style={{ height: '150px', objectFit: 'cover', width: '100%' }} component="img" image={imageUrl} />
+                                    </Card>
+                                )}
+                                <label htmlFor="file-upload" style={{ textAlign: 'center', display: 'block', marginTop: 15 }}>
+                                    <Typography style={{ textAlign: 'center', marginBottom: 10 }}>Aadhhar Card Front Side</Typography>
+                                    <Button variant="contained" component="span">
+                                        Upload File
+                                    </Button>
+                                </label>
+                            </CustomBox>
                         </Box>
                     </Grid>
-                </ProfileGrid>
+                    <Grid item xs={12} sm={6} md={4} lg={3}>
+                        <Box style={{ width: '100%', borderRadius: 12, minHeight: '315px', padding: 20, boxShadow: '0px 0px 10px #dcdcdc', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                            <CustomBox>
+                                <Input
+                                    type="file"
+                                    onChange={handleFileChange2}
+                                    style={{ display: 'none' }}
+                                    inputProps={{ accept: 'image/*' }}
+                                    id="file-upload2"
+                                />
+                                {selectedFile2 && <p className='file_name' style={{ paddingBottom: 10 }}>File Name: {selectedFile2.name}</p>}
+                                {imageUrl2 && (
+                                    <Card sx={{ width: '100%' }}>
+                                        <CardMedia style={{ height: '150px', objectFit: 'cover', width: '100%' }} component="img" image={imageUrl2} />
+                                    </Card>
+                                )}
+                                <label htmlFor="file-upload2" style={{ textAlign: 'center', display: 'block', marginTop: 15 }}>
+                                    <Typography style={{ textAlign: 'center', marginBottom: 10 }}>Aadhhar Card Back Side</Typography>
+                                    <Button variant="contained" component="span">
+                                        Upload File
+                                    </Button>
+                                </label>
+                            </CustomBox>
+                        </Box>
+                    </Grid>
+                    <Grid item xs={12} sm={6} md={4} lg={3}>
+                        <Box style={{ width: '100%', borderRadius: 12, minHeight: '315px', padding: 20, boxShadow: '0px 0px 10px #dcdcdc', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                            <CustomBox>
+                                <Input
+                                    type="file"
+                                    onChange={handleFileChange3}
+                                    style={{ display: 'none' }}
+                                    inputProps={{ accept: 'image/*' }}
+                                    id="file-upload3"
+                                />
+                                {selectedFile3 && <p className='file_name' style={{ paddingBottom: 10 }}>File Name: {selectedFile3.name}</p>}
+                                {imageUrl3 && (
+                                    <Card sx={{ width: '100%' }}>
+                                        <CardMedia style={{ height: '150px', objectFit: 'cover', width: '100%' }} component="img" image={imageUrl3} />
+                                    </Card>
+                                )}
+                                <label htmlFor="file-upload3" style={{ textAlign: 'center', display: 'block', marginTop: 15 }}>
+                                    <Typography style={{ textAlign: 'center', marginBottom: 10 }}>Passport</Typography>
+                                    <Button variant="contained" component="span">
+                                        Upload File
+                                    </Button>
+                                </label>
+                            </CustomBox>
+                        </Box>
+                    </Grid>
+                </Grid>
             </Box>
         </Box>
     );
 }
 
-ProfilePage.propTypes = {
+DocumentPage.propTypes = {
     window: PropTypes.func,
 };
 
-export default ProfilePage;
+export default DocumentPage;

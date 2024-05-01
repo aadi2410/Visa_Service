@@ -64,13 +64,13 @@ function Privacypolicy(props) {
                         </Link>
                     </ListItem>
                     <ListItem disablePadding>
-                        <Link className="sidebar_item">
+                        <Link to='/document' className="sidebar_item">
                             <SwipeRightAltIcon />
                             <Typography>Documents</Typography>
                         </Link>
                     </ListItem>
                     <ListItem disablePadding>
-                        <Link to='/dashboard' className="sidebar_item" >
+                        <Link target="_blank" to='/' className="sidebar_item" >
                             <SwipeRightAltIcon />
                             <Typography>Apply for Visa</Typography>
                         </Link>
@@ -82,13 +82,13 @@ function Privacypolicy(props) {
                         </Link>
                     </ListItem>
                     <ListItem disablePadding>
-                        <Link className="sidebar_item">
+                        <Link to='/faq' className="sidebar_item">
                             <SwipeRightAltIcon />
                             <Typography>FAQ</Typography>
                         </Link>
                     </ListItem>
                     <ListItem disablePadding>
-                        <Link className="sidebar_item">
+                        <Link to='/login' className="sidebar_item">
                             <SwipeRightAltIcon />
                             <Typography>Logout</Typography>
                         </Link>
@@ -147,7 +147,7 @@ function Privacypolicy(props) {
                                 onClose={handleCloseUserMenu}
                             >
                                 <MenuItem style={{ alignItems: 'baseline' }} onClick={handleCloseUserMenu}>
-                                    <Link style={{ textDecoration: 'none', color: 'black', textAlign: 'left' }} to='/homeloginpage'>Home</Link>
+                                    <Link style={{ textDecoration: 'none', color: 'black', textAlign: 'left' }} to='/'>Home</Link>
                                 </MenuItem>
                                 <MenuItem style={{ alignItems: 'baseline' }} onClick={handleCloseUserMenu}>
                                     <Link style={{ textDecoration: 'none', color: 'black', textAlign: 'left' }} to='/'>About Us</Link>

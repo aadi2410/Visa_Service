@@ -9,6 +9,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import PrivateRoute from './component/privateRoute';
 import { useEffect } from 'react';
+import DocumentPage from './component/document';
 
 function App() {
   const isAuthenticated = localStorage.getItem('loginData')||null;
@@ -28,6 +29,7 @@ function App() {
             <Route  path='dashboard' element={<Dashboard/>}/>
             <Route exact path='/profilepage' element={<ProfilePage/>}/>
             <Route exact path='/privacypolicy' element={<Privacypolicy/>}/>
+            <Route exact path='/document' element={<DocumentPage/>}/>
 
           </Route>
       
