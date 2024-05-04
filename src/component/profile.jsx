@@ -334,7 +334,7 @@ function ProfilePage(props) {
                                             objectFit: 'cover',
                                             background: 'lightgray',
                                             marginTop: 16,
-                                            maxHeight: 250
+                                            maxHeight: 250, height: '100%'
                                         }}
                                     />
                                 ) : (
@@ -348,7 +348,7 @@ function ProfilePage(props) {
                                             objectFit: 'cover',
                                             background: 'lightgray',
                                             marginTop: 16,
-                                            maxHeight: 250
+                                            maxHeight: 250, height: '100%'
                                         }}
                                     />
                                 )}
