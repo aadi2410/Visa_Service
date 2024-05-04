@@ -1,7 +1,8 @@
 import * as React from 'react';
+import { useState } from 'react';
 import PropTypes from 'prop-types';
 import AppBar from '@mui/material/AppBar';
-import { Box, MenuItem, Menu, Avatar, Tooltip, Grid, styled, Button, TextField, TextareaAutosize } from '@mui/material';
+import { Box, MenuItem, Menu, Avatar, Tooltip, Grid, styled, Button, TextField, TextareaAutosize, Input, Card, CardMedia } from '@mui/material';
 import CssBaseline from '@mui/material/CssBaseline';
 import Divider from '@mui/material/Divider';
 import Drawer from '@mui/material/Drawer';
@@ -27,6 +28,16 @@ const ProfileGrid = styled(Grid)({
         },
     }
 })
+const CustomBox = styled(Box)({
+    width: '100%',
+    '& .file_name': {
+        display: '-webkit-box',
+        WebkitLineClamp: 1,
+        '-webkit-box-orient': 'vertical',
+        overflow: 'hidden',
+        height: '30px',
+    }
+})
 
 const drawerWidth = 240;
 
@@ -35,6 +46,14 @@ function ProfilePage(props) {
     const [mobileOpen, setMobileOpen] = React.useState(false);
     const [isClosing, setIsClosing] = React.useState(false);
     const [anchorElUser, setAnchorElUser] = React.useState(null);
+    const [selectedFile, setSelectedFile] = useState(null);
+    const [imageUrl, setImageUrl] = React.useState(null);
+
+    const handleFileChange = (event) => {
+        setSelectedFile(event.target.files[0]);
+        const fileUrl = URL.createObjectURL(event.target.files[0]);
+        setImageUrl(fileUrl);
+    };
     const handleCloseUserMenu = () => {
         setAnchorElUser(null);
     };
@@ -76,13 +95,7 @@ function ProfilePage(props) {
                     </Link>
                 </ListItem>
                 <ListItem disablePadding>
-                    <Link to='/document' className="sidebar_item">
-                        <SwipeRightAltIcon />
-                        <Typography>Documents</Typography>
-                    </Link>
-                </ListItem>
-                <ListItem disablePadding>
-                    <Link target="_blank" to='/' className="sidebar_item" >
+                    <Link to='/applyvisa' className="sidebar_item">
                         <SwipeRightAltIcon />
                         <Typography>Apply for Visa</Typography>
                     </Link>
@@ -111,6 +124,44 @@ function ProfilePage(props) {
 
     // Remove this const when copying and pasting into your project.
     const container = window !== undefined ? () => window().document.body : undefined;
+
+    const [formData, setFormData] = useState({
+        profilePicture: '',
+        firstName: '',
+        lastName: '',
+        email: '',
+        phoneNumber: '',
+        passport: '',
+        country: '',
+        pinCode: '',
+        temporaryAddress: '',
+        presentAddress: ''
+      });
+    
+      const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setFormData({
+          ...formData,
+          [name]: value
+        });
+      };
+    
+      const handleSubmit = (e) => {
+        e.preventDefault();
+        localStorage.setItem('profileData', JSON.stringify(formData));
+        setFormData({
+          profilePicture: '',
+          firstName: '',
+          lastName: '',
+          email: '',
+          phoneNumber: '',
+          passport: '',
+          country: '',
+          pinCode: '',
+          temporaryAddress: '',
+          presentAddress: ''
+        });
+      };
 
     return (
         <Box sx={{ display: 'flex' }}>
@@ -215,75 +266,98 @@ function ProfilePage(props) {
                 <Toolbar />
                 <ProfileGrid container spacing={5}>
                     <Grid className='profile_left_box' item xs={12} md={7} lg={9}>
-                         <form style={{display: 'flex', gap: 20, flexWrap: 'wrap'}}>
-                         <Box style={{flex: 1, minWidth: '45%', display: 'flex', flexDirection: 'column', gap: 5}}>
-                            <label>First Name</label>
-                            <TextField placeholder='Enter your name' type="text" variant='outlined' />
-                         </Box>
-                         <Box style={{flex: 1, minWidth: '45%', display: 'flex', flexDirection: 'column', gap: 5}}>
-                            <label>Last Name</label>
-                            <TextField placeholder='Enter your name' type="text" variant='outlined' />
-                         </Box>
-                         <Box style={{flex: 1, minWidth: '45%', display: 'flex', flexDirection: 'column', gap: 5}}>
-                            <label>Email Address</label>
-                            <TextField placeholder='Enter your email' type="email" variant='outlined' />
-                         </Box>
-                         <Box style={{flex: 1, minWidth: '45%', display: 'flex', flexDirection: 'column', gap: 5}}>
-                            <label>Phone Number</label>
-                            <TextField placeholder='Enter your number' type="number" variant='outlined' />
-                         </Box>
-                         <Box style={{flex: 1, minWidth: '45%', display: 'flex', flexDirection: 'column', gap: 5}}>
-                            <label>Pan Number</label>
-                            <TextField placeholder='Enter your PAN' type="text" variant='outlined' />
-                         </Box>
-                         <Box style={{flex: 1, minWidth: '45%', display: 'flex', flexDirection: 'column', gap: 5}}>
-                            <label>Passport</label>
-                            <TextField placeholder='Enter your passport no' type="text" variant='outlined' />
-                         </Box>
-                         <Box style={{flex: 1, minWidth: '45%', display: 'flex', flexDirection: 'column', gap: 5}}>
-                            <label>Aadhar Number</label>
-                            <TextField placeholder='Enter your name' type="text" variant='outlined' />
-                         </Box>
-                         <Box style={{flex: 1, minWidth: '45%', display: 'flex', flexDirection: 'column', gap: 5}}>
-                            <label>Country</label>
-                            <TextField placeholder='Enter your Aadhar' type="text" variant='outlined' />
-                         </Box>
-                         <Box style={{flex: 1, minWidth: '45%', display: 'flex', flexDirection: 'column', gap: 5}}>
-                            <label>Pin Code</label>
-                            <TextField placeholder='Enter your pincode' type="number" variant='outlined' />
-                         </Box>
-                         <Box style={{flex: 1, minWidth: '45%', display: 'flex', flexDirection: 'column', gap: 5}}>
-                            <label>Address Line 1</label>
-                            <TextField placeholder='Enter your address' type="text" variant='outlined' />
-                         </Box>
-                         <Box style={{flex: 1, minWidth: '45%', display: 'flex', flexDirection: 'column', gap: 5}}>
-                            <label>Address Line 2</label>
-                            <TextField placeholder='Enter your address' type="text" variant='outlined' />
-                         </Box>
-                         <Box style={{flex: 1, minWidth: '45%', display: 'flex', flexDirection: 'column', gap: 5}}>
-                            <label>Address Line 3</label>
-                            <TextField placeholder='Enter your address' type="text" variant='outlined' />
-                         </Box>
-                         <Box style={{flex: 1, minWidth: '45%', display: 'flex', flexDirection: 'column', gap: 5}}>
-                            <label>Present Address</label>
-                            <TextareaAutosize minRows={4} type="text" variant='outlined' />
-                         </Box>
-                         </form>
-                         <Box style={{textAlign: 'center', marginTop: 20}}>
-                         <Button variant='contained' style={{minWidth: 200, minHeight: 48}}>Submit</Button>
-                         </Box>
+                        <form style={{ display: 'flex', gap: 20, flexWrap: 'wrap' }}>
+                            <Box style={{ flex: 1, minWidth: '100%', display: 'flex', flexDirection: 'column', gap: 5 }}>
+                                <label>Upload your profile picture</label>
+                                <TextField
+                                    name="profilePicture"
+                                    type="file"
+                                    onChange={handleFileChange}
+                                    inputProps={{ accept: 'image/*' }}
+                                    id="file-upload"
+                                    variant="outlined"
+                                    required
+                                />
+                            </Box>
+                            <Box style={{ flex: 1, minWidth: '45%', display: 'flex', flexDirection: 'column', gap: 5 }}>
+                                <label>First Name</label>
+                                <TextField required name="firstName" onChange={handleInputChange} placeholder='Enter your name' type="text" variant='outlined' />
+                            </Box>
+                            <Box style={{ flex: 1, minWidth: '45%', display: 'flex', flexDirection: 'column', gap: 5 }}>
+                                <label>Last Name</label>
+                                <TextField required name="lastName" onChange={handleInputChange} placeholder='Enter your name' type="text" variant='outlined' />
+                            </Box>
+                            <Box style={{ flex: 1, minWidth: '45%', display: 'flex', flexDirection: 'column', gap: 5 }}>
+                                <label>Email Address</label>
+                                <TextField required name="email" onChange={handleInputChange} placeholder='Enter your email' type="email" variant='outlined' />
+                            </Box>
+                            <Box style={{ flex: 1, minWidth: '45%', display: 'flex', flexDirection: 'column', gap: 5 }}>
+                                <label>Phone Number</label>
+                                <TextField required name="phoneNumber" onChange={handleInputChange} placeholder='Enter your number' type="number" variant='outlined' />
+                            </Box>
+                            <Box style={{ flex: 1, minWidth: '45%', display: 'flex', flexDirection: 'column', gap: 5 }}>
+                                <label>Passport</label>
+                                <TextField required name="passport" onChange={handleInputChange} placeholder='Enter your passport no' type="text" variant='outlined' />
+                            </Box>
+                            <Box style={{ flex: 1, minWidth: '45%', display: 'flex', flexDirection: 'column', gap: 5 }}>
+                                <label>Country</label>
+                                <TextField required name="country" onChange={handleInputChange} placeholder='Enter your Aadhar' type="text" variant='outlined' />
+                            </Box>
+                            <Box style={{ flex: 1, minWidth: '45%', display: 'flex', flexDirection: 'column', gap: 5 }}>
+                                <label>Pin Code</label>
+                                <TextField required name="pincode" onChange={handleInputChange} placeholder='Enter your pincode' type="number" variant='outlined' />
+                            </Box>
+                            <Box style={{ flex: 1, minWidth: '100%', display: 'flex', flexDirection: 'column', gap: 5 }}>
+                                <label>Temporary address</label>
+                                <TextareaAutosize required name="temporaryAddress" onChange={handleInputChange} minRows={4} type="text" variant='outlined' />
+                            </Box>
+                            <Box style={{ flex: 1, minWidth: '100%', display: 'flex', flexDirection: 'column', gap: 5 }}>
+                                <label>Present Address</label>
+                                <TextareaAutosize required name="presentAddress" onChange={handleInputChange} minRows={4} type="text" variant='outlined' />
+                            </Box>
+                        <Box style={{ textAlign: 'center', marginTop: 20,flex: 1, minWidth: '100%' }} onClick={handleSubmit}>
+                            <Button variant='contained' style={{ minWidth: 200, minHeight: 48 }}>Submit</Button>
+                        </Box>
+                        </form>
                     </Grid>
                     <Grid item xs={12} md={5} lg={3}>
-                        <Box style={{ textAlign: 'left', padding: 20, boxShadow: '0px 0px 10px #dcdcdc', width: '100%', borderRadius: 12, display: 'flex', alignItems: 'center', flexDirection: 'column', textAlign:  'center' }}>
-                            <Box style={{ position: 'relative' }}>
-                                <img src={ProfileImage} alt="" style={{ maxWidth: 250, width: '100%', borderRadius: '50%', objectFit: 'cover', background: 'lightgray' }} />
-                                <EditIcon style={{ cursor: 'pointer', position: 'absolute', right: 20, bottom: 20, boxShadow: '0px 0px 10px #dcdcdc', color: '#1976d2', background: 'white', padding: 8, borderRadius: '50%', fontSize: 40 }} />
+                        <Box style={{ textAlign: 'left', padding: 20, boxShadow: '0px 0px 10px #dcdcdc', width: '100%', borderRadius: 12, display: 'flex', alignItems: 'center', flexDirection: 'column', textAlign: 'center' }}>
+                            <Box className='profile_div' style={{ position: 'relative' }}>
+                                {imageUrl == null ? (
+                                    <img
+                                        src={ProfileImage}
+                                        alt=""
+                                        style={{
+                                            maxWidth: 250,
+                                            width: '100%',
+                                            borderRadius: '50%',
+                                            objectFit: 'cover',
+                                            background: 'lightgray',
+                                            marginTop: 16,
+                                            maxHeight: 250
+                                        }}
+                                    />
+                                ) : (
+                                    <img
+                                        src={imageUrl}
+                                        alt=""
+                                        style={{
+                                            maxWidth: 250,
+                                            width: '100%',
+                                            borderRadius: '50%',
+                                            objectFit: 'cover',
+                                            background: 'lightgray',
+                                            marginTop: 16,
+                                            maxHeight: 250
+                                        }}
+                                    />
+                                )}
                             </Box>
-                            <Box style={{textAlign: 'center', marginTop: 20}}>
-                            <Typography style={{textAlign: 'center', marginTop: 5}}><b>Name:</b> Jash Jeff</Typography> 
-                            <Typography style={{textAlign: 'center', marginTop: 5}}><b>Email:</b> asdfg@gmail.com </Typography>
-                            <Typography style={{textAlign: 'center', marginTop: 5}}><b>Number:</b> 9876543210</Typography>
-                            <Typography style={{textAlign: 'center', marginTop: 5}}><b>Address:</b> asdefrgtyh, zsws, India (123456)</Typography>
+                            <Box style={{ textAlign: 'center', marginTop: 20 }}>
+                                <Typography style={{ textAlign: 'center', marginTop: 5 }}><b>Name:</b> Jash Jeff</Typography>
+                                <Typography style={{ textAlign: 'center', marginTop: 5 }}><b>Email:</b> asdfg@gmail.com </Typography>
+                                <Typography style={{ textAlign: 'center', marginTop: 5 }}><b>Number:</b> 9876543210</Typography>
+                                <Typography style={{ textAlign: 'center', marginTop: 5 }}><b>Address:</b> asdefrgtyh, zsws, India (123456)</Typography>
                             </Box>
                         </Box>
                     </Grid>

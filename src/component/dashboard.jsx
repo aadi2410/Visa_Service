@@ -64,13 +64,7 @@ function ResponsiveDrawer(props) {
                         </Link>
                     </ListItem>
                     <ListItem disablePadding>
-                        <Link to='/document' className="sidebar_item" >
-                            <SwipeRightAltIcon />
-                            <Typography>Documents</Typography>
-                        </Link>
-                    </ListItem>
-                    <ListItem disablePadding>
-                        <Link target="_blank" to='/' className="sidebar_item" >
+                        <Link to='/applyvisa' className="sidebar_item" >
                             <SwipeRightAltIcon />
                             <Typography>Apply for Visa</Typography>
                         </Link>
