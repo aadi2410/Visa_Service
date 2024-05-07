@@ -48,7 +48,7 @@ function ProfilePage(props) {
     const [anchorElUser, setAnchorElUser] = React.useState(null);
     const [selectedFile, setSelectedFile] = useState(null);
     const [imageUrl, setImageUrl] = React.useState(null);
-
+const[isClick,setIsClick]=useState(false);
     const handleFileChange = (event) => {
         setSelectedFile(event.target.files[0]);
         const fileUrl = URL.createObjectURL(event.target.files[0]);
@@ -124,8 +124,8 @@ function ProfilePage(props) {
 
     // Remove this const when copying and pasting into your project.
     const container = window !== undefined ? () => window().document.body : undefined;
-
-    const [formData, setFormData] = useState({
+const [profileData,setProfileData]=useState(JSON.parse(localStorage.getItem('profileData'))||null)
+    const [formData, setFormData] = useState(JSON.parse(localStorage.getItem('profileData'))||{
         profilePicture: '',
         firstName: '',
         lastName: '',
@@ -136,18 +136,32 @@ function ProfilePage(props) {
         pinCode: '',
         temporaryAddress: '',
         presentAddress: ''
-      });
-    
-      const handleInputChange = (e) => {
+    });
+
+    const handleInputChange = (e) => {
         const { name, value } = e.target;
         setFormData({
-          ...formData,
-          [name]: value
+            ...formData,
+            [name]: value
         });
-      };
-    
-      const handleSubmit = (e) => {
+    };
+
+    const handleSubmit = (e) => {
         e.preventDefault();
+console.log(e.target)
+const {
+    profilePicture = '',
+    firstName = '',
+    lastName = '',
+    email = '',
+    phoneNumber = '',
+    passport = '',
+    country = '',
+    pinCode = '',
+    temporaryAddress = '',
+    presentAddress = ''
+  } = formData||{};
+ 
         localStorage.setItem('profileData', JSON.stringify(formData));
         setFormData({
           profilePicture: '',
@@ -161,8 +175,30 @@ function ProfilePage(props) {
           temporaryAddress: '',
           presentAddress: ''
         });
-      };
-
+        setIsClick(!isClick)
+    };
+   
+    React.useEffect(() => {
+        const data = JSON.parse(localStorage.getItem('profileData')) || null;
+        setProfileData(data);
+    }, [formData]);
+    React.useEffect(() => {
+        const data = JSON.parse(localStorage.getItem('profileData')) || null;
+                setFormData(data)
+    }, [isClick]);
+    const {
+        profilePicture = '',
+        firstName = '',
+        lastName = '',
+        email = '',
+        phoneNumber = '',
+        passport = '',
+        country = '',
+        pinCode = '',
+        temporaryAddress = '',
+        presentAddress = ''
+      } = profileData||{};
+      console.log({formData})
     return (
         <Box sx={{ display: 'flex' }}>
             <CssBaseline />
@@ -315,9 +351,9 @@ function ProfilePage(props) {
                                 <label>Present Address</label>
                                 <TextareaAutosize required name="presentAddress" onChange={handleInputChange} minRows={4} type="text" variant='outlined' />
                             </Box>
-                        <Box style={{ textAlign: 'center', marginTop: 20,flex: 1, minWidth: '100%' }} onClick={handleSubmit}>
-                            <Button variant='contained' style={{ minWidth: 200, minHeight: 48 }}>Submit</Button>
-                        </Box>
+                            <Box style={{ textAlign: 'center', marginTop: 20, flex: 1, minWidth: '100%' }} onClick={handleSubmit}>
+                                <Button variant='contained' style={{ minWidth: 200, minHeight: 48 }}>Submit</Button>
+                            </Box>
                         </form>
                     </Grid>
                     <Grid item xs={12} md={5} lg={3}>
@@ -334,7 +370,7 @@ function ProfilePage(props) {
                                             objectFit: 'cover',
                                             background: 'lightgray',
                                             marginTop: 16,
-                                            maxHeight: 250, height: '100%'
+                                            aspectRatio: 1/1,
                                         }}
                                     />
                                 ) : (
@@ -348,16 +384,16 @@ function ProfilePage(props) {
                                             objectFit: 'cover',
                                             background: 'lightgray',
                                             marginTop: 16,
-                                            maxHeight: 250, height: '100%'
+                                            aspectRatio: 1/1,
                                         }}
                                     />
                                 )}
                             </Box>
                             <Box style={{ textAlign: 'center', marginTop: 20 }}>
-                                <Typography style={{ textAlign: 'center', marginTop: 5 }}><b>Name:</b> Jash Jeff</Typography>
-                                <Typography style={{ textAlign: 'center', marginTop: 5 }}><b>Email:</b> asdfg@gmail.com </Typography>
-                                <Typography style={{ textAlign: 'center', marginTop: 5 }}><b>Number:</b> 9876543210</Typography>
-                                <Typography style={{ textAlign: 'center', marginTop: 5 }}><b>Address:</b> asdefrgtyh, zsws, India (123456)</Typography>
+                                <Typography style={{ textAlign: 'center', marginTop: 5 }}><b>Name:</b> {firstName}</Typography>
+                                <Typography style={{ textAlign: 'center', marginTop: 5 }}><b>Email:</b> {email} </Typography>
+                                <Typography style={{ textAlign: 'center', marginTop: 5 }}><b>Number:</b> {phoneNumber}</Typography>
+                                <Typography style={{ textAlign: 'center', marginTop: 5 }}><b>Address:</b> {presentAddress}</Typography>
                             </Box>
                         </Box>
                     </Grid>

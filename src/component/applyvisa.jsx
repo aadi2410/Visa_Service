@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useState } from 'react';
 import PropTypes from 'prop-types';
 import AppBar from '@mui/material/AppBar';
-import { Box, MenuItem, Menu, Avatar, Tooltip, Grid, styled, Button, Card, CardMedia, Input, Tab, Tabs } from '@mui/material';
+import { Box, MenuItem, Menu, Avatar, Tooltip, Grid, styled, Button, Card, CardMedia, Input, Tab, Tabs, FormControl, InputLabel, Select } from '@mui/material';
 import CssBaseline from '@mui/material/CssBaseline';
 import Divider from '@mui/material/Divider';
 import Drawer from '@mui/material/Drawer';
@@ -63,7 +63,6 @@ function a11yProps(index) {
     };
 }
 
-
 function ApplyVisa(props) {
     const { window } = props;
     const [mobileOpen, setMobileOpen] = React.useState(false);
@@ -76,19 +75,64 @@ function ApplyVisa(props) {
     const [imageUrl2, setImageUrl2] = React.useState(null);
     const [imageUrl3, setImageUrl3] = React.useState(null);
     const [value, setValue] = React.useState(0);
+    const [age, setAge] = React.useState('');
+
+    const handlePersonCountChange = (event) => {
+      setAge(event.target.value);
+    };
 
     const handleTabChange = (event, newValue) => {
         setValue(newValue);
     };
+    React.useEffect(() => {
+        const adharimage1 = localStorage.getItem('adharimage1');
+        const adharimage2 = localStorage.getItem('adharimage2');
+        const adharimagename1 = localStorage.getItem('adharimage1_name');
+
+        const adharimagename2 = localStorage.getItem('adharimage2_name');
+
+        if (adharimage1) {
+            setSelectedFile({name:adharimagename1});
+            setImageUrl(adharimage1);
+        }
+        if (adharimage2) {
+            setSelectedFile2({name:adharimagename2});
+
+            setImageUrl2(adharimage2);
+        }
+        
+      }, []);
+      console.log(selectedFile)
     const handleFileChange = (event) => {
+    const file = event.target.files[0];
+
         setSelectedFile(event.target.files[0]);
         const fileUrl = URL.createObjectURL(event.target.files[0]);
+        const reader = new FileReader();
+        localStorage.setItem('adharimage1_name',file.name);
+
+        reader.addEventListener('load', ()=>{
+            localStorage.setItem('adharimage1',reader.result);
+
+        })
+        reader.readAsDataURL(file);
+
         setImageUrl(fileUrl);
     };
 
     const handleFileChange2 = (event) => {
+        const file = event.target.files[0];
+
         setSelectedFile2(event.target.files[0]);
         const fileUrl2 = URL.createObjectURL(event.target.files[0]);
+        const reader = new FileReader();
+        localStorage.setItem('adharimage2_name',file.name);
+
+        reader.addEventListener('load', ()=>{
+            localStorage.setItem('adharimage2',reader.result);
+
+        })
+        reader.readAsDataURL(file);
         setImageUrl2(fileUrl2);
     };
 
@@ -288,6 +332,7 @@ function ApplyVisa(props) {
                                 </Box>
                             </Grid>
                             <Grid item xs={12} sm={6} md={4} lg={3}>
+
                                 <Box style={{ width: '100%', borderRadius: 12, minHeight: '315px', padding: 20, boxShadow: '0px 0px 10px #dcdcdc', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                                     <CustomBox>
                                         <Input
@@ -343,10 +388,25 @@ function ApplyVisa(props) {
                         </Box>
                     </CustomTabPanel>
                     <CustomTabPanel value={value} index={1}>
-                        <Box style={{ paddingTop: 20, paddingBottom: 40 }}>
+                    <Box style={{ paddingTop: 20, paddingBottom: 40 }}>
                             <Typography style={{ marginBottom: 12 }}>Group Visa Application Progress</Typography>
                             <CustomizedSteppers />
                         </Box>
+                        <Box style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 5, marginBottom: 50 }}>
+                                <label>Number of Person</label>
+                                <Select
+                                style={{maxWidth: 150}}
+                                    value={age}
+                                    onChange={handlePersonCountChange}
+                                    displayEmpty
+                                    inputProps={{ 'aria-label': 'Without label' }}
+                                    >
+                                    <MenuItem value={10}>Ten</MenuItem>
+                                    <MenuItem value={20}>Twenty</MenuItem>
+                                    <MenuItem value={30}>Thirty</MenuItem>
+                                </Select>
+                            </Box>
+                        
                         <Grid container spacing={3}>
                             <Grid item xs={12} sm={6} md={4} lg={3}>
                                 <Box style={{ width: '100%', borderRadius: 12, minHeight: '315px', padding: 20, boxShadow: '0px 0px 10px #dcdcdc', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>

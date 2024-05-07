@@ -29,11 +29,27 @@ const PdfUploadAndViewer = () => {
 
   const [numPages, setNumPages] = useState(null);
   const [pageNumber, setPageNumber] = useState(1);
+  React.useEffect(() => {
+    const savedFile = localStorage.getItem('upload_pdf');
+
+    if (savedFile) {
+      setSelectedFile(savedFile);
+    }
+  }, []);
 
   const handlePdfFileChange = (event) => {
-    setSelectedFile(event.target.files[0]);
-  };
+    const file = event.target.files[0];
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => {
+      const base64String = reader.result;
+            
+      localStorage.setItem('upload_pdf', base64String);
+      localStorage.setItem('upload_pdf_name', file.name);
 
+      setSelectedFile(file);
+    };
+  };
   const handleUpload = () => {
     // Handle file upload logic
     console.log(selectedFile);
@@ -64,7 +80,7 @@ const PdfUploadAndViewer = () => {
         {selectedFile && (
             <Card sx={{ marginTop: 2, boxShadow: 'none' }}>
             <CardContent style={{padding: 0}}>
-                <p className='file_name'>file: {selectedFile.name}</p>
+                <p className='file_name'>file: {selectedFile.name??localStorage.getItem('upload_pdf_name')}</p>
             {selectedFile && (
                 <PdfBox mt={2}>
                 <Document
