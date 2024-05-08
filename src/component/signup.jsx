@@ -3,12 +3,14 @@ import { TextField, Typography, Grid, Button } from '@mui/material';
 import About_img from '../assets/about.png';
 import { Link, useNavigate } from 'react-router-dom';
 import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
+import {axiosInstance} from '../api/apiconfig';
+import {  toast } from 'react-toastify';
 
 const SignUp = () => {
   const navigate=useNavigate();
   const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
+    full_name: '',
+    mobile_no: '',
     email: '',
     password: '',
   });
@@ -20,13 +22,17 @@ const SignUp = () => {
       [name]: value,
     });
   };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log(formData); // You can handle form submission logic here
   
-   localStorage.setItem('userData',JSON.stringify(formData));
-   navigate('/login')
+  const handleSubmit = async(e) => {
+    e.preventDefault();
+    try {
+      const response = await axiosInstance.post('register', formData);
+      localStorage.setItem('userData',JSON.stringify(response));
+      navigate('/login');
+    } catch (error) {
+      toast.error("Something went wrong");
+    }
+ 
   };
 
   return (
@@ -48,8 +54,8 @@ const SignUp = () => {
                 <TextField
                   fullWidth
                   required
-                  label="First Name"
-                  name="firstName"
+                  label="Full Name"
+                  name="full_name"
                   value={formData.firstName}
                   onChange={handleChange}
                 />
@@ -59,9 +65,9 @@ const SignUp = () => {
                   required
 
                   fullWidth
-                  label="Last Name"
-                  name="lastName"
-                  value={formData.lastName}
+                  label="Mobile No."
+                  name="mobile_no"
+                  value={formData.mobile_no}
                   onChange={handleChange}
                 />
               </Grid>

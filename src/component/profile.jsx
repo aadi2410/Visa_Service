@@ -17,6 +17,7 @@ import Logo from '../assets/logo.png';
 import SwipeRightAltIcon from '@mui/icons-material/SwipeRightAlt';
 import { Link } from 'react-router-dom';
 import EditIcon from '@mui/icons-material/Edit';
+import { axiosAuthorized } from '../api/apiconfig';
 
 const ProfileGrid = styled(Grid)({
     '@media(max-width: 767px)': {
@@ -43,16 +44,30 @@ const drawerWidth = 240;
 
 function ProfilePage(props) {
     const { window } = props;
+    const [formData, setFormData] = useState(JSON.parse(localStorage.getItem('profileData')) || {
+        profilePicture: '',
+        firstName: '',
+        lastName: '',
+        email: '',
+        mobile_no: '',
+        passport: '',
+        country: '',
+        pinCode: '',
+        temporaryAddress: '',
+        presentAddress: ''
+    });
+    const [profileData, setProfileData] = useState(JSON.parse(localStorage.getItem('profileData')) || null)
     const [mobileOpen, setMobileOpen] = React.useState(false);
     const [isClosing, setIsClosing] = React.useState(false);
     const [anchorElUser, setAnchorElUser] = React.useState(null);
     const [selectedFile, setSelectedFile] = useState(null);
     const [imageUrl, setImageUrl] = React.useState(null);
-const[isClick,setIsClick]=useState(false);
+    const [isClick, setIsClick] = useState(false);
     const handleFileChange = (event) => {
         setSelectedFile(event.target.files[0]);
         const fileUrl = URL.createObjectURL(event.target.files[0]);
         setImageUrl(fileUrl);
+        setFormData({...formData,profilePicture:event.target.files[0]});
     };
     const handleCloseUserMenu = () => {
         setAnchorElUser(null);
@@ -74,7 +89,60 @@ const[isClick,setIsClick]=useState(false);
             setMobileOpen(!mobileOpen);
         }
     };
+    const getProfileData = async () => {
+        try {
+            let userId = localStorage.getItem('user_id') || null;
+            if (userId) {
 
+                const response = await axiosAuthorized.get(`getProfile/${JSON.parse(localStorage.getItem('user_id'))}`);
+                const { user } = response.data;
+                setFormData({
+                    ...formData, firstName: user.firstName, lastName: user.lastName, mobile_no: user.mobile_no, email: user.email, passport: user.passport,
+                    country: user.country,
+                    pinCode: user.pinCode,
+                    presentAddress: user.presentAddress,
+                    temporaryAddress: user.temporaryAddress
+
+                })
+                setProfileData({ ...profileData, firstName: user.firstName, lastName: user.lastName, mobile_no: user.mobile_no, email: user.email });
+                setImageUrl(user.profilePicture);
+
+            }
+
+        } catch (error) {
+            // toast.error("Something went wrong");
+        }
+    }
+    console.log(formData)
+    const updateProfileData = async () => {
+        try {
+            let userId = localStorage.getItem('user_id') || null;
+            if (userId) {
+                const formDataToSend = new FormData();
+                formDataToSend.append('firstName', formData.firstName);
+                formDataToSend.append('profilePicture', formData.profilePicture);
+        console.log(formDataToSend)
+                const response = await axiosAuthorized.put(`getProfile/${JSON.parse(localStorage.getItem('user_id'))}`,formDataToSend,{
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                      }
+                
+                });
+                const { user } = response.data;
+                setFormData({ ...formData, firstName: user.firstName, lastName: user.lastName, mobile_no: user.mobile_no, email: user.email })
+                setProfileData({ ...profileData, firstName: user.firstName, lastName: user.lastName, mobile_no: user.mobile_no, email: user.email, presentAddress: user.presentAddress });
+                console.log(user,user.profilePicture)
+                setImageUrl(user.profilePicture);
+            }
+
+        } catch (error) {
+            // toast.error("Something went wrong");
+        }
+    }
+    console.log(imageUrl)
+    React.useEffect(() => {
+        getProfileData()
+    }, [])
     const drawer = (
         <div>
             <Toolbar>
@@ -124,19 +192,6 @@ const[isClick,setIsClick]=useState(false);
 
     // Remove this const when copying and pasting into your project.
     const container = window !== undefined ? () => window().document.body : undefined;
-const [profileData,setProfileData]=useState(JSON.parse(localStorage.getItem('profileData'))||null)
-    const [formData, setFormData] = useState(JSON.parse(localStorage.getItem('profileData'))||{
-        profilePicture: '',
-        firstName: '',
-        lastName: '',
-        email: '',
-        phoneNumber: '',
-        passport: '',
-        country: '',
-        pinCode: '',
-        temporaryAddress: '',
-        presentAddress: ''
-    });
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -148,57 +203,22 @@ const [profileData,setProfileData]=useState(JSON.parse(localStorage.getItem('pro
 
     const handleSubmit = (e) => {
         e.preventDefault();
-console.log(e.target)
-const {
-    profilePicture = '',
-    firstName = '',
-    lastName = '',
-    email = '',
-    phoneNumber = '',
-    passport = '',
-    country = '',
-    pinCode = '',
-    temporaryAddress = '',
-    presentAddress = ''
-  } = formData||{};
- 
-        localStorage.setItem('profileData', JSON.stringify(formData));
-        setFormData({
-          profilePicture: '',
-          firstName: '',
-          lastName: '',
-          email: '',
-          phoneNumber: '',
-          passport: '',
-          country: '',
-          pinCode: '',
-          temporaryAddress: '',
-          presentAddress: ''
-        });
-        setIsClick(!isClick)
+     
+        updateProfileData()
     };
-   
-    React.useEffect(() => {
-        const data = JSON.parse(localStorage.getItem('profileData')) || null;
-        setProfileData(data);
-    }, [formData]);
-    React.useEffect(() => {
-        const data = JSON.parse(localStorage.getItem('profileData')) || null;
-                setFormData(data)
-    }, [isClick]);
+
     const {
         profilePicture = '',
         firstName = '',
         lastName = '',
         email = '',
-        phoneNumber = '',
+        mobile_no = '',
         passport = '',
         country = '',
         pinCode = '',
         temporaryAddress = '',
         presentAddress = ''
-      } = profileData||{};
-      console.log({formData})
+    } = profileData || {};
     return (
         <Box sx={{ display: 'flex' }}>
             <CssBaseline />
@@ -317,39 +337,60 @@ const {
                             </Box>
                             <Box style={{ flex: 1, minWidth: '45%', display: 'flex', flexDirection: 'column', gap: 5 }}>
                                 <label>First Name</label>
-                                <TextField required name="firstName" onChange={handleInputChange} placeholder='Enter your name' type="text" variant='outlined' />
+                                <TextField
+                                    value={formData.firstName}
+                                    required name="firstName" onChange={handleInputChange} placeholder='Enter your name' type="text" variant='outlined' />
                             </Box>
                             <Box style={{ flex: 1, minWidth: '45%', display: 'flex', flexDirection: 'column', gap: 5 }}>
                                 <label>Last Name</label>
-                                <TextField required name="lastName" onChange={handleInputChange} placeholder='Enter your name' type="text" variant='outlined' />
+                                <TextField
+                                    value={formData.lastName}
+
+                                    required name="lastName" onChange={handleInputChange} placeholder='Enter your name' type="text" variant='outlined' />
                             </Box>
                             <Box style={{ flex: 1, minWidth: '45%', display: 'flex', flexDirection: 'column', gap: 5 }}>
                                 <label>Email Address</label>
-                                <TextField required name="email" onChange={handleInputChange} placeholder='Enter your email' type="email" variant='outlined' />
+                                <TextField
+                                    value={formData.email}
+
+                                    required name="email" onChange={handleInputChange} placeholder='Enter your email' type="email" variant='outlined' />
                             </Box>
                             <Box style={{ flex: 1, minWidth: '45%', display: 'flex', flexDirection: 'column', gap: 5 }}>
                                 <label>Phone Number</label>
-                                <TextField required name="phoneNumber" onChange={handleInputChange} placeholder='Enter your number' type="number" variant='outlined' />
+                                <TextField
+                                    value={formData.mobile_no}
+
+                                    required name="mobile_no" onChange={handleInputChange} placeholder='Enter your number' type="number" variant='outlined' />
                             </Box>
                             <Box style={{ flex: 1, minWidth: '45%', display: 'flex', flexDirection: 'column', gap: 5 }}>
                                 <label>Passport</label>
-                                <TextField required name="passport" onChange={handleInputChange} placeholder='Enter your passport no' type="text" variant='outlined' />
+                                <TextField
+                                    value={formData.passport}
+                                    required name="passport" onChange={handleInputChange} placeholder='Enter your passport no' type="text" variant='outlined' />
                             </Box>
                             <Box style={{ flex: 1, minWidth: '45%', display: 'flex', flexDirection: 'column', gap: 5 }}>
                                 <label>Country</label>
-                                <TextField required name="country" onChange={handleInputChange} placeholder='Enter your Aadhar' type="text" variant='outlined' />
+                                <TextField
+                                    value={formData.country}
+                                    required name="country" onChange={handleInputChange} placeholder='Enter your Country' type="text" variant='outlined' />
                             </Box>
                             <Box style={{ flex: 1, minWidth: '45%', display: 'flex', flexDirection: 'column', gap: 5 }}>
                                 <label>Pin Code</label>
-                                <TextField required name="pincode" onChange={handleInputChange} placeholder='Enter your pincode' type="number" variant='outlined' />
+                                <TextField
+                                    value={formData.pinCode}
+                                    required name="pincode" onChange={handleInputChange} placeholder='Enter your pincode' type="number" variant='outlined' />
                             </Box>
                             <Box style={{ flex: 1, minWidth: '100%', display: 'flex', flexDirection: 'column', gap: 5 }}>
                                 <label>Temporary address</label>
-                                <TextareaAutosize required name="temporaryAddress" onChange={handleInputChange} minRows={4} type="text" variant='outlined' />
+                                <TextareaAutosize
+                                    value={formData.temporaryAddress}
+                                    required name="temporaryAddress" onChange={handleInputChange} minRows={4} type="text" variant='outlined' />
                             </Box>
                             <Box style={{ flex: 1, minWidth: '100%', display: 'flex', flexDirection: 'column', gap: 5 }}>
                                 <label>Present Address</label>
-                                <TextareaAutosize required name="presentAddress" onChange={handleInputChange} minRows={4} type="text" variant='outlined' />
+                                <TextareaAutosize
+                                    value={formData.presentAddress}
+                                    required name="presentAddress" onChange={handleInputChange} minRows={4} type="text" variant='outlined' />
                             </Box>
                             <Box style={{ textAlign: 'center', marginTop: 20, flex: 1, minWidth: '100%' }} onClick={handleSubmit}>
                                 <Button variant='contained' style={{ minWidth: 200, minHeight: 48 }}>Submit</Button>
@@ -370,7 +411,7 @@ const {
                                             objectFit: 'cover',
                                             background: 'lightgray',
                                             marginTop: 16,
-                                            aspectRatio: 1/1,
+                                            aspectRatio: 1 / 1,
                                         }}
                                     />
                                 ) : (
@@ -384,7 +425,7 @@ const {
                                             objectFit: 'cover',
                                             background: 'lightgray',
                                             marginTop: 16,
-                                            aspectRatio: 1/1,
+                                            aspectRatio: 1 / 1,
                                         }}
                                     />
                                 )}
@@ -392,7 +433,7 @@ const {
                             <Box style={{ textAlign: 'center', marginTop: 20 }}>
                                 <Typography style={{ textAlign: 'center', marginTop: 5 }}><b>Name:</b> {firstName}</Typography>
                                 <Typography style={{ textAlign: 'center', marginTop: 5 }}><b>Email:</b> {email} </Typography>
-                                <Typography style={{ textAlign: 'center', marginTop: 5 }}><b>Number:</b> {phoneNumber}</Typography>
+                                <Typography style={{ textAlign: 'center', marginTop: 5 }}><b>Number:</b> {mobile_no}</Typography>
                                 <Typography style={{ textAlign: 'center', marginTop: 5 }}><b>Address:</b> {presentAddress}</Typography>
                             </Box>
                         </Box>
