@@ -16,9 +16,8 @@ import Typography from '@mui/material/Typography';
 import Logo from '../assets/logo.png';
 import SwipeRightAltIcon from '@mui/icons-material/SwipeRightAlt';
 import { Link } from 'react-router-dom';
-import EditIcon from '@mui/icons-material/Edit';
 import { axiosAuthorized } from '../api/apiconfig';
-
+import {  toast } from 'react-toastify';
 const ProfileGrid = styled(Grid)({
     '@media(max-width: 767px)': {
         '& .profile_left_box': {
@@ -44,7 +43,7 @@ const drawerWidth = 240;
 
 function ProfilePage(props) {
     const { window } = props;
-    const [formData, setFormData] = useState(JSON.parse(localStorage.getItem('profileData')) || {
+    const [formData, setFormData] = useState( {
         profilePicture: '',
         firstName: '',
         lastName: '',
@@ -62,9 +61,7 @@ function ProfilePage(props) {
     const [anchorElUser, setAnchorElUser] = React.useState(null);
     const [selectedFile, setSelectedFile] = useState(null);
     const [imageUrl, setImageUrl] = React.useState(null);
-    const [isClick, setIsClick] = useState(false);
     const handleFileChange = (event) => {
-        setSelectedFile(event.target.files[0]);
         const fileUrl = URL.createObjectURL(event.target.files[0]);
         setImageUrl(fileUrl);
         setFormData({...formData,profilePicture:event.target.files[0]});
@@ -104,24 +101,30 @@ function ProfilePage(props) {
                     temporaryAddress: user.temporaryAddress
 
                 })
-                setProfileData({ ...profileData, firstName: user.firstName, lastName: user.lastName, mobile_no: user.mobile_no, email: user.email });
+                setProfileData({ ...profileData, firstName: user.firstName?user.firstName:user.full_name, lastName: user.lastName, mobile_no: user.mobile_no, email: user.email });
                 setImageUrl(user.profilePicture);
-
+                setSelectedFile(user.profileFileName)
             }
 
         } catch (error) {
-            // toast.error("Something went wrong");
+            toast.error("Something went wrong");
         }
     }
-    console.log(formData)
     const updateProfileData = async () => {
         try {
             let userId = localStorage.getItem('user_id') || null;
             if (userId) {
                 const formDataToSend = new FormData();
                 formDataToSend.append('firstName', formData.firstName);
+                formDataToSend.append('lastName', formData.lastName);
+                formDataToSend.append('email', formData.email);
+                formDataToSend.append('mobile_no', formData.mobile_no);
+                formDataToSend.append('passport', formData.passport);
+                formDataToSend.append('country', formData.country);
+                formDataToSend.append('pinCode', formData.pinCode);
+                formDataToSend.append('temporaryAddress', formData.temporaryAddress);
+                formDataToSend.append('presentAddress', formData.presentAddress);
                 formDataToSend.append('profilePicture', formData.profilePicture);
-        console.log(formDataToSend)
                 const response = await axiosAuthorized.put(`getProfile/${JSON.parse(localStorage.getItem('user_id'))}`,formDataToSend,{
                     headers: {
                         'Content-Type': 'multipart/form-data'
@@ -131,15 +134,14 @@ function ProfilePage(props) {
                 const { user } = response.data;
                 setFormData({ ...formData, firstName: user.firstName, lastName: user.lastName, mobile_no: user.mobile_no, email: user.email })
                 setProfileData({ ...profileData, firstName: user.firstName, lastName: user.lastName, mobile_no: user.mobile_no, email: user.email, presentAddress: user.presentAddress });
-                console.log(user,user.profilePicture)
                 setImageUrl(user.profilePicture);
+                setSelectedFile(user.profileFileName)
             }
 
         } catch (error) {
             // toast.error("Something went wrong");
         }
     }
-    console.log(imageUrl)
     React.useEffect(() => {
         getProfileData()
     }, [])
