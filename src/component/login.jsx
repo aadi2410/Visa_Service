@@ -3,10 +3,11 @@ import { TextField, Typography, Grid, Button, Box, styled } from '@mui/material'
 import About_img from '../assets/about.png';
 import { Link, useNavigate } from 'react-router-dom';
 import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
-import { toast } from 'react-toastify';
 import PropTypes from 'prop-types';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
+import {  toast } from 'react-toastify';
+import {axiosInstance} from '../api/apiconfig';
 
 const CustomTabBox = styled(Box)({
   '& .MuiTabs-flexContainer': {
@@ -66,36 +67,23 @@ const Login = () => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit =async (e) => {
     e.preventDefault();
-    let get = localStorage.getItem('userData') || null;
+   
+    try {
+      const response = await axiosInstance.post('login', formData);
+      console.log(response,"testping10@gmail.comtestping10@gmail.com")
+      localStorage.setItem('loginData',JSON.stringify(response));
+      localStorage.setItem('user_id',JSON.stringify(response.userId));
+      localStorage.setItem('token',JSON.stringify(response.token));
 
-    if (get) {
-      let parseItem = JSON.parse(localStorage.getItem('userData'));
-      let { email, password } = parseItem;
-      console.log({ parseItem, formData });
-      console.log(email === formData.email && password === formData.password)
-
-      if (email === formData.email && password === formData.password) {
-
-        localStorage.setItem('loginData', JSON.stringify(formData));
-        toast.success("Successfull login");
-
-        navigate('/')
-      } else if (email != formData.email) {
-        toast.error("Email Not Registered please signup");
-        navigate('/signup')
-
-      }
-      else if (password != formData.password) {
-        toast.error("Password does't match");
-      }
-    } else {
-      toast.error("Account not registered Please signup");
-      navigate('/signup')
+      toast.success("Successfull login");
+      navigate('/')
+    } catch (error) {
+      console.log(error)
+      toast.error("Something went wrong");
     }
-  };
-
+  }
   return (
     <>
       <Grid container spacing={5} style={{ background: '#1976d220' }}>

@@ -337,10 +337,10 @@ function ApplyVisa(props) {
                         </Tabs>
                     </Box>
                     <CustomTabPanel value={value} index={0}>
-                        <Box style={{ paddingTop: 20, paddingBottom: 40 }}>
+                        {/* <Box style={{ paddingTop: 20, paddingBottom: 40 }}>
                             <Typography style={{ marginBottom: 12 }}>Single Visa Application Progress</Typography>
                             <CustomizedSteppers />
-                        </Box>
+                        </Box> */}
                         <Grid container spacing={3}>
                             <Grid item xs={12} sm={6} md={4} lg={3}>
                                 <Box style={{ width: '100%', borderRadius: 12, minHeight: '315px', padding: 20, boxShadow: '0px 0px 10px #dcdcdc', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -428,7 +428,7 @@ function ApplyVisa(props) {
                         <Box style={{ paddingTop: 20, paddingBottom: 40 }}>
                             <Typography style={{ marginBottom: 12 }}>Group Visa Application Progress</Typography>
                             <CustomizedSteppers />
-                        </Box>
+                        </Box> */}
                         <Box style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 5, marginBottom: 50 }}>
                             <label>Number of Person</label>
                             <Select

@@ -31,6 +31,8 @@ const style = {
     px: 4,
 };
 
+import { axiosAuthorized } from '../api/apiconfig';
+import {  toast } from 'react-toastify';
 const ProfileGrid = styled(Grid)({
     '@media(max-width: 767px)': {
         '& .profile_left_box': {
@@ -56,6 +58,19 @@ const drawerWidth = 240;
 
 function ProfilePage(props) {
     const { window } = props;
+    const [formData, setFormData] = useState( {
+        profilePicture: '',
+        firstName: '',
+        lastName: '',
+        email: '',
+        mobile_no: '',
+        passport: '',
+        country: '',
+        pinCode: '',
+        temporaryAddress: '',
+        presentAddress: ''
+    });
+    const [profileData, setProfileData] = useState(JSON.parse(localStorage.getItem('profileData')) || null)
     const [mobileOpen, setMobileOpen] = React.useState(false);
     const [isClosing, setIsClosing] = React.useState(false);
     const [anchorElUser, setAnchorElUser] = React.useState(null);
@@ -66,9 +81,9 @@ function ProfilePage(props) {
     const handleModalOpen = () => setModalOpen(true);
     const handleModalClose = () => setModalOpen(false);
     const handleFileChange = (event) => {
-        setSelectedFile(event.target.files[0]);
         const fileUrl = URL.createObjectURL(event.target.files[0]);
         setImageUrl(fileUrl);
+        setFormData({...formData,profilePicture:event.target.files[0]});
     };
     const handleCloseUserMenu = () => {
         setAnchorElUser(null);
@@ -90,7 +105,65 @@ function ProfilePage(props) {
             setMobileOpen(!mobileOpen);
         }
     };
+    const getProfileData = async () => {
+        try {
+            let userId = localStorage.getItem('user_id') || null;
+            if (userId) {
 
+                const response = await axiosAuthorized.get(`getProfile/${JSON.parse(localStorage.getItem('user_id'))}`);
+                const { user } = response.data;
+                setFormData({
+                    ...formData, firstName: user.firstName, lastName: user.lastName, mobile_no: user.mobile_no, email: user.email, passport: user.passport,
+                    country: user.country,
+                    pinCode: user.pinCode,
+                    presentAddress: user.presentAddress,
+                    temporaryAddress: user.temporaryAddress
+
+                })
+                setProfileData({ ...profileData, firstName: user.firstName?user.firstName:user.full_name, lastName: user.lastName, mobile_no: user.mobile_no, email: user.email });
+                setImageUrl(user.profilePicture);
+                setSelectedFile(user.profileFileName)
+            }
+
+        } catch (error) {
+            toast.error("Something went wrong");
+        }
+    }
+    const updateProfileData = async () => {
+        try {
+            let userId = localStorage.getItem('user_id') || null;
+            if (userId) {
+                const formDataToSend = new FormData();
+                formDataToSend.append('firstName', formData.firstName);
+                formDataToSend.append('lastName', formData.lastName);
+                formDataToSend.append('email', formData.email);
+                formDataToSend.append('mobile_no', formData.mobile_no);
+                formDataToSend.append('passport', formData.passport);
+                formDataToSend.append('country', formData.country);
+                formDataToSend.append('pinCode', formData.pinCode);
+                formDataToSend.append('temporaryAddress', formData.temporaryAddress);
+                formDataToSend.append('presentAddress', formData.presentAddress);
+                formDataToSend.append('profilePicture', formData.profilePicture);
+                const response = await axiosAuthorized.put(`getProfile/${JSON.parse(localStorage.getItem('user_id'))}`,formDataToSend,{
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                      }
+                
+                });
+                const { user } = response.data;
+                setFormData({ ...formData, firstName: user.firstName, lastName: user.lastName, mobile_no: user.mobile_no, email: user.email })
+                setProfileData({ ...profileData, firstName: user.firstName, lastName: user.lastName, mobile_no: user.mobile_no, email: user.email, presentAddress: user.presentAddress });
+                setImageUrl(user.profilePicture);
+                setSelectedFile(user.profileFileName)
+            }
+
+        } catch (error) {
+            // toast.error("Something went wrong");
+        }
+    }
+    React.useEffect(() => {
+        getProfileData()
+    }, [])
     const drawer = (
         <div>
             <Toolbar>
@@ -164,49 +237,16 @@ function ProfilePage(props) {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        const {
-            profilePicture = '',
-            firstName = '',
-            lastName = '',
-            email = '',
-            phoneNumber = '',
-            passport = '',
-            country = '',
-            pinCode = '',
-            temporaryAddress = '',
-            presentAddress = ''
-        } = formData || {};
-
-        localStorage.setItem('profileData', JSON.stringify(formData));
-        setFormData({
-            profilePicture: '',
-            firstName: '',
-            lastName: '',
-            email: '',
-            phoneNumber: '',
-            passport: '',
-            country: '',
-            pinCode: '',
-            temporaryAddress: '',
-            presentAddress: ''
-        });
-        setIsClick(!isClick)
+     
+        updateProfileData()
     };
 
-    React.useEffect(() => {
-        const data = JSON.parse(localStorage.getItem('profileData')) || null;
-        setProfileData(data);
-    }, [formData]);
-    React.useEffect(() => {
-        const data = JSON.parse(localStorage.getItem('profileData')) || null;
-        setFormData(data)
-    }, [isClick]);
     const {
         profilePicture = '',
         firstName = '',
         lastName = '',
         email = '',
-        phoneNumber = '',
+        mobile_no = '',
         passport = '',
         country = '',
         pinCode = '',
@@ -330,19 +370,30 @@ function ProfilePage(props) {
                             </Box>
                             <Box style={{ flex: 1, minWidth: '45%', display: 'flex', flexDirection: 'column', gap: 5 }}>
                                 <label>First Name</label>
-                                <TextField required name="firstName" onChange={handleInputChange} placeholder='Enter your name' type="text" variant='outlined' />
+                                <TextField
+                                    value={formData.firstName}
+                                    required name="firstName" onChange={handleInputChange} placeholder='Enter your name' type="text" variant='outlined' />
                             </Box>
                             <Box style={{ flex: 1, minWidth: '45%', display: 'flex', flexDirection: 'column', gap: 5 }}>
                                 <label>Last Name</label>
-                                <TextField required name="lastName" onChange={handleInputChange} placeholder='Enter your name' type="text" variant='outlined' />
+                                <TextField
+                                    value={formData.lastName}
+
+                                    required name="lastName" onChange={handleInputChange} placeholder='Enter your name' type="text" variant='outlined' />
                             </Box>
                             <Box style={{ flex: 1, minWidth: '45%', display: 'flex', flexDirection: 'column', gap: 5 }}>
                                 <label>Email Address</label>
-                                <TextField required name="email" onChange={handleInputChange} placeholder='Enter your email' type="email" variant='outlined' />
+                                <TextField
+                                    value={formData.email}
+
+                                    required name="email" onChange={handleInputChange} placeholder='Enter your email' type="email" variant='outlined' />
                             </Box>
                             <Box style={{ flex: 1, minWidth: '45%', display: 'flex', flexDirection: 'column', gap: 5 }}>
                                 <label>Phone Number</label>
-                                <TextField required name="phoneNumber" onChange={handleInputChange} placeholder='Enter your number' type="number" variant='outlined' />
+                                <TextField
+                                    value={formData.mobile_no}
+
+                                    required name="mobile_no" onChange={handleInputChange} placeholder='Enter your number' type="number" variant='outlined' />
                             </Box>
                             <Box style={{ flex: 1, minWidth: '45%', display: 'flex', flexDirection: 'column', gap: 5 }}>
                                 <label>Passport Number</label>
@@ -350,15 +401,27 @@ function ProfilePage(props) {
                             </Box>
                             <Box style={{ flex: 1, minWidth: '45%', display: 'flex', flexDirection: 'column', gap: 5 }}>
                                 <label>Country</label>
-                                <TextField required name="country" onChange={handleInputChange} placeholder='Enter your Aadhar' type="text" variant='outlined' />
+                                <TextField
+                                    value={formData.country}
+                                    required name="country" onChange={handleInputChange} placeholder='Enter your Country' type="text" variant='outlined' />
                             </Box>
                             <Box style={{ flex: 1, minWidth: '45%', display: 'flex', flexDirection: 'column', gap: 5 }}>
                                 <label>Pin Code</label>
-                                <TextField required name="pincode" onChange={handleInputChange} placeholder='Enter your pincode' type="number" variant='outlined' />
+                                <TextField
+                                    value={formData.pinCode}
+                                    required name="pincode" onChange={handleInputChange} placeholder='Enter your pincode' type="number" variant='outlined' />
+                            </Box>
+                            <Box style={{ flex: 1, minWidth: '100%', display: 'flex', flexDirection: 'column', gap: 5 }}>
+                                <label>Temporary address</label>
+                                <TextareaAutosize
+                                    value={formData.temporaryAddress}
+                                    required name="temporaryAddress" onChange={handleInputChange} minRows={4} type="text" variant='outlined' />
                             </Box>
                             <Box style={{ flex: 1, minWidth: '100%', display: 'flex', flexDirection: 'column', gap: 5 }}>
                                 <label>Present Address</label>
-                                <TextareaAutosize required name="presentAddress" onChange={handleInputChange} minRows={4} type="text" variant='outlined' />
+                                <TextareaAutosize
+                                    value={formData.presentAddress}
+                                    required name="presentAddress" onChange={handleInputChange} minRows={4} type="text" variant='outlined' />
                             </Box>
                             <Box style={{ textAlign: 'center', marginTop: 20, flex: 1, minWidth: '100%' }} onClick={handleModalOpen}>
                                 <Button variant='contained' style={{ minWidth: 200, minHeight: 48 }}>Submit</Button>
@@ -422,7 +485,7 @@ function ProfilePage(props) {
                             <Box style={{ textAlign: 'center', marginTop: 20 }}>
                                 <Typography style={{ textAlign: 'center', marginTop: 5 }}><b>Name:</b> {firstName}</Typography>
                                 <Typography style={{ textAlign: 'center', marginTop: 5 }}><b>Email:</b> {email} </Typography>
-                                <Typography style={{ textAlign: 'center', marginTop: 5 }}><b>Number:</b> {phoneNumber}</Typography>
+                                <Typography style={{ textAlign: 'center', marginTop: 5 }}><b>Number:</b> {mobile_no}</Typography>
                                 <Typography style={{ textAlign: 'center', marginTop: 5 }}><b>Address:</b> {presentAddress}</Typography>
                             </Box>
                         </Box>
