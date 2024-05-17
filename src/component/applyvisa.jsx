@@ -228,7 +228,7 @@ function ApplyVisa(props) {
                     </Link>
                 </ListItem>
                 <ListItem disablePadding>
-                    <Link to='/login' className="sidebar_item">
+                <Link to='/login' className="sidebar_item" onClick={()=>{localStorage.clear()}}>
                         <SwipeRightAltIcon />
                         <Typography>Logout</Typography>
                     </Link>

@@ -117,10 +117,10 @@ function ProfilePage(props) {
                     country: user.country,
                     pinCode: user.pinCode,
                     presentAddress: user.presentAddress,
-                    temporaryAddress: user.temporaryAddress
+                    temporaryAddress: user.temporaryAddress,
 
                 })
-                setProfileData({ ...profileData, firstName: user.firstName?user.firstName:user.full_name, lastName: user.lastName, mobile_no: user.mobile_no, email: user.email });
+                setProfileData({ ...profileData, presentAddress: user.presentAddress,firstName: user.firstName?user.firstName:user.full_name, lastName: user.lastName, mobile_no: user.mobile_no, email: user.email });
                 setImageUrl(user.profilePicture);
                 setSelectedFile(user.profileFileName)
             }
@@ -202,7 +202,7 @@ function ProfilePage(props) {
                     </Link>
                 </ListItem>
                 <ListItem disablePadding>
-                    <Link to='/login' className="sidebar_item">
+                    <Link to='/login' className="sidebar_item" onClick={()=>{localStorage.clear()}}>
                         <SwipeRightAltIcon />
                         <Typography>Logout</Typography>
                     </Link>
@@ -240,6 +240,7 @@ function ProfilePage(props) {
         temporaryAddress = '',
         presentAddress = ''
     } = profileData || {};
+    console.log(profileData)
     return (
         <Box sx={{ display: 'flex' }}>
             <CssBaseline />
@@ -352,7 +353,7 @@ function ProfilePage(props) {
                                     inputProps={{ accept: 'image/*' }}
                                     id="file-upload"
                                     variant="outlined"
-                                    required
+                                    
                                 />
                             </Box>
                             <Box style={{ flex: 1, minWidth: '45%', display: 'flex', flexDirection: 'column', gap: 5 }}>
@@ -395,7 +396,7 @@ function ProfilePage(props) {
                             <Box style={{ flex: 1, minWidth: '45%', display: 'flex', flexDirection: 'column', gap: 5 }}>
                                 <label>Pin Code</label>
                                 <TextField
-                                    value={formData.pinCode}
+                                    // value={formData.pinCode}
                                      name="pincode" onChange={handleInputChange} placeholder='Enter your pincode' type="number" variant='outlined' />
                             </Box>
                             <Box style={{ flex: 1, minWidth: '100%', display: 'flex', flexDirection: 'column', gap: 5 }}>

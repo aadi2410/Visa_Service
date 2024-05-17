@@ -89,7 +89,7 @@ function AdminDashboard(props) {
                         </Link>
                     </ListItem> */}
                     <ListItem disablePadding>
-                        <Link className="sidebar_item" onClick={()=>{localStorage.clear();navigate('/login')}}>
+                    <Link to='/login' className="sidebar_item" onClick={()=>{localStorage.clear()}}>
                             <SwipeRightAltIcon />
                             <Typography>Logout</Typography>
                         </Link>
