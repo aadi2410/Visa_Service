@@ -151,7 +151,7 @@ const navigate=useNavigate()
                                 </MenuItem>
                                 <MenuItem style={{ alignItems: 'baseline' }} onClick={()=>{localStorage.removeItem('loginData');
                 navigate('/login')}}>
-                                    <Link style={{ textDecoration: 'none', color: 'black', textAlign: 'left' }} to='/'>Logout</Link>
+                                    <Link style={{ textDecoration: 'none', color: 'black', textAlign: 'left' }} to='/login'>Logout</Link>
                                 </MenuItem>
                             </Menu>
                         </Box>

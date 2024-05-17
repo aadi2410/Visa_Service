@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useState } from 'react';
 import PropTypes from 'prop-types';
 import AppBar from '@mui/material/AppBar';
-import { Box, MenuItem, Menu, Avatar, Tooltip, Grid, styled, Button, Card, CardMedia, Input, Tab, Tabs, FormControl, InputLabel, Select } from '@mui/material';
+import { Box, MenuItem, Menu, Avatar, Tooltip, Grid, styled, Button, Card, CardMedia, Input, Tab, Tabs, FormControl, InputLabel, Select, Modal } from '@mui/material';
 import CssBaseline from '@mui/material/CssBaseline';
 import Divider from '@mui/material/Divider';
 import Drawer from '@mui/material/Drawer';
@@ -15,6 +15,7 @@ import Typography from '@mui/material/Typography';
 import Logo from '../assets/logo.png';
 import SwipeRightAltIcon from '@mui/icons-material/SwipeRightAlt';
 import { Link } from 'react-router-dom';
+import SuccessIcon from '../assets/success.png';
 import PdfUploadAndViewer from './pdfUpload';
 import CustomizedSteppers from './stepper';
 
@@ -28,6 +29,17 @@ const CustomBox = styled(Box)({
         height: '30px',
     }
 })
+const style = {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: 400,
+    bgcolor: 'background.paper',
+    borderRadius: 2,
+    py: 2,
+    px: 4,
+};
 const drawerWidth = 240;
 
 function CustomTabPanel(props) {
@@ -76,14 +88,18 @@ function ApplyVisa(props) {
     const [imageUrl3, setImageUrl3] = React.useState(null);
     const [value, setValue] = React.useState(0);
     const [age, setAge] = React.useState('');
+    const [modalopen, setModalOpen] = React.useState(false);
+    const handleModalOpen = () => setModalOpen(true);
+    const handleModalClose = () => setModalOpen(false);
 
     const handlePersonCountChange = (event) => {
-      setAge(event.target.value);
+        setAge(event.target.value);
     };
 
     const handleTabChange = (event, newValue) => {
         setValue(newValue);
     };
+
     React.useEffect(() => {
         const adharimage1 = localStorage.getItem('adharimage1');
         const adharimage2 = localStorage.getItem('adharimage2');
@@ -92,27 +108,27 @@ function ApplyVisa(props) {
         const adharimagename2 = localStorage.getItem('adharimage2_name');
 
         if (adharimage1) {
-            setSelectedFile({name:adharimagename1});
+            setSelectedFile({ name: adharimagename1 });
             setImageUrl(adharimage1);
         }
         if (adharimage2) {
-            setSelectedFile2({name:adharimagename2});
+            setSelectedFile2({ name: adharimagename2 });
 
             setImageUrl2(adharimage2);
         }
-        
-      }, []);
-      console.log(selectedFile)
+
+    }, []);
+
     const handleFileChange = (event) => {
-    const file = event.target.files[0];
+        const file = event.target.files[0];
 
         setSelectedFile(event.target.files[0]);
         const fileUrl = URL.createObjectURL(event.target.files[0]);
         const reader = new FileReader();
-        localStorage.setItem('adharimage1_name',file.name);
+        localStorage.setItem('adharimage1_name', file.name);
 
-        reader.addEventListener('load', ()=>{
-            localStorage.setItem('adharimage1',reader.result);
+        reader.addEventListener('load', () => {
+            localStorage.setItem('adharimage1', reader.result);
 
         })
         reader.readAsDataURL(file);
@@ -126,10 +142,10 @@ function ApplyVisa(props) {
         setSelectedFile2(event.target.files[0]);
         const fileUrl2 = URL.createObjectURL(event.target.files[0]);
         const reader = new FileReader();
-        localStorage.setItem('adharimage2_name',file.name);
+        localStorage.setItem('adharimage2_name', file.name);
 
-        reader.addEventListener('load', ()=>{
-            localStorage.setItem('adharimage2',reader.result);
+        reader.addEventListener('load', () => {
+            localStorage.setItem('adharimage2', reader.result);
 
         })
         reader.readAsDataURL(file);
@@ -384,29 +400,56 @@ function ApplyVisa(props) {
                             </Grid>
                         </Grid>
                         <Box style={{ display: 'flex', justifyContent: 'end', marginTop: 20 }}>
-                            <Button variant='contained' style={{ minWidth: 200, paddingBlock: 10 }}>Submit</Button>
+                            <Button variant='contained' style={{ minWidth: 200, paddingBlock: 10 }} onClick={handleModalOpen}>Submit</Button>
                         </Box>
+                        <Modal
+                            open={modalopen}
+                            onClose={handleModalClose}
+                            aria-labelledby="modal-modal-title"
+                            aria-describedby="modal-modal-description"
+                        >
+                            <Box sx={style}>
+                                <Typography id="modal-modal-title" variant="h6" component="h2" style={{ textAlign: 'center' }}>
+                                    <img src={SuccessIcon} width={120} />
+                                </Typography>
+                                <Typography id="modal-modal-description" sx={{ mt: 0, fontWeight: 900, textAlign: 'center' }}>
+                                    Documents Successfully Uploaded
+                                </Typography>
+                                <Typography id="modal-modal-description" sx={{ mt: 1, textAlign: 'center' }}>
+                                    Thank you for uploading your documents. Please wait for the verification.
+                                </Typography>
+                                <Box style={{ textAlign: 'center', marginTop: 10 }}>
+                                    <Button onClick={handleModalClose} variant="contained" color="primary">Ok</Button>
+                                </Box>
+                            </Box>
+                        </Modal>
                     </CustomTabPanel>
                     <CustomTabPanel value={value} index={1}>
-                    <Box style={{ paddingTop: 20, paddingBottom: 40 }}>
+                        <Box style={{ paddingTop: 20, paddingBottom: 40 }}>
                             <Typography style={{ marginBottom: 12 }}>Group Visa Application Progress</Typography>
                             <CustomizedSteppers />
                         </Box>
                         <Box style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 5, marginBottom: 50 }}>
-                                <label>Number of Person</label>
-                                <Select
-                                style={{maxWidth: 150}}
-                                    value={age}
-                                    onChange={handlePersonCountChange}
-                                    displayEmpty
-                                    inputProps={{ 'aria-label': 'Without label' }}
-                                    >
-                                    <MenuItem value={10}>Ten</MenuItem>
-                                    <MenuItem value={20}>Twenty</MenuItem>
-                                    <MenuItem value={30}>Thirty</MenuItem>
-                                </Select>
-                            </Box>
-                        
+                            <label>Number of Person</label>
+                            <Select
+                                style={{ maxWidth: 150 }}
+                                value={age}
+                                onChange={handlePersonCountChange}
+                                displayEmpty
+                                inputProps={{ 'aria-label': 'Without label' }}
+                            >
+                                <MenuItem value={2}>Two</MenuItem>
+                                <MenuItem value={3}>Three</MenuItem>
+                                <MenuItem value={4}>Four</MenuItem>
+                                <MenuItem value={5}>Five</MenuItem>
+                                <MenuItem value={6}>Six</MenuItem>
+                                <MenuItem value={7}>Seven</MenuItem>
+                                <MenuItem value={8}>Eight</MenuItem>
+                                <MenuItem value={9}>Nine</MenuItem>
+                                <MenuItem value={10}>Ten</MenuItem>
+                            </Select>
+                        </Box>
+
                         <Grid container spacing={3}>
                             <Grid item xs={12} sm={6} md={4} lg={3}>
                                 <Box style={{ width: '100%', borderRadius: 12, minHeight: '315px', padding: 20, boxShadow: '0px 0px 10px #dcdcdc', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -440,8 +483,29 @@ function ApplyVisa(props) {
                             </Grid>
                         </Grid>
                         <Box style={{ display: 'flex', justifyContent: 'end', marginTop: 20 }}>
-                            <Button variant='contained' style={{ minWidth: 200, paddingBlock: 10 }}>Submit</Button>
+                            <Button variant='contained' style={{ minWidth: 200, paddingBlock: 10 }} onClick={handleModalOpen}>Submit</Button>
                         </Box>
+                        <Modal
+                            open={modalopen}
+                            onClose={handleModalClose}
+                            aria-labelledby="modal-modal-title"
+                            aria-describedby="modal-modal-description"
+                        >
+                            <Box sx={style}>
+                                <Typography id="modal-modal-title" variant="h6" component="h2" style={{ textAlign: 'center' }}>
+                                    <img src={SuccessIcon} width={120} />
+                                </Typography>
+                                <Typography id="modal-modal-description" sx={{ mt: 0, fontWeight: 900, textAlign: 'center' }}>
+                                    Profile Data Successfully Filled
+                                </Typography>
+                                <Typography id="modal-modal-description" sx={{ mt: 1, textAlign: 'center' }}>
+                                    Thank you for completing your profile information. Your details have been successfully saved.
+                                </Typography>
+                                <Box style={{ textAlign: 'center', marginTop: 10 }}>
+                                    <Button onClick={handleModalClose} variant="contained" color="primary">Ok</Button>
+                                </Box>
+                            </Box>
+                        </Modal>
                     </CustomTabPanel>
                 </Box>
             </Box>

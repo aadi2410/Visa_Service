@@ -10,13 +10,26 @@ import IconButton from '@mui/material/IconButton';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ProfileImage from '../assets/profile.png';
+import SuccessIcon from '../assets/success.png';
 import MenuIcon from '@mui/icons-material/Menu';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Logo from '../assets/logo.png';
 import SwipeRightAltIcon from '@mui/icons-material/SwipeRightAlt';
 import { Link } from 'react-router-dom';
-import EditIcon from '@mui/icons-material/Edit';
+import Modal from '@mui/material/Modal';
+
+const style = {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: 400,
+    bgcolor: 'background.paper',
+    borderRadius: 2,
+    py: 2,
+    px: 4,
+};
 
 const ProfileGrid = styled(Grid)({
     '@media(max-width: 767px)': {
@@ -47,8 +60,11 @@ function ProfilePage(props) {
     const [isClosing, setIsClosing] = React.useState(false);
     const [anchorElUser, setAnchorElUser] = React.useState(null);
     const [selectedFile, setSelectedFile] = useState(null);
+    const [isClick, setIsClick] = useState(false);
     const [imageUrl, setImageUrl] = React.useState(null);
-const[isClick,setIsClick]=useState(false);
+    const [modalopen, setModalOpen] = React.useState(false);
+    const handleModalOpen = () => setModalOpen(true);
+    const handleModalClose = () => setModalOpen(false);
     const handleFileChange = (event) => {
         setSelectedFile(event.target.files[0]);
         const fileUrl = URL.createObjectURL(event.target.files[0]);
@@ -124,8 +140,8 @@ const[isClick,setIsClick]=useState(false);
 
     // Remove this const when copying and pasting into your project.
     const container = window !== undefined ? () => window().document.body : undefined;
-const [profileData,setProfileData]=useState(JSON.parse(localStorage.getItem('profileData'))||null)
-    const [formData, setFormData] = useState(JSON.parse(localStorage.getItem('profileData'))||{
+    const [profileData, setProfileData] = useState(JSON.parse(localStorage.getItem('profileData')) || null)
+    const [formData, setFormData] = useState(JSON.parse(localStorage.getItem('profileData')) || {
         profilePicture: '',
         firstName: '',
         lastName: '',
@@ -148,43 +164,42 @@ const [profileData,setProfileData]=useState(JSON.parse(localStorage.getItem('pro
 
     const handleSubmit = (e) => {
         e.preventDefault();
-console.log(e.target)
-const {
-    profilePicture = '',
-    firstName = '',
-    lastName = '',
-    email = '',
-    phoneNumber = '',
-    passport = '',
-    country = '',
-    pinCode = '',
-    temporaryAddress = '',
-    presentAddress = ''
-  } = formData||{};
- 
+        const {
+            profilePicture = '',
+            firstName = '',
+            lastName = '',
+            email = '',
+            phoneNumber = '',
+            passport = '',
+            country = '',
+            pinCode = '',
+            temporaryAddress = '',
+            presentAddress = ''
+        } = formData || {};
+
         localStorage.setItem('profileData', JSON.stringify(formData));
         setFormData({
-          profilePicture: '',
-          firstName: '',
-          lastName: '',
-          email: '',
-          phoneNumber: '',
-          passport: '',
-          country: '',
-          pinCode: '',
-          temporaryAddress: '',
-          presentAddress: ''
+            profilePicture: '',
+            firstName: '',
+            lastName: '',
+            email: '',
+            phoneNumber: '',
+            passport: '',
+            country: '',
+            pinCode: '',
+            temporaryAddress: '',
+            presentAddress: ''
         });
         setIsClick(!isClick)
     };
-   
+
     React.useEffect(() => {
         const data = JSON.parse(localStorage.getItem('profileData')) || null;
         setProfileData(data);
     }, [formData]);
     React.useEffect(() => {
         const data = JSON.parse(localStorage.getItem('profileData')) || null;
-                setFormData(data)
+        setFormData(data)
     }, [isClick]);
     const {
         profilePicture = '',
@@ -197,8 +212,7 @@ const {
         pinCode = '',
         temporaryAddress = '',
         presentAddress = ''
-      } = profileData||{};
-      console.log({formData})
+    } = profileData || {};
     return (
         <Box sx={{ display: 'flex' }}>
             <CssBaseline />
@@ -267,7 +281,6 @@ const {
                 sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
                 aria-label="mailbox folders"
             >
-                {/* The implementation can be swapped with js to avoid SEO duplication of links. */}
                 <Drawer
                     container={container}
                     variant="temporary"
@@ -275,7 +288,7 @@ const {
                     onTransitionEnd={handleDrawerTransitionEnd}
                     onClose={handleDrawerClose}
                     ModalProps={{
-                        keepMounted: true, // Better open performance on mobile.
+                        keepMounted: true,
                     }}
                     sx={{
                         display: { xs: 'block', sm: 'none' },
@@ -332,7 +345,7 @@ const {
                                 <TextField required name="phoneNumber" onChange={handleInputChange} placeholder='Enter your number' type="number" variant='outlined' />
                             </Box>
                             <Box style={{ flex: 1, minWidth: '45%', display: 'flex', flexDirection: 'column', gap: 5 }}>
-                                <label>Passport</label>
+                                <label>Passport Number</label>
                                 <TextField required name="passport" onChange={handleInputChange} placeholder='Enter your passport no' type="text" variant='outlined' />
                             </Box>
                             <Box style={{ flex: 1, minWidth: '45%', display: 'flex', flexDirection: 'column', gap: 5 }}>
@@ -344,16 +357,33 @@ const {
                                 <TextField required name="pincode" onChange={handleInputChange} placeholder='Enter your pincode' type="number" variant='outlined' />
                             </Box>
                             <Box style={{ flex: 1, minWidth: '100%', display: 'flex', flexDirection: 'column', gap: 5 }}>
-                                <label>Temporary address</label>
-                                <TextareaAutosize required name="temporaryAddress" onChange={handleInputChange} minRows={4} type="text" variant='outlined' />
-                            </Box>
-                            <Box style={{ flex: 1, minWidth: '100%', display: 'flex', flexDirection: 'column', gap: 5 }}>
                                 <label>Present Address</label>
                                 <TextareaAutosize required name="presentAddress" onChange={handleInputChange} minRows={4} type="text" variant='outlined' />
                             </Box>
-                            <Box style={{ textAlign: 'center', marginTop: 20, flex: 1, minWidth: '100%' }} onClick={handleSubmit}>
+                            <Box style={{ textAlign: 'center', marginTop: 20, flex: 1, minWidth: '100%' }} onClick={handleModalOpen}>
                                 <Button variant='contained' style={{ minWidth: 200, minHeight: 48 }}>Submit</Button>
                             </Box>
+                            <Modal
+                                open={modalopen}
+                                onClose={handleModalClose}
+                                aria-labelledby="modal-modal-title"
+                                aria-describedby="modal-modal-description"
+                            >
+                                <Box sx={style}>
+                                    <Typography id="modal-modal-title" variant="h6" component="h2" style={{ textAlign: 'center' }}>
+                                        <img src={SuccessIcon} width={120} />
+                                    </Typography>
+                                    <Typography id="modal-modal-description" sx={{ mt: 0, fontWeight: 900, textAlign: 'center' }}>
+                                        Profile Data Successfully Filled
+                                    </Typography>
+                                    <Typography id="modal-modal-description" sx={{ mt: 1, textAlign: 'center' }}>
+                                        Thank you for completing your profile information. Your details have been successfully saved.
+                                    </Typography>
+                                    <Box style={{textAlign: 'center', marginTop: 10}}>
+                                        <Button onClick={handleModalClose} variant="contained" color="primary">Ok</Button>
+                                    </Box>
+                                </Box>
+                            </Modal>
                         </form>
                     </Grid>
                     <Grid item xs={12} md={5} lg={3}>
@@ -370,7 +400,7 @@ const {
                                             objectFit: 'cover',
                                             background: 'lightgray',
                                             marginTop: 16,
-                                            aspectRatio: 1/1,
+                                            aspectRatio: 1 / 1,
                                         }}
                                     />
                                 ) : (
@@ -384,7 +414,7 @@ const {
                                             objectFit: 'cover',
                                             background: 'lightgray',
                                             marginTop: 16,
-                                            aspectRatio: 1/1,
+                                            aspectRatio: 1 / 1,
                                         }}
                                     />
                                 )}

@@ -1,11 +1,26 @@
 import React, { useState } from 'react';
-import { TextField, Typography, Grid, Button } from '@mui/material';
+import { TextField, Typography, Grid, Button, RadioGroup, FormControlLabel, Radio, FormControl, FormLabel, Modal, Box } from '@mui/material';
 import About_img from '../assets/about.png';
+import SuccessIcon from '../assets/success.png';
 import { Link, useNavigate } from 'react-router-dom';
 import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
-
+const style = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 400,
+  bgcolor: 'background.paper',
+  borderRadius: 2,
+  py: 2,
+  px: 4,
+};
 const SignUp = () => {
   const navigate=useNavigate();
+
+  const [modalopen, setModalOpen] = React.useState(false);
+  const handleModalOpen = () => setModalOpen(true);
+  const handleModalClose = () => setModalOpen(false);
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -89,10 +104,45 @@ const SignUp = () => {
                   onChange={handleChange}
                 />
               </Grid>
+              <Grid item xs={12}>
+                <FormControl>
+                    <FormLabel id="demo-radio-buttons-group-label">Are you want to signup as a:</FormLabel>
+                    <RadioGroup
+                        aria-labelledby="demo-radio-buttons-group-label"
+                        defaultValue="female"
+                        name="radio-buttons-group"
+                        style={{display: 'flex', gap: 20, flexDirection: 'row'}}
+                      >
+                        <FormControlLabel value="user" control={<Radio />} label="User" />
+                        <FormControlLabel value="admin" control={<Radio />} label="Admin" />
+                      </RadioGroup>
+                </FormControl>
+              </Grid>
             </Grid>
-            <Button variant='contained' sx={{marginTop:2}} className='login_btn' type="submit">
+            <Button variant='contained' sx={{marginTop:2}} className='login_btn' type="submit" onClick={handleModalOpen}>
               Sign Up
             </Button>
+            <Modal
+                            open={modalopen}
+                            onClose={handleModalClose}
+                            aria-labelledby="modal-modal-title"
+                            aria-describedby="modal-modal-description"
+                        >
+                            <Box sx={style}>
+                                <Typography id="modal-modal-title" variant="h6" component="h2" style={{ textAlign: 'center' }}>
+                                    <img src={SuccessIcon} width={120} />
+                                </Typography>
+                                <Typography id="modal-modal-description" sx={{ mt: 0, fontWeight: 900, textAlign: 'center' }}>
+                                    Successfully Registered
+                                </Typography>
+                                <Typography id="modal-modal-description" sx={{ mt: 1, textAlign: 'center' }}>
+                                    Please login for further process.
+                                </Typography>
+                                <Box style={{ textAlign: 'center', marginTop: 10 }}>
+                                    <Button onClick={handleModalClose} variant="contained" color="primary">Ok</Button>
+                                </Box>
+                            </Box>
+                        </Modal>
             <Typography style={{textAlign: 'center'}} mt={4} mb={3}>OR</Typography>
             <Typography style={{textAlign: 'center', paddingBottom: 50}}>Already have an Account <Link style={{textDecoration: 'none', color: '#1976d2', fontWeight: 600}} to='/login'>Login</Link></Typography>
           </form>

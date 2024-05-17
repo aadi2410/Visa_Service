@@ -8,7 +8,8 @@ const PdfBox = styled(Box)({
     },
     '& .pdf_div canvas': {
         width: '100% !important',
-        height: 'unset !important',
+        height: '150px !important',
+        objectFit: 'contain'
     }
 })
 const CustomBox = styled(Box)({
@@ -76,13 +77,13 @@ const PdfUploadAndViewer = () => {
         inputProps={{ accept: 'application/pdf' }}
         id="file-upload-pdf"
       />
-      <label htmlFor="file-upload-pdf" style={{ textAlign: 'center', display: 'block', marginTop: 15 }}>
+      <label htmlFor="file-upload-pdf" style={{ textAlign: 'center', display: 'block' }}>
         {selectedFile && (
-            <Card sx={{ marginTop: 2, boxShadow: 'none' }}>
+            <Card sx={{boxShadow: 'none' }}>
             <CardContent style={{padding: 0}}>
                 <p className='file_name'>file: {selectedFile.name??localStorage.getItem('upload_pdf_name')}</p>
             {selectedFile && (
-                <PdfBox mt={2}>
+                <PdfBox>
                 <Document
                 className='pdf_div'
                     file={selectedFile}
@@ -90,7 +91,6 @@ const PdfUploadAndViewer = () => {
                 >
                     <Page
                     pageNumber={pageNumber}
-                    width={300}
                     />
                 </Document>
                 </PdfBox>
@@ -98,7 +98,7 @@ const PdfUploadAndViewer = () => {
             </CardContent>
             </Card>
         )}
-                                    <Typography style={{ textAlign: 'center', marginBottom: 10 }}>Form Upload</Typography>
+                                    <Typography style={{ textAlign: 'center', marginBottom: 10, marginTop: 15 }}>Form Upload</Typography>
 
         <Button variant="contained" component="span">
           Upload PDF
