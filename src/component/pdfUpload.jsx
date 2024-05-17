@@ -3,29 +3,29 @@ import { Button, Input, Box, Card, CardContent, styled, Typography } from '@mui/
 import { Document, Page, pdfjs } from 'react-pdf';
 
 const PdfBox = styled(Box)({
-    '& .pdf_div .react-pdf__Page > div': {
-        display: 'none'
-    },
-    '& .pdf_div canvas': {
-        width: '100% !important',
-        height: '150px !important',
-        objectFit: 'contain'
-    }
+  '& .pdf_div .react-pdf__Page > div': {
+    display: 'none'
+  },
+  '& .pdf_div canvas': {
+    width: '100% !important',
+    height: '150px !important',
+    objectFit: 'contain'
+  }
 })
 const CustomBox = styled(Box)({
-    width: '100%',
-    '& .file_name': {
-        display: '-webkit-box',
-        WebkitLineClamp: 1,
-        '-webkit-box-orient': 'vertical',  
-        overflow: 'hidden',
-        height: '30px'
-    }
+  width: '100%',
+  '& .file_name': {
+    display: '-webkit-box',
+    WebkitLineClamp: 1,
+    '-webkit-box-orient': 'vertical',
+    overflow: 'hidden',
+    height: '30px'
+  }
 })
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 
-const PdfUploadAndViewer = ({ images,setImages}) => {
+const PdfUploadAndViewer = ({ images, setImages,isUpload }) => {
   const [selectedFile, setSelectedFile] = useState(null);
 
   const [numPages, setNumPages] = useState(null);
@@ -44,13 +44,14 @@ const PdfUploadAndViewer = ({ images,setImages}) => {
     reader.readAsDataURL(file);
     reader.onload = () => {
       const base64String = reader.result;
-            
-      localStorage.setItem('upload_pdf', base64String);
-      localStorage.setItem('upload_pdf_name', file.name);
+
+      // localStorage.setItem('upload_pdf', base64String);
+      // localStorage.setItem('upload_pdf_name', file.name);
 
       setSelectedFile(file);
     };
-    setImages([...images,file])
+    console.log({ images })
+    setImages({ ...images, singleVisaApplyDocument: file })
   };
   const handleUpload = () => {
     // Handle file upload logic
@@ -65,12 +66,12 @@ const PdfUploadAndViewer = ({ images,setImages}) => {
     setPageNumber((prevPageNumber) => prevPageNumber + 1);
   };
 
-  const handlePrevPage = () => {
-    setPageNumber((prevPageNumber) => prevPageNumber - 1);
+  const handleCancel = () => {
+    const { singleVisaApplyDocument, ...rest } = images;
+    setImages(rest); setSelectedFile(null)
   };
-
   return (
-    <CustomBox style={{width: '100%'}}>
+    <CustomBox style={{ width: '100%' }}>
       <Input
         type="file"
         onChange={handlePdfFileChange}
@@ -79,36 +80,41 @@ const PdfUploadAndViewer = ({ images,setImages}) => {
         id="file-upload-pdf"
       />
       <label htmlFor="file-upload-pdf" style={{ textAlign: 'center', display: 'block' }}>
-        {selectedFile && (
-            <Card sx={{boxShadow: 'none' }}>
-            <CardContent style={{padding: 0}}>
-                <p className='file_name'>file: {selectedFile.name??localStorage.getItem('upload_pdf_name')}</p>
-            {selectedFile && (
+        {(selectedFile || images.singleVisaApplyDocument) && (
+          <Card sx={{ boxShadow: 'none' }}>
+            <CardContent style={{ padding: 0 }}>
+             {!isUpload&& <p className='file_name'>file: {selectedFile?.name ?? ""}</p>}
+              {(selectedFile || images.singleVisaApplyDocument) && (
                 <PdfBox>
-                <Document
-                className='pdf_div'
-                    file={selectedFile}
+                  <Document
+                    className='pdf_div'
+                    file={images.singleVisaApplyDocument}
                     onLoadSuccess={handleDocumentLoadSuccess}
-                >
+                  >
                     <Page
-                    pageNumber={pageNumber}
+                      pageNumber={pageNumber}
                     />
-                </Document>
+                  </Document>
                 </PdfBox>
-            )}
+              )}
             </CardContent>
-            </Card>
+          </Card>
         )}
+        {!isUpload &&
+          <>
+            <Typography style={{ textAlign: 'center', marginBottom: 10, marginTop: 15 }}>Form Upload</Typography>
+            <Box display={'flex'} gap={5}>
 
-        {!selectedFile&&
-        <>
-                                            <Typography style={{ textAlign: 'center', marginBottom: 10, marginTop: 15 }}>Form Upload</Typography>
-                                            <Button variant="contained" component="span">
-          Upload PDF
-        </Button>
-        </>
-       }
+              <Button variant="contained" component="span">
+                Upload PDF
+              </Button>
+
+            </Box>
+          </>}
       </label>
+      {!isUpload && <Button variant="contained" component="span" onClick={handleCancel}>
+        Cancel PDF
+      </Button>}
     </CustomBox>
   );
 };

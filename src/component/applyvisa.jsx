@@ -95,6 +95,7 @@ function ApplyVisa(props) {
     const handleModalClose = () => setModalOpen(false);
     const [msg, setMsg] = useState({ title: "", subtile: "" })
     const [activeStep, setActiveStep] = useState(0);
+    const [isUpload,setIsUpload]=useState(false)
     const handlePersonCountChange = (event) => {
         setAge(event.target.value);
     };
@@ -103,45 +104,45 @@ function ApplyVisa(props) {
         setValue(newValue);
     };
 
-    React.useEffect(() => {
-        const adharimage1 = localStorage.getItem('adharimage1');
-        const adharimage2 = localStorage.getItem('adharimage2');
-        const adharimagename1 = localStorage.getItem('adharimage1_name');
-        const adharimagename2 = localStorage.getItem('adharimage2_name');
-        const savedFile = localStorage.getItem('upload_pdf');
+    // React.useEffect(() => {
+    //     const adharimage1 = localStorage.getItem('adharimage1');
+    //     const adharimage2 = localStorage.getItem('adharimage2');
+    //     const adharimagename1 = localStorage.getItem('adharimage1_name');
+    //     const adharimagename2 = localStorage.getItem('adharimage2_name');
+    //     const savedFile = localStorage.getItem('upload_pdf');
 
-        if (adharimage1) {
-            setSelectedFile({ name: adharimagename1 });
-            setImageUrl(adharimage1);
-        }
-        if (adharimage2) {
-            setSelectedFile2({ name: adharimagename2 });
+    //     if (adharimage1) {
+    //         setSelectedFile({ name: adharimagename1 });
+    //         setImageUrl(adharimage1);
+    //     }
+    //     if (adharimage2) {
+    //         setSelectedFile2({ name: adharimagename2 });
 
-            setImageUrl2(adharimage2);
-        }
-        if(adharimage1&&adharimage2&&savedFile){
-            setActiveStep(2)
-        }
+    //         setImageUrl2(adharimage2);
+    //     }
+    //     if(adharimage1&&adharimage2&&savedFile){
+    //         setActiveStep(2)
+    //     }
 
-    }, []);
-    const handleImage = (img) => {
-        setImages([...images, img])
-    }
+    // }, []);
+
     const handleFileChange = (event) => {
         const file = event.target.files[0];
 
         setSelectedFile(event.target.files[0]);
         const fileUrl = URL.createObjectURL(event.target.files[0]);
-        const reader = new FileReader();
-        localStorage.setItem('adharimage1_name', file.name);
+        // const reader = new FileReader();
+        // localStorage.setItem('adharimage1_name', file.name);
 
-        reader.addEventListener('load', () => {
-            localStorage.setItem('adharimage1', reader.result);
+        // reader.addEventListener('load', () => {
+        //     localStorage.setItem('adharimage1', reader.result);
 
-        })
-        reader.readAsDataURL(file);
+        // })
+        // reader.readAsDataURL(file);
 
         setImageUrl(fileUrl);
+        setImages({ ...images, singleVisaApplyAdharFront: file })
+
     };
 
     const handleFileChange2 = (event) => {
@@ -149,15 +150,17 @@ function ApplyVisa(props) {
 
         setSelectedFile2(event.target.files[0]);
         const fileUrl2 = URL.createObjectURL(event.target.files[0]);
-        const reader = new FileReader();
-        localStorage.setItem('adharimage2_name', file.name);
+        // const reader = new FileReader();
+        // localStorage.setItem('adharimage2_name', file.name);
 
-        reader.addEventListener('load', () => {
-            localStorage.setItem('adharimage2', reader.result);
+        // reader.addEventListener('load', () => {
+        //     localStorage.setItem('adharimage2', reader.result);
 
-        })
-        reader.readAsDataURL(file);
+        // })
+        // reader.readAsDataURL(file);
         setImageUrl2(fileUrl2);
+        setImages({ ...images, singleVisaApplyAdharBack: file })
+
     };
 
     const handleFileChange3 = (event) => {
@@ -235,37 +238,69 @@ function ApplyVisa(props) {
     );
 
     const container = window !== undefined ? () => window().document.body : undefined;
-    const handleSubmit = async () => {
+    const getDocumentData = async () => {
         try {
             let userId = localStorage.getItem('user_id') || null;
             if (userId) {
-                const formDataToSend = new FormData();
-                images.forEach((images, index) => {
-                    formDataToSend.append(`uploadedImages`, images);
-                });
-                const response = await axiosAuthorized.post(`/singleVisaUpload/${JSON.parse(localStorage.getItem('user_id'))}`, formDataToSend, {
-                    headers: {
-                        'Content-Type': 'multipart/form-data'
-                    }
+                const response = await axiosAuthorized.get(`singleVisaUploadUser/${JSON.parse(localStorage.getItem('user_id'))}`);
+                if(response.data.document){
+                    setIsUpload(true);
+                    setActiveStep(2)
 
-                });
-                if (response.data.message) {
-                    setMsg({ title: response.data.message, subtile: "Thank you for completing your document information. Your details have been successfully saved." })
+                }else{
+                    setIsUpload(false);
                 }
-                handleModalOpen()
-                console.log({ response })
+                setImages({ singleVisaApplyAdharBack: response.data.document.singleVisaApplyAdharBack, singleVisaApplyAdharFront: response.data.document.singleVisaApplyAdharFront, singleVisaApplyDocument: response.data.document.singleVisaApplyDocument })
             }
 
         } catch (error) {
+            console.log(error)
+            // toast.error(error?.response?.data?.message ?? "Something went wrong");
+        }
+    };
+    React.useEffect(() => {
+        getDocumentData()
+    }, [])
+    const handleSubmit = async () => {
+        try {
+            if (Object.values(images).length === 3) {
+                let userId = localStorage.getItem('user_id') || null;
+                if (userId) {
+                    const formDataToSend = new FormData();
+                   
+                    formDataToSend.append('singleVisaApplyAdharFront', images.singleVisaApplyAdharFront);
+                    formDataToSend.append('singleVisaApplyAdharBack', images.singleVisaApplyAdharBack);
+                    formDataToSend.append('singleVisaApplyDocument', images.singleVisaApplyDocument);
+
+                    const response = await axiosAuthorized.post(`/singleVisaUpload/${JSON.parse(localStorage.getItem('user_id'))}`, formDataToSend, {
+                        headers: {
+                            'Content-Type': 'multipart/form-data'
+                        }
+
+                    });
+                    if (response.data.message) {
+                        setMsg({ title: response.data.message, subtile: "Thank you for completing your document information. Your details have been successfully saved." })
+                    }
+                    setActiveStep(1)
+                    handleModalOpen();
+                }
+            }
+
+        } catch (error) {
+            console.log({error})
             // toast.error("Something went wrong");
         }
     };
-//     React.useEffect(()=>{
-//         console.log(imageUrl2 , imageUrl , selectedFile)
-//         if(imageUrl2 && imageUrl && selectedFile){
-// setActiveStep(2)
-//         }
-//     },[])
+    //     React.useEffect(()=>{
+    //         console.log(imageUrl2 , imageUrl , selectedFile)
+    //         if(imageUrl2 && imageUrl && selectedFile){
+    // setActiveStep(2)
+    //         }
+    //     },[])
+    const handleCancel = (type) => {
+        const { [type]: _, ...rest } = images;
+        setImages(rest); setSelectedFile(null)
+    };
     return (
         <Box sx={{ display: 'flex' }}>
             <CssBaseline />
@@ -382,7 +417,7 @@ function ApplyVisa(props) {
                         <Grid container spacing={3}>
                             <Grid item xs={12} sm={6} md={4} lg={3}>
                                 <Box style={{ width: '100%', borderRadius: 12, minHeight: '315px', padding: 20, boxShadow: '0px 0px 10px #dcdcdc', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                    <PdfUploadAndViewer images={images} setImages={setImages} />
+                                    <PdfUploadAndViewer images={images} setImages={setImages} isUpload={isUpload}/>
                                 </Box>
                             </Grid>
                             <Grid item xs={12} sm={6} md={4} lg={3}>
@@ -391,23 +426,32 @@ function ApplyVisa(props) {
                                     <CustomBox>
                                         <Input
                                             type="file"
-                                            onChange={(event) => { handleImage(event.target.files[0]); handleFileChange(event) }}
+                                            onChange={(event) => { handleFileChange(event) }}
                                             style={{ display: 'none' }}
                                             inputProps={{ accept: 'image/*' }}
                                             id="file-upload"
                                         />
-                                        {selectedFile && <p className='file_name' style={{ paddingBottom: 10 }}>File Name: {selectedFile.name}</p>}
-                                        {imageUrl && (
+                                        {selectedFile &&!isUpload&& <p className='file_name' style={{ paddingBottom: 10 }}>File Name: {selectedFile.name}</p>}
+                                        {images.singleVisaApplyAdharFront && (
                                             <Card sx={{ width: '100%' }}>
-                                                <CardMedia style={{ height: '150px', objectFit: 'cover', width: '100%' }} component="img" image={imageUrl} />
+                                                <CardMedia style={{ height: '150px', objectFit: 'cover', width: '100%' }} component="img" image={images.singleVisaApplyAdharFront instanceof File?URL.createObjectURL(images.singleVisaApplyAdharFront):images.singleVisaApplyAdharFront} />
                                             </Card>
                                         )}
-                                        {!imageUrl && <label htmlFor="file-upload" style={{ textAlign: 'center', display: 'block', marginTop: 15 }}>
-                                            <Typography style={{ textAlign: 'center', marginBottom: 10 }}>Aadhhar Card Front Side</Typography>
-                                            <Button variant="contained" component="span">
-                                                Upload File
+                                      {!isUpload&&  <>
+                                        <label htmlFor="file-upload" style={{ textAlign: 'center', display: 'block', marginTop: 15 }}>
+                                            <Typography style={{ textAlign: 'center', marginBottom: 10 }}>Aadhar Card Front Side</Typography>
+                                            <Box>
+                                                <Button variant="contained" component="span">
+                                                    Upload Image
+                                                </Button>
+
+                                            </Box>
+                                          
+                                        </label>
+                                        <Button variant="contained" component="span" onClick={() => handleCancel("singleVisaApplyAdharFront")}>
+                                                Cancel Image
                                             </Button>
-                                        </label>}
+                                            </>}
                                     </CustomBox>
                                 </Box>
                             </Grid>
@@ -416,23 +460,30 @@ function ApplyVisa(props) {
                                     <CustomBox>
                                         <Input
                                             type="file"
-                                            onChange={(event) => { handleImage(event.target.files[0]); handleFileChange2(event) }}
+                                            onChange={(event) => { handleFileChange2(event) }}
                                             style={{ display: 'none' }}
                                             inputProps={{ accept: 'image/*' }}
                                             id="file-upload2"
                                         />
-                                        {selectedFile2 && <p className='file_name' style={{ paddingBottom: 10 }}>File Name: {selectedFile2.name}</p>}
-                                        {imageUrl2 && (
+                                        {selectedFile2&&!isUpload && <p className='file_name' style={{ paddingBottom: 10 }}>File Name: {selectedFile2.name}</p>}
+
+                                        {images.singleVisaApplyAdharBack && (
                                             <Card sx={{ width: '100%' }}>
-                                                <CardMedia style={{ height: '150px', objectFit: 'cover', width: '100%' }} component="img" image={imageUrl2} />
+                                                <CardMedia style={{ height: '150px', objectFit: 'cover', width: '100%' }} component="img" image={images.singleVisaApplyAdharBack instanceof File?URL.createObjectURL(images.singleVisaApplyAdharBack):images.singleVisaApplyAdharBack} />
                                             </Card>
                                         )}
-                                        {!imageUrl2 && <label htmlFor="file-upload2" style={{ textAlign: 'center', display: 'block', marginTop: 15 }}>
+                                       {!isUpload&& <>
+                                        <label htmlFor="file-upload2" style={{ textAlign: 'center', display: 'block', marginTop: 15 }}>
                                             <Typography style={{ textAlign: 'center', marginBottom: 10 }}>Aadhhar Card Back Side</Typography>
                                             <Button variant="contained" component="span">
                                                 Upload File
                                             </Button>
-                                        </label>}
+
+                                        </label>
+                                        <Button variant="contained" component="span" onClick={() => handleCancel("singleVisaApplyAdharBack")}>
+                                            Cancel File
+                                        </Button>
+                                        </>}
                                     </CustomBox>
                                 </Box>
                             </Grid>
@@ -440,7 +491,8 @@ function ApplyVisa(props) {
                         {/* {!imageUrl2 && !imageUrl && !selectedFile && <Box style={{ display: 'flex', justifyContent: 'end', marginTop: 20 }}>
                             <Button variant='contained' style={{ minWidth: 200, paddingBlock: 10 }} onClick={handleSubmit}>Submit</Button>
                         </Box>} */}
-                        <Button variant='contained' style={{ minWidth: 200, paddingBlock: 10 }} onClick={handleSubmit}>Submit</Button>
+{                     !isUpload&&   <Button variant='contained' style={{ minWidth: 200, paddingBlock: 10 }} onClick={handleSubmit}>Submit</Button>
+}
                         <Modal
                             open={modalopen}
                             onClose={handleModalClose}
@@ -458,7 +510,10 @@ function ApplyVisa(props) {
                                     Thank you for uploading your documents. Please wait for the verification.
                                 </Typography>
                                 <Box style={{ textAlign: 'center', marginTop: 10 }}>
-                                    <Button onClick={() => { handleModalClose(); setActiveStep(2) }} variant="contained" color="primary">Ok</Button>
+                                    <Button onClick={() => {
+                                        handleModalClose();
+                                        getDocumentData()
+                                    }} variant="contained" color="primary">Ok</Button>
                                 </Box>
                             </Box>
                         </Modal>
@@ -467,7 +522,7 @@ function ApplyVisa(props) {
                         <Box style={{ paddingTop: 20, paddingBottom: 40 }}>
                             <Typography style={{ marginBottom: 12 }}>Group Visa Application Progress</Typography>
                             <CustomizedSteppers />
-                        </Box> 
+                        </Box>
                         <Box style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 5, marginBottom: 50 }}>
                             <label>Number of Person</label>
                             <Select

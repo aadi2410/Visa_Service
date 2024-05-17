@@ -21,17 +21,18 @@ import CustomizedSteppers from './stepper';
 import EnhancedTable from './applied-data-table';
 import { toast } from 'react-toastify';
 import { axiosAuthorized } from '../api/apiconfig';
+import { Document, Page } from 'react-pdf';
 
-const CustomBox = styled(Box)({
-    width: '100%',
-    '& .file_name': {
-        display: '-webkit-box',
-        WebkitLineClamp: 1,
-        '-webkit-box-orient': 'vertical',
-        overflow: 'hidden',
-        height: '30px',
+const PdfBox = styled(Box)({
+    '& .pdf_div .react-pdf__Page > div': {
+      display: 'none'
+    },
+    '& .pdf_div canvas': {
+      width: '100% !important',
+      height: '150px !important',
+      objectFit: 'contain'
     }
-})
+  })
 const drawerWidth = 240;
 
 function CustomTabPanel(props) {
@@ -82,9 +83,13 @@ function DocumentUploaded(props) {
     const [age, setAge] = React.useState('');
     const [isClick, setIsClick] = useState(false);
     const [document, setDocument] = useState({ singleVisaApplyAdharBack: "", singleVisaApplyAdharFront: "" });
-    const location = useLocation()
-    console.log({ location: location.state.id }, location.state.data)
-    const handlePersonCountChange = (event) => {
+    const location = useLocation();
+    const [pageNumber, setPageNumber] = useState(1);
+
+    const handleDocumentLoadSuccess = ({ numPages }) => {
+        // setNumPages(numPages);
+      };
+        const handlePersonCountChange = (event) => {
         setAge(event.target.value);
     };
 
@@ -121,7 +126,7 @@ function DocumentUploaded(props) {
             if (userId) {
                 const response = await axiosAuthorized.get(`singleVisaUpload/${JSON.parse(localStorage.getItem('user_id'))}?type=admin&user_id=${location.state.id}`);
 
-                setDocument({ singleVisaApplyAdharBack: response.data.document.singleVisaApplyAdharBack, singleVisaApplyAdharFront: response.data.document.singleVisaApplyAdharFront, singleVisaApplyForm: response.data.document.singleVisaApplyForm })
+                setDocument({ singleVisaApplyAdharBack: response.data.document.singleVisaApplyAdharBack, singleVisaApplyAdharFront: response.data.document.singleVisaApplyAdharFront, singleVisaApplyDocument: response.data.document.singleVisaApplyDocument })
             }
 
         } catch (error) {
@@ -407,20 +412,32 @@ function DocumentUploaded(props) {
                             <Box style={{ padding: '10px 20px', minWidth: 290, border: '1px solid #dcdcdc', borderRadius: '8px', flex: 1 }}>
                                 <Typography variant='h6' style={{ textAlign: 'center', marginBottom: 10 }}>Aadhar Back</Typography>
                                 <img src={document.singleVisaApplyAdharBack}
-                                    style={{ width: "100%", border: '1px solid #dcdcdc', borderRadius: '8px',height:"240px",objectFit:"contain", minHeight: 200 }} alt="" />
+                                    style={{ width: "100%", border: '1px solid #dcdcdc', borderRadius: '8px', height: "240px", objectFit: "contain", minHeight: 200 }} alt="" />
                             </Box>
                             <Box style={{ padding: '10px 20px', minWidth: 290, border: '1px solid #dcdcdc', borderRadius: '8px', flex: 1 }}>
                                 <Typography variant='h6' style={{ textAlign: 'center', marginBottom: 10 }}>Aadhar Front </Typography>
-                                <img src={document.singleVisaApplyAdharFront} style={{ width: "100%",height:"240px",objectFit:"contain", border: '1px solid #dcdcdc', borderRadius: '8px', minHeight: 200 }} alt="" />
+                                <img src={document.singleVisaApplyAdharFront} style={{ width: "100%", height: "240px", objectFit: "contain", border: '1px solid #dcdcdc', borderRadius: '8px', minHeight: 200 }} alt="" />
                             </Box>
                             {/* <Box style={{ padding: '10px 20px', minWidth: 290, border: '1px solid #dcdcdc', borderRadius: '8px', flex: 1 }}>
                                 <Typography variant='h6' style={{ textAlign: 'center', marginBottom: 10 }}>Address Proof </Typography>
                                 <img src="" style={{ minWidth: 290, border: '1px solid #dcdcdc', borderRadius: '8px', minHeight: 200 }} alt="" />
-                            </Box>
+                            </Box>*/}
                             <Box style={{ padding: '10px 20px', minWidth: 290, border: '1px solid #dcdcdc', borderRadius: '8px', flex: 1 }}>
-                                <Typography variant='h6' style={{ textAlign: 'center', marginBottom: 10 }}>Passport </Typography>
-                                <img src="" style={{ minWidth: 290, border: '1px solid #dcdcdc', borderRadius: '8px', minHeight: 200 }} alt="" />
-                            </Box> */}
+                                                            <Typography variant='h6' style={{ textAlign: 'center', marginBottom: 10 }}>Visa Form </Typography>
+
+                            <PdfBox style={{ padding: '10px 20px', border: '1px solid #dcdcdc', borderRadius: '8px', flex: 1 }}>
+                                <Document
+                                    className='pdf_div'
+                                    file={document.singleVisaApplyDocument}
+                                    onLoadSuccess={handleDocumentLoadSuccess}
+
+                                >
+                                    <Page
+                      pageNumber={pageNumber}
+                    />
+                                </Document>
+                            </PdfBox>
+                            </Box>
                         </Box>
                     </Grid>
                 </Grid>
