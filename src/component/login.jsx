@@ -6,8 +6,8 @@ import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
 import PropTypes from 'prop-types';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
-import {  toast } from 'react-toastify';
-import {axiosInstance} from '../api/apiconfig';
+import { toast } from 'react-toastify';
+import { axiosInstance } from '../api/apiconfig';
 
 const CustomTabBox = styled(Box)({
   '& .MuiTabs-flexContainer': {
@@ -52,11 +52,18 @@ const Login = () => {
   const [value, setValue] = React.useState(0);
 
   const handleTabChange = (event, newValue) => {
+    if (newValue) {
+      setFormData({ ...formData, type: "admin" })
+    } else {
+      setFormData({ ...formData, type: "user" })
+
+    }
     setValue(newValue);
   };
   const [formData, setFormData] = useState({
     email: '',
     password: '',
+    type: "user"
   });
 
   const handleChange = (e) => {
@@ -66,19 +73,24 @@ const Login = () => {
       [name]: value,
     });
   };
-
-  const handleSubmit =async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-   
+
     try {
       const response = await axiosInstance.post('login', formData);
-      console.log(response,"testping10@gmail.comtestping10@gmail.com")
-      localStorage.setItem('loginData',JSON.stringify(response));
-      localStorage.setItem('user_id',JSON.stringify(response.userId));
-      localStorage.setItem('token',JSON.stringify(response.token));
+
+      localStorage.setItem('loginData', JSON.stringify(response));
+      localStorage.setItem('user_id', JSON.stringify(response.userId));
+      localStorage.setItem('token', JSON.stringify(response.token));
+      localStorage.setItem('type', JSON.stringify(response.type));
 
       toast.success("Successfull login");
-      navigate('/')
+      if (response.type === "admin") {
+        navigate('/admindashboard')
+      } else {
+
+        navigate('/')
+      }
     } catch (error) {
       console.log(error)
       toast.error("Something went wrong");
@@ -104,7 +116,7 @@ const Login = () => {
                 <Tab label="Admin Login" {...a11yProps(1)} />
               </Tabs>
             </CustomTabBox>
-            <CustomTabPanel value={value} index={0}>
+            <Box my={2}>
               <form onSubmit={handleSubmit} style={{ maxWidth: 450, margin: 'auto', paddingInline: 12 }}>
                 <Grid container spacing={2}>
                   <Grid item xs={12}>
@@ -138,42 +150,8 @@ const Login = () => {
                 <Typography style={{ textAlign: 'center' }} mt={4} mb={3}>OR</Typography>
                 <Typography style={{ textAlign: 'center', paddingBottom: 50 }}>Don't have an Account <Link style={{ textDecoration: 'none', color: '#1976d2', fontWeight: 600 }} to='/signup'>Sign Up</Link></Typography>
               </form>
-            </CustomTabPanel>
-            <CustomTabPanel value={value} index={1}>
-              <form onSubmit={handleSubmit} style={{ maxWidth: 450, margin: 'auto', paddingInline: 12 }}>
-                <Grid container spacing={2}>
-                  <Grid item xs={12}>
-                    <TextField
-                      fullWidth
-                      type="email"
-                      label="Email"
-                      name="email"
-                      value={formData.email}
-                      onChange={handleChange}
-                      required
+            </Box>
 
-                    />
-                  </Grid>
-                  <Grid item xs={12}>
-                    <TextField
-                      fullWidth
-                      type="password"
-                      label="Password"
-                      name="password"
-                      value={formData.password}
-                      onChange={handleChange}
-                      required
-
-                    />
-                  </Grid>
-                </Grid>
-                <Button variant='contained' sx={{ marginTop: 2 }} className='login_btn' type="submit">
-                  Login
-                </Button>
-                <Typography style={{ textAlign: 'center' }} mt={4} mb={3}>OR</Typography>
-                <Typography style={{ textAlign: 'center', paddingBottom: 50 }}>Don't have an Account <Link style={{ textDecoration: 'none', color: '#1976d2', fontWeight: 600 }} to='/signup'>Sign Up</Link></Typography>
-              </form>
-            </CustomTabPanel>
           </Box>
         </Grid>
       </Grid>

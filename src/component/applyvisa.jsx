@@ -18,6 +18,7 @@ import { Link } from 'react-router-dom';
 import SuccessIcon from '../assets/success.png';
 import PdfUploadAndViewer from './pdfUpload';
 import CustomizedSteppers from './stepper';
+import { axiosAuthorized } from '../api/apiconfig';
 
 const CustomBox = styled(Box)({
     width: '100%',
@@ -89,9 +90,11 @@ function ApplyVisa(props) {
     const [value, setValue] = React.useState(0);
     const [age, setAge] = React.useState('');
     const [modalopen, setModalOpen] = React.useState(false);
+    const [images, setImages] = useState([])
     const handleModalOpen = () => setModalOpen(true);
     const handleModalClose = () => setModalOpen(false);
-
+    const [msg, setMsg] = useState({ title: "", subtile: "" })
+    const [activeStep, setActiveStep] = useState(0);
     const handlePersonCountChange = (event) => {
         setAge(event.target.value);
     };
@@ -104,8 +107,8 @@ function ApplyVisa(props) {
         const adharimage1 = localStorage.getItem('adharimage1');
         const adharimage2 = localStorage.getItem('adharimage2');
         const adharimagename1 = localStorage.getItem('adharimage1_name');
-
         const adharimagename2 = localStorage.getItem('adharimage2_name');
+        const savedFile = localStorage.getItem('upload_pdf');
 
         if (adharimage1) {
             setSelectedFile({ name: adharimagename1 });
@@ -116,9 +119,14 @@ function ApplyVisa(props) {
 
             setImageUrl2(adharimage2);
         }
+        if(adharimage1&&adharimage2&&savedFile){
+            setActiveStep(2)
+        }
 
     }, []);
-
+    const handleImage = (img) => {
+        setImages([...images, img])
+    }
     const handleFileChange = (event) => {
         const file = event.target.files[0];
 
@@ -227,7 +235,37 @@ function ApplyVisa(props) {
     );
 
     const container = window !== undefined ? () => window().document.body : undefined;
+    const handleSubmit = async () => {
+        try {
+            let userId = localStorage.getItem('user_id') || null;
+            if (userId) {
+                const formDataToSend = new FormData();
+                images.forEach((images, index) => {
+                    formDataToSend.append(`uploadedImages`, images);
+                });
+                const response = await axiosAuthorized.post(`/singleVisaUpload/${JSON.parse(localStorage.getItem('user_id'))}`, formDataToSend, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
 
+                });
+                if (response.data.message) {
+                    setMsg({ title: response.data.message, subtile: "Thank you for completing your document information. Your details have been successfully saved." })
+                }
+                handleModalOpen()
+                console.log({ response })
+            }
+
+        } catch (error) {
+            // toast.error("Something went wrong");
+        }
+    };
+//     React.useEffect(()=>{
+//         console.log(imageUrl2 , imageUrl , selectedFile)
+//         if(imageUrl2 && imageUrl && selectedFile){
+// setActiveStep(2)
+//         }
+//     },[])
     return (
         <Box sx={{ display: 'flex' }}>
             <CssBaseline />
@@ -337,14 +375,14 @@ function ApplyVisa(props) {
                         </Tabs>
                     </Box>
                     <CustomTabPanel value={value} index={0}>
-                        {/* <Box style={{ paddingTop: 20, paddingBottom: 40 }}>
+                        <Box style={{ paddingTop: 20, paddingBottom: 40 }}>
                             <Typography style={{ marginBottom: 12 }}>Single Visa Application Progress</Typography>
-                            <CustomizedSteppers />
-                        </Box> */}
+                            <CustomizedSteppers activeStep={activeStep} setActiveStep={setActiveStep} images={images} />
+                        </Box>
                         <Grid container spacing={3}>
                             <Grid item xs={12} sm={6} md={4} lg={3}>
                                 <Box style={{ width: '100%', borderRadius: 12, minHeight: '315px', padding: 20, boxShadow: '0px 0px 10px #dcdcdc', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                    <PdfUploadAndViewer />
+                                    <PdfUploadAndViewer images={images} setImages={setImages} />
                                 </Box>
                             </Grid>
                             <Grid item xs={12} sm={6} md={4} lg={3}>
@@ -353,7 +391,7 @@ function ApplyVisa(props) {
                                     <CustomBox>
                                         <Input
                                             type="file"
-                                            onChange={handleFileChange}
+                                            onChange={(event) => { handleImage(event.target.files[0]); handleFileChange(event) }}
                                             style={{ display: 'none' }}
                                             inputProps={{ accept: 'image/*' }}
                                             id="file-upload"
@@ -364,12 +402,12 @@ function ApplyVisa(props) {
                                                 <CardMedia style={{ height: '150px', objectFit: 'cover', width: '100%' }} component="img" image={imageUrl} />
                                             </Card>
                                         )}
-                                        <label htmlFor="file-upload" style={{ textAlign: 'center', display: 'block', marginTop: 15 }}>
+                                        {!imageUrl && <label htmlFor="file-upload" style={{ textAlign: 'center', display: 'block', marginTop: 15 }}>
                                             <Typography style={{ textAlign: 'center', marginBottom: 10 }}>Aadhhar Card Front Side</Typography>
                                             <Button variant="contained" component="span">
                                                 Upload File
                                             </Button>
-                                        </label>
+                                        </label>}
                                     </CustomBox>
                                 </Box>
                             </Grid>
@@ -378,7 +416,7 @@ function ApplyVisa(props) {
                                     <CustomBox>
                                         <Input
                                             type="file"
-                                            onChange={handleFileChange2}
+                                            onChange={(event) => { handleImage(event.target.files[0]); handleFileChange2(event) }}
                                             style={{ display: 'none' }}
                                             inputProps={{ accept: 'image/*' }}
                                             id="file-upload2"
@@ -389,19 +427,20 @@ function ApplyVisa(props) {
                                                 <CardMedia style={{ height: '150px', objectFit: 'cover', width: '100%' }} component="img" image={imageUrl2} />
                                             </Card>
                                         )}
-                                        <label htmlFor="file-upload2" style={{ textAlign: 'center', display: 'block', marginTop: 15 }}>
+                                        {!imageUrl2 && <label htmlFor="file-upload2" style={{ textAlign: 'center', display: 'block', marginTop: 15 }}>
                                             <Typography style={{ textAlign: 'center', marginBottom: 10 }}>Aadhhar Card Back Side</Typography>
                                             <Button variant="contained" component="span">
                                                 Upload File
                                             </Button>
-                                        </label>
+                                        </label>}
                                     </CustomBox>
                                 </Box>
                             </Grid>
                         </Grid>
-                        <Box style={{ display: 'flex', justifyContent: 'end', marginTop: 20 }}>
-                            <Button variant='contained' style={{ minWidth: 200, paddingBlock: 10 }} onClick={handleModalOpen}>Submit</Button>
-                        </Box>
+                        {/* {!imageUrl2 && !imageUrl && !selectedFile && <Box style={{ display: 'flex', justifyContent: 'end', marginTop: 20 }}>
+                            <Button variant='contained' style={{ minWidth: 200, paddingBlock: 10 }} onClick={handleSubmit}>Submit</Button>
+                        </Box>} */}
+                        <Button variant='contained' style={{ minWidth: 200, paddingBlock: 10 }} onClick={handleSubmit}>Submit</Button>
                         <Modal
                             open={modalopen}
                             onClose={handleModalClose}
@@ -419,7 +458,7 @@ function ApplyVisa(props) {
                                     Thank you for uploading your documents. Please wait for the verification.
                                 </Typography>
                                 <Box style={{ textAlign: 'center', marginTop: 10 }}>
-                                    <Button onClick={handleModalClose} variant="contained" color="primary">Ok</Button>
+                                    <Button onClick={() => { handleModalClose(); setActiveStep(2) }} variant="contained" color="primary">Ok</Button>
                                 </Box>
                             </Box>
                         </Modal>
@@ -428,7 +467,7 @@ function ApplyVisa(props) {
                         <Box style={{ paddingTop: 20, paddingBottom: 40 }}>
                             <Typography style={{ marginBottom: 12 }}>Group Visa Application Progress</Typography>
                             <CustomizedSteppers />
-                        </Box> */}
+                        </Box> 
                         <Box style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 5, marginBottom: 50 }}>
                             <label>Number of Person</label>
                             <Select
@@ -496,10 +535,10 @@ function ApplyVisa(props) {
                                     <img src={SuccessIcon} width={120} />
                                 </Typography>
                                 <Typography id="modal-modal-description" sx={{ mt: 0, fontWeight: 900, textAlign: 'center' }}>
-                                    Profile Data Successfully Filled
+                                    {msg.title}
                                 </Typography>
                                 <Typography id="modal-modal-description" sx={{ mt: 1, textAlign: 'center' }}>
-                                    Thank you for completing your profile information. Your details have been successfully saved.
+                                    {msg.subtile}
                                 </Typography>
                                 <Box style={{ textAlign: 'center', marginTop: 10 }}>
                                     <Button onClick={handleModalClose} variant="contained" color="primary">Ok</Button>

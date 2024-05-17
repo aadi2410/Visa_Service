@@ -22,6 +22,8 @@ function AdminDashboard(props) {
     const [mobileOpen, setMobileOpen] = React.useState(false);
     const [isClosing, setIsClosing] = React.useState(false);
     const [anchorElUser, setAnchorElUser] = React.useState(null);
+    const navigate=useNavigate()
+
     const handleCloseUserMenu = () => {
         setAnchorElUser(null);
     };
@@ -68,12 +70,12 @@ function AdminDashboard(props) {
                             <Typography>Applied Visa</Typography>
                         </Link>
                     </ListItem>
-                <ListItem disablePadding>
+                {/* <ListItem disablePadding>
                     <Link to='/documentuploaded' className="sidebar_item">
                         <SwipeRightAltIcon />
                         <Typography>Documents</Typography>
                     </Link>
-                </ListItem>
+                </ListItem> */}
                     {/* <ListItem disablePadding>
                         <Link to='/privacypolicy' className="sidebar_item" >
                             <SwipeRightAltIcon />
@@ -87,7 +89,7 @@ function AdminDashboard(props) {
                         </Link>
                     </ListItem> */}
                     <ListItem disablePadding>
-                        <Link to='/login' className="sidebar_item" >
+                        <Link className="sidebar_item" onClick={()=>{localStorage.clear();navigate('/login')}}>
                             <SwipeRightAltIcon />
                             <Typography>Logout</Typography>
                         </Link>
@@ -98,7 +100,6 @@ function AdminDashboard(props) {
 
     // Remove this const when copying and pasting into your project.
     const container = window !== undefined ? () => window().document.body : undefined;
-const navigate=useNavigate()
     return (
         <Box sx={{ display: 'flex' }}>
             <CssBaseline />

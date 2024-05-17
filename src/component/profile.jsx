@@ -18,7 +18,8 @@ import Logo from '../assets/logo.png';
 import SwipeRightAltIcon from '@mui/icons-material/SwipeRightAlt';
 import { Link } from 'react-router-dom';
 import Modal from '@mui/material/Modal';
-
+import { axiosAuthorized } from '../api/apiconfig';
+import {  toast } from 'react-toastify';
 const style = {
     position: 'absolute',
     top: '50%',
@@ -31,8 +32,6 @@ const style = {
     px: 4,
 };
 
-import { axiosAuthorized } from '../api/apiconfig';
-import {  toast } from 'react-toastify';
 const ProfileGrid = styled(Grid)({
     '@media(max-width: 767px)': {
         '& .profile_left_box': {
@@ -58,6 +57,8 @@ const drawerWidth = 240;
 
 function ProfilePage(props) {
     const { window } = props;
+    const [profileData, setProfileData] = useState(JSON.parse(localStorage.getItem('profileData')) || null)
+
     const [formData, setFormData] = useState( {
         profilePicture: '',
         firstName: '',
@@ -70,7 +71,6 @@ function ProfilePage(props) {
         temporaryAddress: '',
         presentAddress: ''
     });
-    const [profileData, setProfileData] = useState(JSON.parse(localStorage.getItem('profileData')) || null)
     const [mobileOpen, setMobileOpen] = React.useState(false);
     const [isClosing, setIsClosing] = React.useState(false);
     const [anchorElUser, setAnchorElUser] = React.useState(null);
@@ -213,20 +213,7 @@ function ProfilePage(props) {
 
     // Remove this const when copying and pasting into your project.
     const container = window !== undefined ? () => window().document.body : undefined;
-    const [profileData, setProfileData] = useState(JSON.parse(localStorage.getItem('profileData')) || null)
-    const [formData, setFormData] = useState(JSON.parse(localStorage.getItem('profileData')) || {
-        profilePicture: '',
-        firstName: '',
-        lastName: '',
-        email: '',
-        phoneNumber: '',
-        passport: '',
-        country: '',
-        pinCode: '',
-        temporaryAddress: '',
-        presentAddress: ''
-    });
-
+  
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setFormData({
@@ -355,7 +342,7 @@ function ProfilePage(props) {
                 <Toolbar />
                 <ProfileGrid container spacing={5}>
                     <Grid className='profile_left_box' item xs={12} md={7} lg={9}>
-                        <form style={{ display: 'flex', gap: 20, flexWrap: 'wrap' }}>
+                        <form style={{ display: 'flex', gap: 20, flexWrap: 'wrap' }} onSubmit={handleSubmit}>
                             <Box style={{ flex: 1, minWidth: '100%', display: 'flex', flexDirection: 'column', gap: 5 }}>
                                 <label>Upload your profile picture</label>
                                 <TextField
@@ -409,7 +396,7 @@ function ProfilePage(props) {
                                 <label>Pin Code</label>
                                 <TextField
                                     value={formData.pinCode}
-                                    required name="pincode" onChange={handleInputChange} placeholder='Enter your pincode' type="number" variant='outlined' />
+                                     name="pincode" onChange={handleInputChange} placeholder='Enter your pincode' type="number" variant='outlined' />
                             </Box>
                             <Box style={{ flex: 1, minWidth: '100%', display: 'flex', flexDirection: 'column', gap: 5 }}>
                                 <label>Temporary address</label>
@@ -423,8 +410,8 @@ function ProfilePage(props) {
                                     value={formData.presentAddress}
                                     required name="presentAddress" onChange={handleInputChange} minRows={4} type="text" variant='outlined' />
                             </Box>
-                            <Box style={{ textAlign: 'center', marginTop: 20, flex: 1, minWidth: '100%' }} onClick={handleModalOpen}>
-                                <Button variant='contained' style={{ minWidth: 200, minHeight: 48 }}>Submit</Button>
+                            <Box style={{ textAlign: 'center', marginTop: 20, flex: 1, minWidth: '100%' }}>
+                                <Button type={'submit'} variant='contained' style={{ minWidth: 200, minHeight: 48 }}>Submit</Button>
                             </Box>
                             <Modal
                                 open={modalopen}

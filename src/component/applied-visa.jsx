@@ -189,12 +189,12 @@ function AppliedVisa(props) {
                         <Typography>Applied Visa</Typography>
                     </Link>
                 </ListItem>
-                <ListItem disablePadding>
+                {/* <ListItem disablePadding>
                     <Link to='/documentuploaded' className="sidebar_item">
                         <SwipeRightAltIcon />
                         <Typography>Documents</Typography>
                     </Link>
-                </ListItem>
+                </ListItem> */}
                 {/* <ListItem disablePadding>
                     <Link to='/privacypolicy' className="sidebar_item">
                         <SwipeRightAltIcon />

@@ -15,10 +15,12 @@ import Typography from '@mui/material/Typography';
 import ProfileImage from '../assets/profile.png';
 import Logo from '../assets/logo.png';
 import SwipeRightAltIcon from '@mui/icons-material/SwipeRightAlt';
-import { Link } from 'react-router-dom';
+import { Link, useLocation, useParams } from 'react-router-dom';
 import PdfUploadAndViewer from './pdfUpload';
 import CustomizedSteppers from './stepper';
 import EnhancedTable from './applied-data-table';
+import { toast } from 'react-toastify';
+import { axiosAuthorized } from '../api/apiconfig';
 
 const CustomBox = styled(Box)({
     width: '100%',
@@ -79,9 +81,11 @@ function DocumentUploaded(props) {
     const [value, setValue] = React.useState(0);
     const [age, setAge] = React.useState('');
     const [isClick, setIsClick] = useState(false);
-
+    const [document, setDocument] = useState({ singleVisaApplyAdharBack: "", singleVisaApplyAdharFront: "" });
+    const location = useLocation()
+    console.log({ location: location.state.id }, location.state.data)
     const handlePersonCountChange = (event) => {
-      setAge(event.target.value);
+        setAge(event.target.value);
     };
 
     const handleTabChange = (event, newValue) => {
@@ -111,46 +115,23 @@ function DocumentUploaded(props) {
         });
     };
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        console.log(e.target)
-        const {
-            profilePicture = '',
-            firstName = '',
-            lastName = '',
-            email = '',
-            phoneNumber = '',
-            passport = '',
-            country = '',
-            pinCode = '',
-            temporaryAddress = '',
-            presentAddress = ''
-        } = formData || {};
+    const getDocumentData = async () => {
+        try {
+            let userId = localStorage.getItem('user_id') || null;
+            if (userId) {
+                const response = await axiosAuthorized.get(`singleVisaUpload/${JSON.parse(localStorage.getItem('user_id'))}?type=admin&user_id=${location.state.id}`);
 
-        localStorage.setItem('profileData', JSON.stringify(formData));
-        setFormData({
-            profilePicture: '',
-            firstName: '',
-            lastName: '',
-            email: '',
-            phoneNumber: '',
-            passport: '',
-            country: '',
-            pinCode: '',
-            temporaryAddress: '',
-            presentAddress: ''
-        });
-        setIsClick(!isClick)
-    };
+                setDocument({ singleVisaApplyAdharBack: response.data.document.singleVisaApplyAdharBack, singleVisaApplyAdharFront: response.data.document.singleVisaApplyAdharFront, singleVisaApplyForm: response.data.document.singleVisaApplyForm })
+            }
 
+        } catch (error) {
+            console.log(error)
+            toast.error(error?.response?.data?.message ?? "Something went wrong");
+        }
+    }
     React.useEffect(() => {
-        const data = JSON.parse(localStorage.getItem('profileData')) || null;
-        setProfileData(data);
-    }, [formData]);
-    React.useEffect(() => {
-        const data = JSON.parse(localStorage.getItem('profileData')) || null;
-        setFormData(data)
-    }, [isClick]);
+        getDocumentData()
+    }, []);
     const {
         profilePicture = '',
         firstName = '',
@@ -172,27 +153,26 @@ function DocumentUploaded(props) {
         const adharimagename2 = localStorage.getItem('adharimage2_name');
 
         if (adharimage1) {
-            setSelectedFile({name:adharimagename1});
+            setSelectedFile({ name: adharimagename1 });
             setImageUrl(adharimage1);
         }
         if (adharimage2) {
-            setSelectedFile2({name:adharimagename2});
+            setSelectedFile2({ name: adharimagename2 });
 
             setImageUrl2(adharimage2);
         }
-        
-      }, []);
-      console.log(selectedFile)
+
+    }, []);
     const handleFileChange = (event) => {
-    const file = event.target.files[0];
+        const file = event.target.files[0];
 
         setSelectedFile(event.target.files[0]);
         const fileUrl = URL.createObjectURL(event.target.files[0]);
         const reader = new FileReader();
-        localStorage.setItem('adharimage1_name',file.name);
+        localStorage.setItem('adharimage1_name', file.name);
 
-        reader.addEventListener('load', ()=>{
-            localStorage.setItem('adharimage1',reader.result);
+        reader.addEventListener('load', () => {
+            localStorage.setItem('adharimage1', reader.result);
 
         })
         reader.readAsDataURL(file);
@@ -206,10 +186,10 @@ function DocumentUploaded(props) {
         setSelectedFile2(event.target.files[0]);
         const fileUrl2 = URL.createObjectURL(event.target.files[0]);
         const reader = new FileReader();
-        localStorage.setItem('adharimage2_name',file.name);
+        localStorage.setItem('adharimage2_name', file.name);
 
-        reader.addEventListener('load', ()=>{
-            localStorage.setItem('adharimage2',reader.result);
+        reader.addEventListener('load', () => {
+            localStorage.setItem('adharimage2', reader.result);
 
         })
         reader.readAsDataURL(file);
@@ -268,12 +248,12 @@ function DocumentUploaded(props) {
                         <Typography>Applied Visa</Typography>
                     </Link>
                 </ListItem>
-                <ListItem disablePadding>
+                {/* <ListItem disablePadding>
                     <Link to='/documentuploaded' className="sidebar_item active">
                         <SwipeRightAltIcon />
                         <Typography>Documents</Typography>
                     </Link>
-                </ListItem>
+                </ListItem> */}
                 {/* <ListItem disablePadding>
                     <Link to='/privacypolicy' className="sidebar_item">
                         <SwipeRightAltIcon />
@@ -295,7 +275,6 @@ function DocumentUploaded(props) {
             </List>
         </div>
     );
-
     return (
         <Box sx={{ display: 'flex' }}>
             <CssBaseline />
@@ -399,68 +378,53 @@ function DocumentUploaded(props) {
                 <Toolbar />
                 <Grid container spacing={3}>
                     <Grid item xs={12} md={6}>
-                    <Box style={{ padding: 20, boxShadow: '0px 0px 10px #dcdcdc', width: '100%', borderRadius: 12, display: 'flex', gap: 20, alignItems: 'center' }}>
+                        <Box style={{ padding: 20, boxShadow: '0px 0px 10px #dcdcdc', width: '100%', borderRadius: 12, display: 'flex', gap: 20, alignItems: 'center' }}>
                             <Box className='profile_div' style={{ position: 'relative' }}>
-                                {imageUrl == null ? (
-                                    <img
-                                        src={ProfileImage}
-                                        alt=""
-                                        style={{
-                                            maxWidth: 250,
-                                            width: '100%',
-                                            borderRadius: '50%',
-                                            objectFit: 'cover',
-                                            background: 'lightgray',
-                                            marginTop: 16,
-                                            aspectRatio: 1/1,
-                                        }}
-                                    />
-                                ) : (
-                                    <img
-                                        src={imageUrl}
-                                        alt=""
-                                        style={{
-                                            maxWidth: 250,
-                                            width: '100%',
-                                            borderRadius: '50%',
-                                            objectFit: 'cover',
-                                            background: 'lightgray',
-                                            marginTop: 16,
-                                            aspectRatio: 1/1,
-                                        }}
-                                    />
-                                )}
+                                <img
+                                    src={location.state.data.profilePicture}
+                                    alt=""
+                                    style={{
+                                        maxWidth: 250,
+                                        width: '100%',
+                                        borderRadius: '50%',
+                                        objectFit: 'cover',
+                                        background: 'lightgray',
+                                        marginTop: 16,
+                                        aspectRatio: 1 / 1,
+                                    }}
+                                />
                             </Box>
-                            <Box style={{marginTop: 20 }}>
-                                <Typography style={{marginTop: 5 }}><b>Name:</b> {firstName}</Typography>
-                                <Typography style={{marginTop: 5 }}><b>Email:</b> {email} </Typography>
-                                <Typography style={{marginTop: 5 }}><b>Number:</b> {phoneNumber}</Typography>
-                                <Typography style={{marginTop: 5 }}><b>Address:</b> {presentAddress}</Typography>
+                            <Box style={{ marginTop: 20 }}>
+                                <Typography style={{ marginTop: 5 }}><b>Name:</b> {location.state.data.full_name}</Typography>
+                                <Typography style={{ marginTop: 5 }}><b>Email:</b> {location.state.data.email} </Typography>
+                                <Typography style={{ marginTop: 5 }}><b>Number:</b> {location.state.data.mobile_no}</Typography>
+                                <Typography style={{ marginTop: 5 }}><b>Address:</b> {location.state.data.presentAddress}</Typography>
                             </Box>
                         </Box>
                     </Grid>
                     <Grid item xs={12} md={6}>
-                    <Box style={{display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 12, marginBottom: 30}}>
-                    <Box style={{padding: '10px 20px', minWidth: 290, border: '1px solid #dcdcdc', borderRadius: '8px', flex: 1}}>
-                        <Typography variant='h6' style={{textAlign: 'center', marginBottom: 10}}>Profile </Typography>
-                        <img src="" style={{minWidth: 290, border: '1px solid #dcdcdc', borderRadius: '8px', minHeight: 200}} alt="" />
-                    </Box>
-                    <Box style={{padding: '10px 20px', minWidth: 290, border: '1px solid #dcdcdc', borderRadius: '8px', flex: 1}}>
-                        <Typography variant='h6' style={{textAlign: 'center', marginBottom: 10}}>Passport </Typography>
-                        <img src="" style={{minWidth: 290, border: '1px solid #dcdcdc', borderRadius: '8px', minHeight: 200}} alt="" />
-                    </Box>
-                    <Box style={{padding: '10px 20px', minWidth: 290, border: '1px solid #dcdcdc', borderRadius: '8px', flex: 1}}>
-                        <Typography variant='h6' style={{textAlign: 'center', marginBottom: 10}}>Address Proof </Typography>
-                        <img src="" style={{minWidth: 290, border: '1px solid #dcdcdc', borderRadius: '8px', minHeight: 200}} alt="" />
-                    </Box>
-                    <Box style={{padding: '10px 20px', minWidth: 290, border: '1px solid #dcdcdc', borderRadius: '8px', flex: 1}}>
-                        <Typography variant='h6' style={{textAlign: 'center', marginBottom: 10}}>Passport </Typography>
-                        <img src="" style={{minWidth: 290, border: '1px solid #dcdcdc', borderRadius: '8px', minHeight: 200}} alt="" />
-                    </Box>
-                </Box>
+                        <Box style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 12, marginBottom: 30 }}>
+                            <Box style={{ padding: '10px 20px', minWidth: 290, border: '1px solid #dcdcdc', borderRadius: '8px', flex: 1 }}>
+                                <Typography variant='h6' style={{ textAlign: 'center', marginBottom: 10 }}>Aadhar Back</Typography>
+                                <img src={document.singleVisaApplyAdharBack}
+                                    style={{ width: "100%", border: '1px solid #dcdcdc', borderRadius: '8px',height:"240px",objectFit:"contain", minHeight: 200 }} alt="" />
+                            </Box>
+                            <Box style={{ padding: '10px 20px', minWidth: 290, border: '1px solid #dcdcdc', borderRadius: '8px', flex: 1 }}>
+                                <Typography variant='h6' style={{ textAlign: 'center', marginBottom: 10 }}>Aadhar Front </Typography>
+                                <img src={document.singleVisaApplyAdharFront} style={{ width: "100%",height:"240px",objectFit:"contain", border: '1px solid #dcdcdc', borderRadius: '8px', minHeight: 200 }} alt="" />
+                            </Box>
+                            {/* <Box style={{ padding: '10px 20px', minWidth: 290, border: '1px solid #dcdcdc', borderRadius: '8px', flex: 1 }}>
+                                <Typography variant='h6' style={{ textAlign: 'center', marginBottom: 10 }}>Address Proof </Typography>
+                                <img src="" style={{ minWidth: 290, border: '1px solid #dcdcdc', borderRadius: '8px', minHeight: 200 }} alt="" />
+                            </Box>
+                            <Box style={{ padding: '10px 20px', minWidth: 290, border: '1px solid #dcdcdc', borderRadius: '8px', flex: 1 }}>
+                                <Typography variant='h6' style={{ textAlign: 'center', marginBottom: 10 }}>Passport </Typography>
+                                <img src="" style={{ minWidth: 290, border: '1px solid #dcdcdc', borderRadius: '8px', minHeight: 200 }} alt="" />
+                            </Box> */}
+                        </Box>
                     </Grid>
                 </Grid>
-                <Box style={{display: 'flex', gap: 20, justifyContent: 'end'}}>
+                <Box style={{ display: 'flex', gap: 20, justifyContent: 'end' }}>
                     <Button variant='contained' color='error'>Reject</Button>
                     <Button variant='contained' color='primary'>Varified</Button>
                 </Box>

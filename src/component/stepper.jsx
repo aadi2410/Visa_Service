@@ -130,13 +130,21 @@ ColorlibStepIcon.propTypes = {
 
 const steps = ['Apply for visa', 'Documents Uploaded', 'Waiting for Varification', 'Varified/Rejected'];
 
-export default function CustomizedSteppers() {
+export default function CustomizedSteppers({activeStep,setActiveStep,images}) {
+  React.useEffect(()=>{
+    if(images.length===3){
+
+      setActiveStep(1);
+    }
+  },[images])
   return (
     <Stack sx={{ width: '100%' }} spacing={4}>
-      <CustomStepper alternativeLabel activeStep={1} connector={<ColorlibConnector />}>
+      <CustomStepper alternativeLabel activeStep={activeStep} connector={<ColorlibConnector />}>
         {steps.map((label) => (
           <Step key={label}>
-            <StepLabel StepIconComponent={ColorlibStepIcon} style={{textAlign: 'center'}}>{label}</StepLabel>
+            <StepLabel StepIconComponent={ColorlibStepIcon} style={{textAlign: 'center'}} onClick={(e)=>{
+              console.log(e)
+            }}>{label}</StepLabel>
           </Step>
         ))}
       </CustomStepper>

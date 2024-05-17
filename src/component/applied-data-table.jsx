@@ -21,7 +21,8 @@ import Switch from '@mui/material/Switch';
 import DeleteIcon from '@mui/icons-material/Delete';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import { visuallyHidden } from '@mui/utils';
-
+import { axiosAuthorized } from '../api/apiconfig';
+import { useNavigate } from 'react-router-dom';
 const CustomTableHead = styled(Paper)({
     '& thead': {
         background: 'lightgray',
@@ -106,25 +107,25 @@ const headCells = [
         id: 'calories',
         numeric: true,
         disablePadding: false,
-        label: 'Documents Uploaded',
+        label: 'Mobile No.',
     },
     {
         id: 'fat',
         numeric: true,
         disablePadding: false,
-        label: 'Documents Pending',
+        label: 'Email',
     },
     {
         id: 'carbs',
         numeric: true,
         disablePadding: false,
-        label: 'Mobile Number',
+        label: 'created_at',
     },
     {
         id: 'protein',
         numeric: true,
         disablePadding: false,
-        label: 'Varification',
+        label: 'isVerified',
     },
 ];
 
@@ -134,7 +135,6 @@ function EnhancedTableHead(props) {
     const createSortHandler = (property) => (event) => {
         onRequestSort(event, property);
     };
-
     return (
         
             <TableHead>
@@ -174,13 +174,30 @@ EnhancedTableHead.propTypes = {
     rowCount: PropTypes.number.isRequired,
 };
 
-
 export default function EnhancedTable() {
     const [order, setOrder] = React.useState('asc');
     const [orderBy, setOrderBy] = React.useState('calories');
     const [selected, setSelected] = React.useState([]);
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
+    const [userData,setUserData]=React.useState([])
+const navigate=useNavigate();
+  const getUserData = async () => {
+        try {
+            let userId = localStorage.getItem('user_id') || null;
+            if (userId) {
+
+                const response = await axiosAuthorized.get(`getUsers/${JSON.parse(localStorage.getItem('user_id'))}?type=${JSON.parse(localStorage.getItem('type'))}`);
+                const { user } = response.data;
+                setUserData(user)
+            }
+             
+        } catch (error) {
+        }
+    };
+    React.useEffect(()=>{
+        getUserData()
+    },[])
 
     const handleRequestSort = (event, property) => {
         const isAsc = orderBy === property && order === 'asc';
@@ -228,7 +245,7 @@ export default function EnhancedTable() {
                             rowCount={rows.length}
                         />
                         <TableBody>
-                            {visibleRows.map((row, index) => {
+                            {userData.map((row, index) => {
                                 const labelId = `enhanced-table-checkbox-${index}`;
 
                                 return (
@@ -238,6 +255,7 @@ export default function EnhancedTable() {
                                         tabIndex={-1}
                                         key={row.id}
                                         sx={{ cursor: 'pointer' }}
+                                        onClick={()=>navigate('/documentuploaded',{state:{id:row._id,data:row}})                                    }
                                     >
                                         <TableCell
                                             component="th"
@@ -245,12 +263,12 @@ export default function EnhancedTable() {
                                             scope="row"
                                             padding="16"
                                         >
-                                            {row.name}
+                                            {row.full_name}
                                         </TableCell>
-                                        <TableCell align="right">{row.calories}</TableCell>
-                                        <TableCell align="right">{row.fat}</TableCell>
-                                        <TableCell align="right">{row.carbs}</TableCell>
-                                        <TableCell align="right">{row.protein}</TableCell>
+                                        <TableCell align="right">{row.mobile_no}</TableCell>
+                                        <TableCell align="right">{row.email}</TableCell>
+                                        <TableCell align="right">{row.created_at}</TableCell>
+                                        <TableCell align="right">{'Not Verified'}</TableCell>
                                     </TableRow>
                                 );
                             })}
@@ -265,7 +283,7 @@ export default function EnhancedTable() {
                 <TablePagination
                     rowsPerPageOptions={[10, 20, 30]}
                     component="div"
-                    count={rows.length}
+                    count={userData.length}
                     rowsPerPage={rowsPerPage}
                     page={page}
                     onPageChange={handleChangePage}

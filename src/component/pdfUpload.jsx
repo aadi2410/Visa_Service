@@ -25,7 +25,7 @@ const CustomBox = styled(Box)({
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 
-const PdfUploadAndViewer = () => {
+const PdfUploadAndViewer = ({ images,setImages}) => {
   const [selectedFile, setSelectedFile] = useState(null);
 
   const [numPages, setNumPages] = useState(null);
@@ -50,6 +50,7 @@ const PdfUploadAndViewer = () => {
 
       setSelectedFile(file);
     };
+    setImages([...images,file])
   };
   const handleUpload = () => {
     // Handle file upload logic
@@ -98,11 +99,15 @@ const PdfUploadAndViewer = () => {
             </CardContent>
             </Card>
         )}
-                                    <Typography style={{ textAlign: 'center', marginBottom: 10, marginTop: 15 }}>Form Upload</Typography>
 
-        <Button variant="contained" component="span">
+        {!selectedFile&&
+        <>
+                                            <Typography style={{ textAlign: 'center', marginBottom: 10, marginTop: 15 }}>Form Upload</Typography>
+                                            <Button variant="contained" component="span">
           Upload PDF
         </Button>
+        </>
+       }
       </label>
     </CustomBox>
   );
