@@ -95,7 +95,8 @@ function ApplyVisa(props) {
     const handleModalClose = () => setModalOpen(false);
     const [msg, setMsg] = useState({ title: "", subtile: "" })
     const [activeStep, setActiveStep] = useState(0);
-    const [isUpload,setIsUpload]=useState(false)
+    const [isUpload, setIsUpload] = useState(false);
+    const [lastStep, setLastStep] = useState(null);
     const handlePersonCountChange = (event) => {
         setAge(event.target.value);
     };
@@ -228,7 +229,7 @@ function ApplyVisa(props) {
                     </Link>
                 </ListItem>
                 <ListItem disablePadding>
-                <Link to='/login' className="sidebar_item" onClick={()=>{localStorage.clear()}}>
+                    <Link to='/login' className="sidebar_item" onClick={() => { localStorage.clear() }}>
                         <SwipeRightAltIcon />
                         <Typography>Logout</Typography>
                     </Link>
@@ -243,11 +244,18 @@ function ApplyVisa(props) {
             let userId = localStorage.getItem('user_id') || null;
             if (userId) {
                 const response = await axiosAuthorized.get(`singleVisaUploadUser/${JSON.parse(localStorage.getItem('user_id'))}`);
-                if(response.data.document){
-                    setIsUpload(true);
-                    setActiveStep(2)
+                if (response.data.document) {
+                    if (response.data.document.isVerified) {
 
-                }else{
+                        setActiveStep(3);
+                        setLastStep(response.data.document.reason);
+                    } else {
+
+                        setIsUpload(true);
+                        setActiveStep(2);
+                    }
+
+                } else {
                     setIsUpload(false);
                 }
                 setImages({ singleVisaApplyAdharBack: response.data.document.singleVisaApplyAdharBack, singleVisaApplyAdharFront: response.data.document.singleVisaApplyAdharFront, singleVisaApplyDocument: response.data.document.singleVisaApplyDocument })
@@ -255,19 +263,18 @@ function ApplyVisa(props) {
 
         } catch (error) {
             console.log(error)
-            // toast.error(error?.response?.data?.message ?? "Something went wrong");
         }
     };
     React.useEffect(() => {
         getDocumentData()
-    }, [])
+    }, []);
     const handleSubmit = async () => {
         try {
             if (Object.values(images).length === 3) {
                 let userId = localStorage.getItem('user_id') || null;
                 if (userId) {
                     const formDataToSend = new FormData();
-                   
+
                     formDataToSend.append('singleVisaApplyAdharFront', images.singleVisaApplyAdharFront);
                     formDataToSend.append('singleVisaApplyAdharBack', images.singleVisaApplyAdharBack);
                     formDataToSend.append('singleVisaApplyDocument', images.singleVisaApplyDocument);
@@ -287,16 +294,11 @@ function ApplyVisa(props) {
             }
 
         } catch (error) {
-            console.log({error})
+            console.log({ error })
             // toast.error("Something went wrong");
         }
     };
-    //     React.useEffect(()=>{
-    //         console.log(imageUrl2 , imageUrl , selectedFile)
-    //         if(imageUrl2 && imageUrl && selectedFile){
-    // setActiveStep(2)
-    //         }
-    //     },[])
+
     const handleCancel = (type) => {
         const { [type]: _, ...rest } = images;
         setImages(rest); setSelectedFile(null)
@@ -414,85 +416,89 @@ function ApplyVisa(props) {
                             <Typography style={{ marginBottom: 12 }}>Single Visa Application Progress</Typography>
                             <CustomizedSteppers activeStep={activeStep} setActiveStep={setActiveStep} images={images} />
                         </Box>
-                        <Grid container spacing={3}>
-                            <Grid item xs={12} sm={6} md={4} lg={3}>
-                                <Box style={{ width: '100%', borderRadius: 12, minHeight: '315px', padding: 20, boxShadow: '0px 0px 10px #dcdcdc', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                    <PdfUploadAndViewer images={images} setImages={setImages} isUpload={isUpload}/>
-                                </Box>
-                            </Grid>
-                            <Grid item xs={12} sm={6} md={4} lg={3}>
+                        {lastStep ? <h4>{lastStep}</h4> :
 
-                                <Box style={{ width: '100%', borderRadius: 12, minHeight: '315px', padding: 20, boxShadow: '0px 0px 10px #dcdcdc', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                    <CustomBox>
-                                        <Input
-                                            type="file"
-                                            onChange={(event) => { handleFileChange(event) }}
-                                            style={{ display: 'none' }}
-                                            inputProps={{ accept: 'image/*' }}
-                                            id="file-upload"
-                                        />
-                                        {selectedFile &&!isUpload&& <p className='file_name' style={{ paddingBottom: 10 }}>File Name: {selectedFile.name}</p>}
-                                        {images.singleVisaApplyAdharFront && (
-                                            <Card sx={{ width: '100%' }}>
-                                                <CardMedia style={{ height: '150px', objectFit: 'cover', width: '100%' }} component="img" image={images.singleVisaApplyAdharFront instanceof File?URL.createObjectURL(images.singleVisaApplyAdharFront):images.singleVisaApplyAdharFront} />
-                                            </Card>
-                                        )}
-                                      {!isUpload&&  <>
-                                        <label htmlFor="file-upload" style={{ textAlign: 'center', display: 'block', marginTop: 15 }}>
-                                            <Typography style={{ textAlign: 'center', marginBottom: 10 }}>Aadhar Card Front Side</Typography>
-                                            <Box>
-                                                <Button variant="contained" component="span">
-                                                    Upload Image
-                                                </Button>
+                            <>
+                                <Grid container spacing={3}>
+                                    <Grid item xs={12} sm={6} md={4} lg={3}>
+                                        <Box style={{ width: '100%', borderRadius: 12, minHeight: '315px', padding: 20, boxShadow: '0px 0px 10px #dcdcdc', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                            <PdfUploadAndViewer images={images} setImages={setImages} isUpload={isUpload} />
+                                        </Box>
+                                    </Grid>
+                                    <Grid item xs={12} sm={6} md={4} lg={3}>
 
-                                            </Box>
-                                          
-                                        </label>
-                                        <Button variant="contained" component="span" onClick={() => handleCancel("singleVisaApplyAdharFront")}>
-                                                Cancel Image
-                                            </Button>
-                                            </>}
-                                    </CustomBox>
-                                </Box>
-                            </Grid>
-                            <Grid item xs={12} sm={6} md={4} lg={3}>
-                                <Box style={{ width: '100%', borderRadius: 12, minHeight: '315px', padding: 20, boxShadow: '0px 0px 10px #dcdcdc', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                    <CustomBox>
-                                        <Input
-                                            type="file"
-                                            onChange={(event) => { handleFileChange2(event) }}
-                                            style={{ display: 'none' }}
-                                            inputProps={{ accept: 'image/*' }}
-                                            id="file-upload2"
-                                        />
-                                        {selectedFile2&&!isUpload && <p className='file_name' style={{ paddingBottom: 10 }}>File Name: {selectedFile2.name}</p>}
+                                        <Box style={{ width: '100%', borderRadius: 12, minHeight: '315px', padding: 20, boxShadow: '0px 0px 10px #dcdcdc', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                            <CustomBox>
+                                                <Input
+                                                    type="file"
+                                                    onChange={(event) => { handleFileChange(event) }}
+                                                    style={{ display: 'none' }}
+                                                    inputProps={{ accept: 'image/*' }}
+                                                    id="file-upload"
+                                                />
+                                                {selectedFile && !isUpload && <p className='file_name' style={{ paddingBottom: 10 }}>File Name: {selectedFile.name}</p>}
+                                                {images.singleVisaApplyAdharFront && (
+                                                    <Card sx={{ width: '100%' }}>
+                                                        <CardMedia style={{ height: '150px', objectFit: 'cover', width: '100%' }} component="img" image={images.singleVisaApplyAdharFront instanceof File ? URL.createObjectURL(images.singleVisaApplyAdharFront) : images.singleVisaApplyAdharFront} />
+                                                    </Card>
+                                                )}
+                                                {!isUpload && <>
+                                                    <label htmlFor="file-upload" style={{ textAlign: 'center', display: 'block', marginTop: 15 }}>
+                                                        <Typography style={{ textAlign: 'center', marginBottom: 10 }}>Aadhar Card Front Side</Typography>
+                                                        <Box>
+                                                            <Button variant="contained" component="span">
+                                                                Upload Image
+                                                            </Button>
 
-                                        {images.singleVisaApplyAdharBack && (
-                                            <Card sx={{ width: '100%' }}>
-                                                <CardMedia style={{ height: '150px', objectFit: 'cover', width: '100%' }} component="img" image={images.singleVisaApplyAdharBack instanceof File?URL.createObjectURL(images.singleVisaApplyAdharBack):images.singleVisaApplyAdharBack} />
-                                            </Card>
-                                        )}
-                                       {!isUpload&& <>
-                                        <label htmlFor="file-upload2" style={{ textAlign: 'center', display: 'block', marginTop: 15 }}>
-                                            <Typography style={{ textAlign: 'center', marginBottom: 10 }}>Aadhhar Card Back Side</Typography>
-                                            <Button variant="contained" component="span">
-                                                Upload File
-                                            </Button>
+                                                        </Box>
 
-                                        </label>
-                                        <Button variant="contained" component="span" onClick={() => handleCancel("singleVisaApplyAdharBack")}>
-                                            Cancel File
-                                        </Button>
-                                        </>}
-                                    </CustomBox>
-                                </Box>
-                            </Grid>
-                        </Grid>
-                        {/* {!imageUrl2 && !imageUrl && !selectedFile && <Box style={{ display: 'flex', justifyContent: 'end', marginTop: 20 }}>
+                                                    </label>
+                                                    <Button variant="contained" component="span" onClick={() => handleCancel("singleVisaApplyAdharFront")}>
+                                                        Cancel Image
+                                                    </Button>
+                                                </>}
+                                            </CustomBox>
+                                        </Box>
+                                    </Grid>
+                                    <Grid item xs={12} sm={6} md={4} lg={3}>
+                                        <Box style={{ width: '100%', borderRadius: 12, minHeight: '315px', padding: 20, boxShadow: '0px 0px 10px #dcdcdc', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                            <CustomBox>
+                                                <Input
+                                                    type="file"
+                                                    onChange={(event) => { handleFileChange2(event) }}
+                                                    style={{ display: 'none' }}
+                                                    inputProps={{ accept: 'image/*' }}
+                                                    id="file-upload2"
+                                                />
+                                                {selectedFile2 && !isUpload && <p className='file_name' style={{ paddingBottom: 10 }}>File Name: {selectedFile2.name}</p>}
+
+                                                {images.singleVisaApplyAdharBack && (
+                                                    <Card sx={{ width: '100%' }}>
+                                                        <CardMedia style={{ height: '150px', objectFit: 'cover', width: '100%' }} component="img" image={images.singleVisaApplyAdharBack instanceof File ? URL.createObjectURL(images.singleVisaApplyAdharBack) : images.singleVisaApplyAdharBack} />
+                                                    </Card>
+                                                )}
+                                                {!isUpload && <>
+                                                    <label htmlFor="file-upload2" style={{ textAlign: 'center', display: 'block', marginTop: 15 }}>
+                                                        <Typography style={{ textAlign: 'center', marginBottom: 10 }}>Aadhhar Card Back Side</Typography>
+                                                        <Button variant="contained" component="span">
+                                                            Upload File
+                                                        </Button>
+
+                                                    </label>
+                                                    <Button variant="contained" component="span" onClick={() => handleCancel("singleVisaApplyAdharBack")}>
+                                                        Cancel File
+                                                    </Button>
+                                                </>}
+                                            </CustomBox>
+                                        </Box>
+                                    </Grid>
+                                </Grid>
+                                {/* {!imageUrl2 && !imageUrl && !selectedFile && <Box style={{ display: 'flex', justifyContent: 'end', marginTop: 20 }}>
                             <Button variant='contained' style={{ minWidth: 200, paddingBlock: 10 }} onClick={handleSubmit}>Submit</Button>
                         </Box>} */}
-{                     !isUpload&&   <Button variant='contained' style={{ minWidth: 200, paddingBlock: 10 }} onClick={handleSubmit}>Submit</Button>
-}
+                                {!isUpload && <Button variant='contained' style={{ minWidth: 200, paddingBlock: 10 }} onClick={handleSubmit}>Submit</Button>
+                                }
+                            </>}
                         <Modal
                             open={modalopen}
                             onClose={handleModalClose}

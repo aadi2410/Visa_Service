@@ -127,6 +127,12 @@ const headCells = [
         disablePadding: false,
         label: 'isVerified',
     },
+    {
+        id: 'protein',
+        numeric: true,
+        disablePadding: false,
+        label: 'Reason',
+    },
 ];
 
 function EnhancedTableHead(props) {
@@ -268,7 +274,9 @@ const navigate=useNavigate();
                                         <TableCell align="right">{row.mobile_no}</TableCell>
                                         <TableCell align="right">{row.email}</TableCell>
                                         <TableCell align="right">{row.created_at}</TableCell>
-                                        <TableCell align="right">{'Not Verified'}</TableCell>
+                                        <TableCell align="right">{row?.isVerified?"Verified":"Not Verified"}</TableCell>
+                                        <TableCell align="right">{row?.reason?row?.reason:"N/A"}</TableCell>
+
                                     </TableRow>
                                 );
                             })}

@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useState } from 'react';
 import PropTypes from 'prop-types';
 import AppBar from '@mui/material/AppBar';
-import { Box, MenuItem, Menu, Avatar, Tooltip, Grid, styled, Button, Card, CardMedia, Input, Tab, Tabs, FormControl, InputLabel, Select } from '@mui/material';
+import { Box, MenuItem, Menu, Avatar, Tooltip, Grid, styled, Button, Card, CardMedia, Input, Tab, Tabs, FormControl, InputLabel, Select, TextField } from '@mui/material';
 import CssBaseline from '@mui/material/CssBaseline';
 import Divider from '@mui/material/Divider';
 import Drawer from '@mui/material/Drawer';
@@ -25,14 +25,14 @@ import { Document, Page } from 'react-pdf';
 
 const PdfBox = styled(Box)({
     '& .pdf_div .react-pdf__Page > div': {
-      display: 'none'
+        display: 'none'
     },
     '& .pdf_div canvas': {
-      width: '100% !important',
-      height: '150px !important',
-      objectFit: 'contain'
+        width: '100% !important',
+        height: '150px !important',
+        objectFit: 'contain'
     }
-  })
+})
 const drawerWidth = 240;
 
 function CustomTabPanel(props) {
@@ -85,11 +85,13 @@ function DocumentUploaded(props) {
     const [document, setDocument] = useState({ singleVisaApplyAdharBack: "", singleVisaApplyAdharFront: "" });
     const location = useLocation();
     const [pageNumber, setPageNumber] = useState(1);
+    const [verifyCancel, setVerifyCancel] = useState(false);
+    const [reason, setReason] = useState("");
 
     const handleDocumentLoadSuccess = ({ numPages }) => {
         // setNumPages(numPages);
-      };
-        const handlePersonCountChange = (event) => {
+    };
+    const handlePersonCountChange = (event) => {
         setAge(event.target.value);
     };
 
@@ -272,7 +274,7 @@ function DocumentUploaded(props) {
                     </Link>
                 </ListItem> */}
                 <ListItem disablePadding>
-                    <Link to='/login' className="sidebar_item" onClick={()=>{localStorage.clear()}}>
+                    <Link to='/login' className="sidebar_item" onClick={() => { localStorage.clear() }}>
                         <SwipeRightAltIcon />
                         <Typography>Logout</Typography>
                     </Link>
@@ -280,6 +282,30 @@ function DocumentUploaded(props) {
             </List>
         </div>
     );
+    const handleVerified = async (isVerified,verifyReason=reason) => {
+
+        try {
+            const item={
+                isVerified
+            }
+            item.reason=verifyReason
+            let userId = localStorage.getItem('user_id') || null;
+            if (userId) {
+
+                const response = await axiosAuthorized.put(`/documentVerify/${JSON.parse(localStorage.getItem('user_id'))}?type=admin&user_id=${location.state.id}`,item);
+                console.log({response})
+                if (response.data.message) {
+                    !isVerified&& setVerifyCancel(false)
+                }
+
+            }
+
+        } catch (error) {
+            console.log({ error })
+            // toast.error("Something went wrong");
+        }
+    };
+
     return (
         <Box sx={{ display: 'flex' }}>
             <CssBaseline />
@@ -423,28 +449,33 @@ function DocumentUploaded(props) {
                                 <img src="" style={{ minWidth: 290, border: '1px solid #dcdcdc', borderRadius: '8px', minHeight: 200 }} alt="" />
                             </Box>*/}
                             <Box style={{ padding: '10px 20px', minWidth: 290, border: '1px solid #dcdcdc', borderRadius: '8px', flex: 1 }}>
-                                                            <Typography variant='h6' style={{ textAlign: 'center', marginBottom: 10 }}>Visa Form </Typography>
+                                <Typography variant='h6' style={{ textAlign: 'center', marginBottom: 10 }}>Visa Form </Typography>
 
-                            <PdfBox style={{ padding: '10px 20px', border: '1px solid #dcdcdc', borderRadius: '8px', flex: 1 }}>
-                                <Document
-                                    className='pdf_div'
-                                    file={document.singleVisaApplyDocument}
-                                    onLoadSuccess={handleDocumentLoadSuccess}
+                                <PdfBox style={{ padding: '10px 20px', border: '1px solid #dcdcdc', borderRadius: '8px', flex: 1 }}>
+                                    <Document
+                                        className='pdf_div'
+                                        file={document.singleVisaApplyDocument}
+                                        onLoadSuccess={handleDocumentLoadSuccess}
 
-                                >
-                                    <Page
-                      pageNumber={pageNumber}
-                    />
-                                </Document>
-                            </PdfBox>
+                                    >
+                                        <Page
+                                            pageNumber={pageNumber}
+                                        />
+                                    </Document>
+                                </PdfBox>
                             </Box>
                         </Box>
                     </Grid>
                 </Grid>
-                <Box style={{ display: 'flex', gap: 20, justifyContent: 'end' }}>
-                    <Button variant='contained' color='error'>Reject</Button>
-                    <Button variant='contained' color='primary'>Varified</Button>
-                </Box>
+
+                {verifyCancel ? <Box>
+                    <TextField variant='standard' onChange={(e) => setReason(e.target.value)} />
+                    <Button variant='contained' color='primary' onClick={() => handleVerified(false)}>Submit</Button>
+
+                </Box> : <Box style={{ display: 'flex', gap: 20, justifyContent: 'end' }}>
+                    <Button variant='contained' color='error' onClick={() => setVerifyCancel(true)}>Reject</Button>
+                    <Button variant='contained' color='primary' onClick={() => handleVerified(true,"All Document Verified")}>Verified</Button>
+                </Box>}
             </Box>
         </Box>
     );
