@@ -67,8 +67,11 @@ const PdfUploadAndViewer = ({ images, setImages,isUpload }) => {
   };
 
   const handleCancel = () => {
-    const { singleVisaApplyDocument, ...rest } = images;
-    setImages(rest); setSelectedFile(null)
+    if(images){
+
+      const { singleVisaApplyDocument, ...rest } = images;
+      setImages(rest); setSelectedFile(null)
+    }
   };
   return (
     <CustomBox style={{ width: '100%' }}>
@@ -80,7 +83,7 @@ const PdfUploadAndViewer = ({ images, setImages,isUpload }) => {
         id="file-upload-pdf"
       />
       <label htmlFor="file-upload-pdf" style={{ textAlign: 'center', display: 'block' }}>
-        {(selectedFile || images.singleVisaApplyDocument) && (
+        {(selectedFile || images?.singleVisaApplyDocument) && (
           <Card sx={{ boxShadow: 'none' }}>
             <CardContent style={{ padding: 0 }}>
              {!isUpload&& <p className='file_name'>file: {selectedFile?.name ?? ""}</p>}
