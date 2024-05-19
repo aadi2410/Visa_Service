@@ -108,6 +108,7 @@ function ProfilePage(props) {
     const getProfileData = async () => {
         try {
             let userId = localStorage.getItem('user_id') || null;
+            console.log({userId})
             if (userId) {
 
                 const response = await axiosAuthorized.get(`getProfile/${JSON.parse(localStorage.getItem('user_id'))}`);
@@ -126,7 +127,7 @@ function ProfilePage(props) {
             }
 
         } catch (error) {
-            toast.error("Something went wrong");
+            toast.error(error?.response?.data?.message??"Something went wrong");
         }
     }
     const updateProfileData = async () => {

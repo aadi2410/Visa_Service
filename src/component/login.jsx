@@ -78,7 +78,7 @@ const Login = () => {
 
     try {
       const response = await axiosInstance.post('login', formData);
-
+console.log({response })
       localStorage.setItem('loginData', JSON.stringify(response));
       localStorage.setItem('user_id', JSON.stringify(response.userId));
       localStorage.setItem('token', JSON.stringify(response.token));
@@ -93,7 +93,7 @@ const Login = () => {
       }
     } catch (error) {
       console.log(error)
-      toast.error("Something went wrong");
+      toast.error(error?.response?.data?.message??"Something went wrong");
     }
   }
   return (
