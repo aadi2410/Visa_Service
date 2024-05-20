@@ -359,7 +359,7 @@ function ApplyVisa(props) {
                                     <Link style={{ textDecoration: 'none', color: 'black', textAlign: 'left' }} to='/'>Contact Us</Link>
                                 </MenuItem>
                                 <MenuItem style={{ alignItems: 'baseline' }} onClick={handleCloseUserMenu}>
-                                    <Link style={{ textDecoration: 'none', color: 'black', textAlign: 'left' }} to='/'>Logout</Link>
+                                    <Link style={{ textDecoration: 'none', color: 'black', textAlign: 'left' }} to='/login'>Logout</Link>
                                 </MenuItem>
                             </Menu>
                         </Box>
@@ -439,23 +439,22 @@ function ApplyVisa(props) {
                                                 {selectedFile && !isUpload && <p className='file_name' style={{ paddingBottom: 10 }}>File Name: {selectedFile.name}</p>}
                                                 {images.singleVisaApplyAdharFront && (
                                                     <Card sx={{ width: '100%' }}>
-                                                        <CardMedia style={{ height: '150px', objectFit: 'cover', width: '100%' }} component="img" image={images.singleVisaApplyAdharFront instanceof File ? URL.createObjectURL(images.singleVisaApplyAdharFront) : images.singleVisaApplyAdharFront} />
+                                                        <CardMedia style={{ height: '250px', objectFit: 'cover', width: '100%' }} component="img" image={images.singleVisaApplyAdharFront instanceof File ? URL.createObjectURL(images.singleVisaApplyAdharFront) : images.singleVisaApplyAdharFront} />
                                                     </Card>
                                                 )}
                                                 {!isUpload && <>
                                                     <label htmlFor="file-upload" style={{ textAlign: 'center', display: 'block', marginTop: 15 }}>
                                                         <Typography style={{ textAlign: 'center', marginBottom: 10 }}>Aadhar Card Front Side</Typography>
-                                                        <Box>
+                                                        <Box style={{justifyContent: 'center', display: 'flex'}}>
                                                             <Button variant="contained" component="span">
                                                                 Upload Image
                                                             </Button>
-
                                                         </Box>
 
                                                     </label>
-                                                    <Button variant="contained" component="span" onClick={() => handleCancel("singleVisaApplyAdharFront")}>
+                                                    {/* <Button variant="contained" component="span" onClick={() => handleCancel("singleVisaApplyAdharFront")}>
                                                         Cancel Image
-                                                    </Button>
+                                                    </Button> */}
                                                 </>}
                                             </CustomBox>
                                         </Box>
@@ -474,20 +473,23 @@ function ApplyVisa(props) {
 
                                                 {images.singleVisaApplyAdharBack && (
                                                     <Card sx={{ width: '100%' }}>
-                                                        <CardMedia style={{ height: '150px', objectFit: 'cover', width: '100%' }} component="img" image={images.singleVisaApplyAdharBack instanceof File ? URL.createObjectURL(images.singleVisaApplyAdharBack) : images.singleVisaApplyAdharBack} />
+                                                        <CardMedia style={{ height: '250px', objectFit: 'cover', width: '100%' }} component="img" image={images.singleVisaApplyAdharBack instanceof File ? URL.createObjectURL(images.singleVisaApplyAdharBack) : images.singleVisaApplyAdharBack} />
                                                     </Card>
                                                 )}
                                                 {!isUpload && <>
                                                     <label htmlFor="file-upload2" style={{ textAlign: 'center', display: 'block', marginTop: 15 }}>
                                                         <Typography style={{ textAlign: 'center', marginBottom: 10 }}>Aadhhar Card Back Side</Typography>
+                                                        <Box style={{justifyContent: 'center', display: 'flex'}}>
                                                         <Button variant="contained" component="span">
                                                             Upload File
                                                         </Button>
 
+                                                        </Box>
+
                                                     </label>
-                                                    <Button variant="contained" component="span" onClick={() => handleCancel("singleVisaApplyAdharBack")}>
+                                                    {/* <Button variant="contained" component="span" onClick={() => handleCancel("singleVisaApplyAdharBack")}>
                                                         Cancel File
-                                                    </Button>
+                                                    </Button> */}
                                                 </>}
                                             </CustomBox>
                                         </Box>
@@ -569,7 +571,7 @@ function ApplyVisa(props) {
                                         {selectedFile && <p className='file_name' style={{ paddingBottom: 10 }}>File Name: {selectedFile.name}</p>}
                                         {imageUrl && (
                                             <Card sx={{ width: '100%' }}>
-                                                <CardMedia style={{ height: '150px', objectFit: 'cover', width: '100%' }} component="img" image={imageUrl} />
+                                                <CardMedia style={{ height: '250px', objectFit: 'cover', width: '100%' }} component="img" image={imageUrl} />
                                             </Card>
                                         )}
                                         <label htmlFor="file-upload" style={{ textAlign: 'center', display: 'block', marginTop: 15 }}>

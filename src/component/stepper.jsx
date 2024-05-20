@@ -6,10 +6,11 @@ import Stepper from '@mui/material/Stepper';
 import Step from '@mui/material/Step';
 import StepLabel from '@mui/material/StepLabel';
 import Check from '@mui/icons-material/Check';
-import SettingsIcon from '@mui/icons-material/Settings';
-import GroupAddIcon from '@mui/icons-material/GroupAdd';
-import VideoLabelIcon from '@mui/icons-material/VideoLabel';
+import PlayCircleOutlineIcon from '@mui/icons-material/PlayCircleOutline';
+import HourglassBottomIcon from '@mui/icons-material/HourglassBottom';
+import AssignmentIcon from '@mui/icons-material/Assignment';
 import StepConnector, { stepConnectorClasses } from '@mui/material/StepConnector';
+import VerifiedIcon from '@mui/icons-material/Verified';
 
 const CustomStepper = styled(Stepper)({
     '& .MuiStepLabel-label': {
@@ -108,10 +109,10 @@ function ColorlibStepIcon(props) {
   const { active, completed, className } = props;
 
   const icons = {
-    1: <SettingsIcon />,
-    2: <GroupAddIcon />,
-    3: <VideoLabelIcon />,
-    4: <VideoLabelIcon />,
+    1: <PlayCircleOutlineIcon />,
+    2: <AssignmentIcon />,
+    3: <HourglassBottomIcon />,
+    4: <VerifiedIcon />,
   };
 
   return (
@@ -128,7 +129,7 @@ ColorlibStepIcon.propTypes = {
   icon: PropTypes.node,
 };
 
-const steps = ['Apply for visa', 'Documents Uploaded', 'Waiting for Varification', 'Varified/Rejected'];
+const steps = ['Apply for visa', 'Documents Uploaded', 'Waiting for Verification', 'Verified/Rejected'];
 
 export default function CustomizedSteppers({activeStep,setActiveStep,images}) {
   // React.useEffect(()=>{

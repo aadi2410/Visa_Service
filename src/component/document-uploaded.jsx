@@ -29,7 +29,7 @@ const PdfBox = styled(Box)({
     },
     '& .pdf_div canvas': {
         width: '100% !important',
-        height: '150px !important',
+        height: '250px !important',
         objectFit: 'contain'
     }
 })
@@ -362,7 +362,7 @@ function DocumentUploaded(props) {
                                     <Link style={{ textDecoration: 'none', color: 'black', textAlign: 'left' }} to='/'>Contact Us</Link>
                                 </MenuItem>
                                 <MenuItem style={{ alignItems: 'baseline' }} onClick={handleCloseUserMenu}>
-                                    <Link style={{ textDecoration: 'none', color: 'black', textAlign: 'left' }} to='/'>Logout</Link>
+                                    <Link style={{ textDecoration: 'none', color: 'black', textAlign: 'left' }} to='/login'>Logout</Link>
                                 </MenuItem>
                             </Menu>
                         </Box>

@@ -206,12 +206,12 @@ const navigate=useNavigate()
                         <Typography variant='h4' mt={3} style={{fontWeight: 900}}>8</Typography>
                     </Box>
                     <Box style={{padding: '10px 20px', minWidth: 290, border: '1px solid #dcdcdc', borderRadius: '8px', flex: 1}}>
-                        <Typography variant='h6'>Varification </Typography>
-                        <Typography variant='h4' mt={3} style={{fontWeight: 900, color: 'yellow'}}>Pending</Typography>
-                    </Box>
-                    <Box style={{padding: '10px 20px', minWidth: 290, border: '1px solid #dcdcdc', borderRadius: '8px', flex: 1}}>
                         <Typography variant='h6'>Visa Application</Typography>
                         <Typography variant='h4' mt={3} style={{fontWeight: 900, color: 'green'}}>Success</Typography>
+                    </Box>
+                    <Box style={{padding: '10px 20px', minWidth: 290, border: '1px solid #dcdcdc', borderRadius: '8px', flex: 1}}>
+                        <Typography variant='h6'>Verification Status</Typography>
+                        <Typography variant='h4' mt={3} style={{fontWeight: 900, color: 'yellow'}}>Pending</Typography>
                     </Box>
                 </Box>
                 <Typography paragraph>

@@ -10,7 +10,6 @@ import IconButton from '@mui/material/IconButton';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ProfileImage from '../assets/profile.png';
-import SuccessIcon from '../assets/success.png';
 import MenuIcon from '@mui/icons-material/Menu';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
@@ -20,17 +19,7 @@ import { Link } from 'react-router-dom';
 import Modal from '@mui/material/Modal';
 import { axiosAuthorized } from '../api/apiconfig';
 import {  toast } from 'react-toastify';
-const style = {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: 400,
-    bgcolor: 'background.paper',
-    borderRadius: 2,
-    py: 2,
-    px: 4,
-};
+import CustomModal from '../shared/modal';
 
 const ProfileGrid = styled(Grid)({
     '@media(max-width: 767px)': {
@@ -75,11 +64,11 @@ function ProfilePage(props) {
     const [isClosing, setIsClosing] = React.useState(false);
     const [anchorElUser, setAnchorElUser] = React.useState(null);
     const [selectedFile, setSelectedFile] = useState(null);
-    const [isClick, setIsClick] = useState(false);
-    const [imageUrl, setImageUrl] = React.useState(null);
-    const [modalopen, setModalOpen] = React.useState(false);
     const handleModalOpen = () => setModalOpen(true);
-    const handleModalClose = () => setModalOpen(false);
+    const [isClick, setIsClick] = useState(false);
+    const [modalopen, setModalOpen] = React.useState(false);
+    const [imageUrl, setImageUrl] = React.useState(null);
+
     const handleFileChange = (event) => {
         const fileUrl = URL.createObjectURL(event.target.files[0]);
         setImageUrl(fileUrl);
@@ -298,7 +287,7 @@ function ProfilePage(props) {
                                     <Link style={{ textDecoration: 'none', color: 'black', textAlign: 'left' }} to='/'>Contact Us</Link>
                                 </MenuItem>
                                 <MenuItem style={{ alignItems: 'baseline' }} onClick={handleCloseUserMenu}>
-                                    <Link style={{ textDecoration: 'none', color: 'black', textAlign: 'left' }} to='/'>Logout</Link>
+                                    <Link style={{ textDecoration: 'none', color: 'black', textAlign: 'left' }} to='/login'>Logout</Link>
                                 </MenuItem>
                             </Menu>
                         </Box>
@@ -395,47 +384,23 @@ function ProfilePage(props) {
                                     required name="country" onChange={handleInputChange} placeholder='Enter your Country' type="text" variant='outlined' />
                             </Box>
                             <Box style={{ flex: 1, minWidth: '45%', display: 'flex', flexDirection: 'column', gap: 5 }}>
-                                <label>Pin Code</label>
+                                <label>Zip Code</label>
                                 <TextField
                                     // value={formData.pinCode}
                                      name="pincode" onChange={handleInputChange} placeholder='Enter your pincode' type="number" variant='outlined' />
                             </Box>
                             <Box style={{ flex: 1, minWidth: '100%', display: 'flex', flexDirection: 'column', gap: 5 }}>
-                                <label>Temporary address</label>
-                                <TextareaAutosize
-                                    value={formData.temporaryAddress}
-                                    required name="temporaryAddress" onChange={handleInputChange} minRows={4} type="text" variant='outlined' />
-                            </Box>
-                            <Box style={{ flex: 1, minWidth: '100%', display: 'flex', flexDirection: 'column', gap: 5 }}>
                                 <label>Present Address</label>
                                 <TextareaAutosize
+                                    placeholder='Enter Complete Address'
+                                    style={{padding: '16.5px 14px', fontFamily: 'sans-serif', fontSize: 16, borderRadius: 5}}
                                     value={formData.presentAddress}
                                     required name="presentAddress" onChange={handleInputChange} minRows={4} type="text" variant='outlined' />
                             </Box>
                             <Box style={{ textAlign: 'center', marginTop: 20, flex: 1, minWidth: '100%' }}>
-                                <Button type={'submit'} variant='contained' style={{ minWidth: 200, minHeight: 48 }}>Submit</Button>
+                                <Button onClick={handleModalOpen} type={'submit'} variant='contained' style={{ minWidth: 200, minHeight: 48 }}>Submit</Button>
                             </Box>
-                            <Modal
-                                open={modalopen}
-                                onClose={handleModalClose}
-                                aria-labelledby="modal-modal-title"
-                                aria-describedby="modal-modal-description"
-                            >
-                                <Box sx={style}>
-                                    <Typography id="modal-modal-title" variant="h6" component="h2" style={{ textAlign: 'center' }}>
-                                        <img src={SuccessIcon} width={120} />
-                                    </Typography>
-                                    <Typography id="modal-modal-description" sx={{ mt: 0, fontWeight: 900, textAlign: 'center' }}>
-                                        Profile Data Successfully Filled
-                                    </Typography>
-                                    <Typography id="modal-modal-description" sx={{ mt: 1, textAlign: 'center' }}>
-                                        Thank you for completing your profile information. Your details have been successfully saved.
-                                    </Typography>
-                                    <Box style={{textAlign: 'center', marginTop: 10}}>
-                                        <Button onClick={handleModalClose} variant="contained" color="primary">Ok</Button>
-                                    </Box>
-                                </Box>
-                            </Modal>
+                            <CustomModal />
                         </form>
                     </Grid>
                     <Grid item xs={12} md={5} lg={3}>

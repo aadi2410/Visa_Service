@@ -275,7 +275,7 @@ function AppliedVisa(props) {
                                     <Link style={{ textDecoration: 'none', color: 'black', textAlign: 'left' }} to='/'>Contact Us</Link>
                                 </MenuItem>
                                 <MenuItem style={{ alignItems: 'baseline' }} onClick={handleCloseUserMenu}>
-                                    <Link style={{ textDecoration: 'none', color: 'black', textAlign: 'left' }} to='/'>Logout</Link>
+                                    <Link style={{ textDecoration: 'none', color: 'black', textAlign: 'left' }} to='/login'>Logout</Link>
                                 </MenuItem>
                             </Menu>
                         </Box>

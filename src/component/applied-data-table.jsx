@@ -1,6 +1,6 @@
 import * as React from 'react';
 import PropTypes from 'prop-types';
-import { alpha } from '@mui/material/styles';
+import moment from 'moment';
 import { Box, styled } from '@mui/material';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -273,7 +273,7 @@ const navigate=useNavigate();
                                         </TableCell>
                                         <TableCell align="right">{row.mobile_no}</TableCell>
                                         <TableCell align="right">{row.email}</TableCell>
-                                        <TableCell align="right">{row.created_at}</TableCell>
+                                        <TableCell align="right">{moment(row.created_at).format('DD/MM/YYYY')}</TableCell>
                                         <TableCell align="right">{row?.isVerified?"Verified":"Not Verified"}</TableCell>
                                         <TableCell align="right">{row?.reason?row?.reason:"N/A"}</TableCell>
 

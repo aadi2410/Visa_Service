@@ -157,7 +157,7 @@ function AdminDashboard(props) {
                                 </MenuItem>
                                 <MenuItem style={{ alignItems: 'baseline' }} onClick={()=>{localStorage.removeItem('loginData');
                 navigate('/login')}}>
-                                    <Link style={{ textDecoration: 'none', color: 'black', textAlign: 'left' }} to='/'>Logout</Link>
+                                    <Link style={{ textDecoration: 'none', color: 'black', textAlign: 'left' }} to='/login'>Logout</Link>
                                 </MenuItem>
                             </Menu>
                         </Box>
@@ -204,20 +204,20 @@ function AdminDashboard(props) {
                 <Toolbar />
                 <Box style={{display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 12, marginBottom: 30}}>
                     <Box style={{padding: '10px 20px', minWidth: 290, border: '1px solid #dcdcdc', borderRadius: '8px', flex: 1}}>
-                        <Typography variant='h6'>Total Single Visa Application</Typography>
-                        <Typography variant='h4' mt={3} style={{fontWeight: 900}}>10</Typography>
-                    </Box>
-                    <Box style={{padding: '10px 20px', minWidth: 290, border: '1px solid #dcdcdc', borderRadius: '8px', flex: 1}}>
-                        <Typography variant='h6'>Total Group Visa Application</Typography>
-                        <Typography variant='h4' mt={3} style={{fontWeight: 900}}>8</Typography>
+                        <Typography variant='h6'>Total Visa Application</Typography>
+                        <Typography variant='h4' mt={3} style={{fontWeight: 900}}>20</Typography>
                     </Box>
                     <Box style={{padding: '10px 20px', minWidth: 290, border: '1px solid #dcdcdc', borderRadius: '8px', flex: 1}}>
                         <Typography variant='h6'>Pending Application</Typography>
-                        <Typography variant='h4' mt={3} style={{fontWeight: 900, color: 'yellow'}}>25</Typography>
+                        <Typography variant='h4' mt={3} style={{fontWeight: 900, color: 'yellow'}}>5</Typography>
                     </Box>
                     <Box style={{padding: '10px 20px', minWidth: 290, border: '1px solid #dcdcdc', borderRadius: '8px', flex: 1}}>
                         <Typography variant='h6'>Verified Application</Typography>
-                        <Typography variant='h4' mt={3} style={{fontWeight: 900, color: 'green'}}>10</Typography>
+                        <Typography variant='h4' mt={3} style={{fontWeight: 900, color: 'green'}}>12</Typography>
+                    </Box>
+                    <Box style={{padding: '10px 20px', minWidth: 290, border: '1px solid #dcdcdc', borderRadius: '8px', flex: 1}}>
+                        <Typography variant='h6'>Rejected Application</Typography>
+                        <Typography variant='h4' mt={3} style={{fontWeight: 900, color: 'red'}}>3</Typography>
                     </Box>
                 </Box>
                 <Typography paragraph>

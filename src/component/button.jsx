@@ -31,10 +31,10 @@ const FileUploadButton = () => {
         inputProps={{ accept: 'image/*' }}
         id="file-upload"
       />
-      {selectedFile && <p className='file_name' style={{paddingBottom: 10}}>File Name: {selectedFile.name}</p>}
+      {/* {selectedFile && <p className='file_name' style={{paddingBottom: 10}}>File Name: {selectedFile.name}</p>} */}
       {imageUrl && (
         <Card sx={{ width: '100%' }}>
-          <CardMedia style={{height: '150px', objectFit: 'cover', width: '100%'}} component="img" image={imageUrl} />
+          <CardMedia style={{height: '250px', objectFit: 'cover', width: '100%'}} component="img" image={imageUrl} />
         </Card>
       )}
       <label htmlFor="file-upload" style={{textAlign: 'center', display: 'block', marginTop: 15}}>

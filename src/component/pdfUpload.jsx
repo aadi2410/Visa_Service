@@ -8,7 +8,7 @@ const PdfBox = styled(Box)({
   },
   '& .pdf_div canvas': {
     width: '100% !important',
-    height: '150px !important',
+    height: '250px !important',
     objectFit: 'contain'
   }
 })
@@ -106,7 +106,7 @@ const PdfUploadAndViewer = ({ images, setImages,isUpload }) => {
         {!isUpload &&
           <>
             <Typography style={{ textAlign: 'center', marginBottom: 10, marginTop: 15 }}>Form Upload</Typography>
-            <Box display={'flex'} gap={5}>
+            <Box display={'flex'} gap={5} style={{justifyContent: 'center'}}>
 
               <Button variant="contained" component="span">
                 Upload PDF
@@ -115,9 +115,9 @@ const PdfUploadAndViewer = ({ images, setImages,isUpload }) => {
             </Box>
           </>}
       </label>
-      {!isUpload && <Button variant="contained" component="span" onClick={handleCancel}>
+      {/* {!isUpload && <Button variant="contained" component="span" onClick={handleCancel}>
         Cancel PDF
-      </Button>}
+      </Button>} */}
     </CustomBox>
   );
 };
