@@ -86,9 +86,8 @@ function ApplyVisa(props) {
     const [selectedFile3, setSelectedFile3] = useState(null);
     const [imageUrl, setImageUrl] = React.useState(null);
     const [imageUrl2, setImageUrl2] = React.useState(null);
-    const [imageUrl3, setImageUrl3] = React.useState(null);
     const [value, setValue] = React.useState(0);
-    const [age, setAge] = React.useState('');
+    const [personCount, setPersonCount] = React.useState(1);
     const [modalopen, setModalOpen] = React.useState(false);
     const [images, setImages] = useState([])
     const handleModalOpen = () => setModalOpen(true);
@@ -97,77 +96,71 @@ function ApplyVisa(props) {
     const [activeStep, setActiveStep] = useState(0);
     const [isUpload, setIsUpload] = useState(false);
     const [lastStep, setLastStep] = useState(null);
+    const [groupImageUrl, setGroupImageUrl] = useState([]);
+    const [groupActiveStep, setGroupActiveStep] = useState(0);
     const handlePersonCountChange = (event) => {
-        setAge(event.target.value);
+        setPersonCount(event.target.value);
+        let arr = []
+        Array.from({ length: event.target.value }).map((i, idx) => {
+            let item = {};
+            item.id = idx + 1;
+            item.groupVisaApplyAdharFront = "";
+            item.groupVisaApplyAdharBack = "";
+            item.groupVisaApplyDocument = "";
+            arr.push(item)
+
+        });
+        setGroupImageUrl(arr)
     };
 
     const handleTabChange = (event, newValue) => {
         setValue(newValue);
     };
 
-    // React.useEffect(() => {
-    //     const adharimage1 = localStorage.getItem('adharimage1');
-    //     const adharimage2 = localStorage.getItem('adharimage2');
-    //     const adharimagename1 = localStorage.getItem('adharimage1_name');
-    //     const adharimagename2 = localStorage.getItem('adharimage2_name');
-    //     const savedFile = localStorage.getItem('upload_pdf');
-
-    //     if (adharimage1) {
-    //         setSelectedFile({ name: adharimagename1 });
-    //         setImageUrl(adharimage1);
-    //     }
-    //     if (adharimage2) {
-    //         setSelectedFile2({ name: adharimagename2 });
-
-    //         setImageUrl2(adharimage2);
-    //     }
-    //     if(adharimage1&&adharimage2&&savedFile){
-    //         setActiveStep(2)
-    //     }
-
-    // }, []);
-
     const handleFileChange = (event) => {
         const file = event.target.files[0];
 
         setSelectedFile(event.target.files[0]);
         const fileUrl = URL.createObjectURL(event.target.files[0]);
-        // const reader = new FileReader();
-        // localStorage.setItem('adharimage1_name', file.name);
-
-        // reader.addEventListener('load', () => {
-        //     localStorage.setItem('adharimage1', reader.result);
-
-        // })
-        // reader.readAsDataURL(file);
 
         setImageUrl(fileUrl);
         setImages({ ...images, singleVisaApplyAdharFront: file })
 
     };
+    const handleGroupFileChange = (event, img, type) => {
+        console.log(img)
+        let cpy = [...groupImageUrl];
+        if (event === 'cancel') {
+            cpy.map((i) => {
+                if (i?.id === img?.id) {
+                    i[type] = "";
+                    i.fileName = ""
+                }
+            })
+        } else {
 
+            const file = event.target.files[0];
+            // const fileUrl = URL.createObjectURL(event.target.files[0]);
+            console.log(cpy)
+            cpy.map((i) => {
+                if (i?.id === img?.id) {
+
+                    i[type] = file;
+                    i.fileName = file
+                }
+            })
+        }
+        setGroupImageUrl(cpy);
+    };
     const handleFileChange2 = (event) => {
         const file = event.target.files[0];
 
         setSelectedFile2(event.target.files[0]);
         const fileUrl2 = URL.createObjectURL(event.target.files[0]);
-        // const reader = new FileReader();
-        // localStorage.setItem('adharimage2_name', file.name);
 
-        // reader.addEventListener('load', () => {
-        //     localStorage.setItem('adharimage2', reader.result);
-
-        // })
-        // reader.readAsDataURL(file);
         setImageUrl2(fileUrl2);
         setImages({ ...images, singleVisaApplyAdharBack: file })
 
-    };
-
-    const handleFileChange3 = (event) => {
-        setSelectedFile3(event.target.files[0]);
-        const fileUrl3 = URL.createObjectURL(event.target.files[0]);
-        setImageUrl3(fileUrl3);
     };
 
     const handleCloseUserMenu = () => {
@@ -243,22 +236,68 @@ function ApplyVisa(props) {
         try {
             let userId = localStorage.getItem('user_id') || null;
             if (userId) {
+
                 const response = await axiosAuthorized.get(`singleVisaUploadUser/${JSON.parse(localStorage.getItem('user_id'))}`);
-                if (response.data.document) {
+                if (response.status === 200 ) {
                     if (response.data.document.isVerified) {
 
                         setActiveStep(3);
                         setLastStep(response.data.document.reason);
                     } else {
-
-                        setIsUpload(true);
-                        setActiveStep(2);
+                        if(!response.data.document.singleVisaApplyAdharBack){
+                            setIsUpload(false);
+                            setActiveStep(0);
+                        }else{
+                            setIsUpload(true);
+                            setActiveStep(2);
+                        }
+                      
                     }
+                    setImages({ singleVisaApplyAdharBack: response.data.document.singleVisaApplyAdharBack, singleVisaApplyAdharFront: response.data.document.singleVisaApplyAdharFront, singleVisaApplyDocument: response.data.document.singleVisaApplyDocument })
 
                 } else {
+                    setActiveStep(1);
+
                     setIsUpload(false);
                 }
-                setImages({ singleVisaApplyAdharBack: response.data.document.singleVisaApplyAdharBack, singleVisaApplyAdharFront: response.data.document.singleVisaApplyAdharFront, singleVisaApplyDocument: response.data.document.singleVisaApplyDocument })
+            }
+
+        } catch (error) {
+            console.log(error)
+        }
+    };
+    console.log({images})
+    const getGroupDocumentData = async () => {
+        try {
+            let userId = localStorage.getItem('user_id') || null;
+            if (userId) {
+                const response = await axiosAuthorized.get(`groupVisaUpload/${JSON.parse(localStorage.getItem('user_id'))}`);
+
+                if (response.status == 200) {
+                    if (response.data.document) {
+                        let arr = []
+                        response.data.document.arrayData.map((i, idx) => {
+                            let item = {};
+                            i.items.map((itm) => {
+                                item.id = idx + 1;
+                                item[itm.key.split('[')[0]] = itm.value
+
+                            });
+                            arr.push(item);
+                            setPersonCount(arr.length)
+                            setGroupImageUrl(arr);
+                            setGroupActiveStep(2)
+
+                        });
+
+                    } else {
+                        setIsUpload(false);
+
+                    }
+                } else {
+                    setGroupActiveStep(0);
+                }
+
             }
 
         } catch (error) {
@@ -266,7 +305,8 @@ function ApplyVisa(props) {
         }
     };
     React.useEffect(() => {
-        getDocumentData()
+        getDocumentData();
+        getGroupDocumentData();
     }, []);
     const handleSubmit = async () => {
         try {
@@ -285,6 +325,7 @@ function ApplyVisa(props) {
                         }
 
                     });
+                    console.log({response})
                     if (response.data.message) {
                         setMsg({ title: response.data.message, subtile: "Thank you for completing your document information. Your details have been successfully saved." })
                     }
@@ -298,7 +339,53 @@ function ApplyVisa(props) {
             // toast.error("Something went wrong");
         }
     };
+    const handleGroupSubmit = async () => {
+        try {
 
+            let userId = localStorage.getItem('user_id') || null;
+            if (userId) {
+                const formData = new FormData();
+
+                groupImageUrl.forEach((item, index) => {
+                    formData.append(`groupVisaApplyAdharFront[${index}]`, item.groupVisaApplyAdharFront);
+                    formData.append(`groupVisaApplyAdharBack[${index}]`, item.groupVisaApplyAdharBack);
+                    formData.append(`groupVisaApplyDocument[${index}]`, item.groupVisaApplyDocument);
+                });
+
+                const response = await axiosAuthorized.post(`/groupVisaUpload/${JSON.parse(localStorage.getItem('user_id'))}`, formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
+
+                });
+                if(response.status==201){
+                    handleModalOpen();
+                    let arr = [];
+                    response.data.document.arrayData.map((i, idx) => {
+                        let item = {};
+                        i.items.map((itm) => {
+                            item.id = idx + 1;
+                            item[itm.key.split('[')[0]] = itm.value
+
+                        });
+                        arr.push(item);
+                        setPersonCount(arr.length)
+                        setGroupImageUrl(arr);
+                        setGroupActiveStep(2)
+
+                    });
+                    if (response.data.message) {
+                        setMsg({ title: response.data.message, subtile: "Thank you for completing your document information. Your details have been successfully saved." })
+                    }
+                }
+               
+            }
+
+        } catch (error) {
+            console.log({ error })
+            // toast.error("Something went wrong");
+        }
+    };
     const handleCancel = (type) => {
         const { [type]: _, ...rest } = images;
         setImages(rest); setSelectedFile(null)
@@ -416,7 +503,8 @@ function ApplyVisa(props) {
                             <Typography style={{ marginBottom: 12 }}>Single Visa Application Progress</Typography>
                             <CustomizedSteppers activeStep={activeStep} setActiveStep={setActiveStep} images={images} />
                         </Box>
-                        {lastStep ? <h4>{lastStep}</h4> :
+
+                        {lastStep ? <Box textAlign={'center'} display={'flex'} alignItems={"center"} flexDirection={"column"}><img src={SuccessIcon} width={120} /> <Typography variant='body' textAlign={'center'}>{lastStep}</Typography> </Box> :
 
                             <>
                                 <Grid container spacing={3}>
@@ -485,9 +573,9 @@ function ApplyVisa(props) {
                                                         </Button>
 
                                                     </label>
-                                                    <Button variant="contained" component="span" onClick={() => handleCancel("singleVisaApplyAdharBack")}>
+                                                    {/* <Button variant="contained" component="span" onClick={() => handleCancel("singleVisaApplyAdharBack")}>
                                                         Cancel File
-                                                    </Button>
+                                                    </Button> */}
                                                 </>}
                                             </CustomBox>
                                         </Box>
@@ -527,13 +615,15 @@ function ApplyVisa(props) {
                     <CustomTabPanel value={value} index={1}>
                         <Box style={{ paddingTop: 20, paddingBottom: 40 }}>
                             <Typography style={{ marginBottom: 12 }}>Group Visa Application Progress</Typography>
-                            <CustomizedSteppers />
+                            <CustomizedSteppers
+                                activeStep={groupActiveStep}
+                            />
                         </Box>
                         <Box style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 5, marginBottom: 50 }}>
                             <label>Number of Person</label>
                             <Select
                                 style={{ maxWidth: 150 }}
-                                value={age}
+                                value={personCount}
                                 onChange={handlePersonCountChange}
                                 displayEmpty
                                 inputProps={{ 'aria-label': 'Without label' }}
@@ -549,42 +639,164 @@ function ApplyVisa(props) {
                                 <MenuItem value={10}>Ten</MenuItem>
                             </Select>
                         </Box>
-
-                        <Grid container spacing={3}>
-                            <Grid item xs={12} sm={6} md={4} lg={3}>
-                                <Box style={{ width: '100%', borderRadius: 12, minHeight: '315px', padding: 20, boxShadow: '0px 0px 10px #dcdcdc', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                    <PdfUploadAndViewer />
-                                </Box>
-                            </Grid>
-                            <Grid item xs={12} sm={6} md={4} lg={3}>
-                                <Box style={{ width: '100%', borderRadius: 12, minHeight: '315px', padding: 20, boxShadow: '0px 0px 10px #dcdcdc', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                    <CustomBox>
-                                        <Input
-                                            type="file"
-                                            onChange={handleFileChange}
-                                            style={{ display: 'none' }}
-                                            inputProps={{ accept: 'image/*' }}
-                                            id="file-upload"
+                        {groupImageUrl.map((img, index) => (
+                            <Grid container spacing={3} key={img.id}>
+                                {img.id}
+                                <Grid item xs={12} sm={6} md={4} lg={3} key={`uploadViewer-${index}`}>
+                                    <Box
+                                        style={{
+                                            width: '100%',
+                                            borderRadius: 12,
+                                            minHeight: '315px',
+                                            padding: 20,
+                                            boxShadow: '0px 0px 10px #dcdcdc',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                        }}
+                                    >
+                                        <PdfUploadAndViewer
+                                            value={value}
+                                            images={img}
+                                            setImages={setImages}
+                                            isUpload={   (groupActiveStep==2||groupActiveStep==3)??isUpload}
+                                            key={img.id}
+                                            handleGroupFileChange={handleGroupFileChange}
+                                         
+                                            groupActiveStep={groupActiveStep}
                                         />
-                                        {selectedFile && <p className='file_name' style={{ paddingBottom: 10 }}>File Name: {selectedFile.name}</p>}
-                                        {imageUrl && (
-                                            <Card sx={{ width: '100%' }}>
-                                                <CardMedia style={{ height: '150px', objectFit: 'cover', width: '100%' }} component="img" image={imageUrl} />
-                                            </Card>
-                                        )}
-                                        <label htmlFor="file-upload" style={{ textAlign: 'center', display: 'block', marginTop: 15 }}>
-                                            <Typography style={{ textAlign: 'center', marginBottom: 10 }}>Aadhhar Card Front Side</Typography>
-                                            <Button variant="contained" component="span">
-                                                Upload File
-                                            </Button>
-                                        </label>
-                                    </CustomBox>
-                                </Box>
+                                    </Box>
+                                </Grid>
+                                <Grid item xs={12} sm={6} md={4} lg={3} key={`adharFront-${index}`}>
+                                    <Box
+                                        style={{
+                                            width: '100%',
+                                            borderRadius: 12,
+                                            minHeight: '315px',
+                                            padding: 20,
+                                            boxShadow: '0px 0px 10px #dcdcdc',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                        }}
+                                    >
+                                        <CustomBox>
+                                            <Input
+                                                type="file"
+                                                name={img.id}
+                                                onChange={(event) => {
+                                                    handleGroupFileChange(event, img, "groupVisaApplyAdharFront");
+                                                }}
+                                                style={{ display: 'none' }}
+                                                inputProps={{ accept: 'image/*' }}
+                                                id={`file-upload-${img.id}`}
+                                            />
+                                            {(img.groupVisaApplyAdharFront && (groupActiveStep != 2 && groupActiveStep != 3)) && (
+                                                <p className="file_name" style={{ paddingBottom: 10 }}>
+                                                    File Name: {img.groupVisaApplyAdharFront.name}
+                                                </p>
+                                            )}
+                                            {img.groupVisaApplyAdharFront && (
+                                                <Card sx={{ width: '100%' }}>
+                                                    <CardMedia
+                                                        style={{ height: '150px', objectFit: 'cover', width: '100%' }}
+                                                        component="img"
+                                                        image={
+                                                            img.groupVisaApplyAdharFront instanceof File
+                                                                ? URL.createObjectURL(img.groupVisaApplyAdharFront)
+                                                                : img.groupVisaApplyAdharFront
+                                                        }
+                                                    />
+                                                </Card>
+                                            )}
+
+                                            {(groupActiveStep != 2 && groupActiveStep != 3) && <>
+                                                <label htmlFor={`file-upload-${img.id}`} style={{ textAlign: 'center', display: 'block', marginTop: 15 }}>
+                                                    <Typography style={{ textAlign: 'center', marginBottom: 10 }}>Aadhar Card Front Side</Typography>
+                                                    <Box>
+                                                        <Button variant="contained" component="span">
+                                                            Upload Image
+                                                        </Button>
+                                                    </Box>
+                                                </label>
+                                               {img.groupVisaApplyAdharFront&& <Button
+                                                    variant="contained"
+                                                    component="span"
+                                                    onClick={() => handleGroupFileChange("cancel", img, "groupVisaApplyAdharFront")}
+                                                >
+                                                    Cancel Image
+                                                </Button>}
+                                            </>}
+
+                                        </CustomBox>
+                                    </Box>
+                                </Grid>
+                                <Grid item xs={12} sm={6} md={4} lg={3} key={`adharBack-${index}`}>
+                                    <Box
+                                        style={{
+                                            width: '100%',
+                                            borderRadius: 12,
+                                            minHeight: '315px',
+                                            padding: 20,
+                                            boxShadow: '0px 0px 10px #dcdcdc',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                        }}
+                                    >
+                                        <CustomBox>
+                                            <Input
+                                                type="file"
+                                                onChange={(event) => handleGroupFileChange(event, img, "groupVisaApplyAdharBack")
+                                                }
+
+                                                style={{ display: 'none' }}
+                                                inputProps={{ accept: 'image/*' }}
+                                                id={`file-upload2-${img.id}`}
+                                            />
+                                            {img.groupVisaApplyAdharBack &&(groupActiveStep!=2&&groupActiveStep!=3)&& (
+                                                <p className="file_name" style={{ paddingBottom: 10 }}>
+                                                    File Name: {img.groupVisaApplyAdharBack.name}
+                                                </p>
+                                            )}
+                                            {img.groupVisaApplyAdharBack && (
+                                                <Card sx={{ width: '100%' }}>
+                                                    <CardMedia
+                                                        style={{ height: '150px', objectFit: 'cover', width: '100%' }}
+                                                        component="img"
+                                                        image={
+                                                            img.groupVisaApplyAdharBack instanceof File
+                                                                ? URL.createObjectURL(img.groupVisaApplyAdharBack)
+                                                                : img.groupVisaApplyAdharBack
+                                                        }
+                                                    />
+                                                </Card>
+                                            )}
+                                          {(groupActiveStep!=2&&groupActiveStep!=3)&&
+                                            <>
+                                                <label htmlFor={`file-upload2-${img.id}`} style={{ textAlign: 'center', display: 'block', marginTop: 15 }}>
+                                                    <Typography style={{ textAlign: 'center', marginBottom: 10 }}>Aadhar Card Back Side</Typography>
+                                                    <Button variant="contained" component="span">
+                                                        Upload File
+                                                    </Button>
+                                                </label>
+                                            </>}
+                                            {!img.groupVisaApplyAdharBack&& <Button
+                                                    variant="contained"
+                                                    component="span"
+                                                    onClick={() => handleGroupFileChange("cancel", img, "groupVisaApplyAdharBack")}
+                                                >
+                                                    Cancel Image
+                                                </Button>}
+                                          
+                                        </CustomBox>
+                                    </Box>
+                                </Grid>
                             </Grid>
-                        </Grid>
-                        <Box style={{ display: 'flex', justifyContent: 'end', marginTop: 20 }}>
-                            <Button variant='contained' style={{ minWidth: 200, paddingBlock: 10 }} onClick={handleModalOpen}>Submit</Button>
-                        </Box>
+                        ))}
+                       
+                       {(groupActiveStep!=2&&groupActiveStep!=3)&& <Button variant='contained' onClick={handleGroupSubmit}>Submit</Button>}
+                       
                         <Modal
                             open={modalopen}
                             onClose={handleModalClose}

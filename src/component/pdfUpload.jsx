@@ -25,7 +25,8 @@ const CustomBox = styled(Box)({
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 
-const PdfUploadAndViewer = ({ images, setImages,isUpload }) => {
+const PdfUploadAndViewer = ({key, images, setImages,isUpload ,handleGroupFileChange,value}) => {
+  console.log(isUpload)
   const [selectedFile, setSelectedFile] = useState(null);
 
   const [numPages, setNumPages] = useState(null);
@@ -50,7 +51,7 @@ const PdfUploadAndViewer = ({ images, setImages,isUpload }) => {
 
       setSelectedFile(file);
     };
-    console.log({ images })
+    
     setImages({ ...images, singleVisaApplyDocument: file })
   };
   const handleUpload = () => {
@@ -74,24 +75,27 @@ const PdfUploadAndViewer = ({ images, setImages,isUpload }) => {
     }
   };
   return (
-    <CustomBox style={{ width: '100%' }}>
+    <CustomBox style={{ width: '100%' }} key={key??1}>
       <Input
         type="file"
-        onChange={handlePdfFileChange}
+        onChange={(e)=>{!value==1?handlePdfFileChange(e):handleGroupFileChange(e,images,
+          "groupVisaApplyDocument"
+        );
+      }}
         style={{ display: 'none' }}
         inputProps={{ accept: 'application/pdf' }}
-        id="file-upload-pdf"
+          id={`file-upload-pdf-${images.id??1}`}
       />
-      <label htmlFor="file-upload-pdf" style={{ textAlign: 'center', display: 'block' }}>
-        {(selectedFile || images?.singleVisaApplyDocument) && (
+      <label htmlFor={`file-upload-pdf-${images.id??1}`} style={{ textAlign: 'center', display: 'block' }}>
+        {(selectedFile || images?.singleVisaApplyDocument||images?.groupVisaApplyDocument) && (
           <Card sx={{ boxShadow: 'none' }}>
             <CardContent style={{ padding: 0 }}>
-             {!isUpload&& <p className='file_name'>file: {selectedFile?.name ?? ""}</p>}
-              {(selectedFile || images.singleVisaApplyDocument) && (
+             {!isUpload&& <p className='file_name'>file: {(selectedFile?.name ?? "")||images?.groupVisaApplyDocument?.name}</p>}
+              {(selectedFile || images.singleVisaApplyDocument||images?.groupVisaApplyDocument) && (
                 <PdfBox>
                   <Document
                     className='pdf_div'
-                    file={images.singleVisaApplyDocument}
+                    file={images.singleVisaApplyDocument||images?.groupVisaApplyDocument}
                     onLoadSuccess={handleDocumentLoadSuccess}
                   >
                     <Page
