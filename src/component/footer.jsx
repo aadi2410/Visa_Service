@@ -18,19 +18,19 @@ const Footer = () => {
             <Typography variant="h6" gutterBottom>
               Quick Links
             </Typography>
-            <Typography variant="body1">
+            <Typography variant="body1" mb={1}>
               Home
             </Typography>
-            <Typography variant="body1">
+            <Typography variant="body1" mb={1}>
               About Us
             </Typography>
-            <Typography variant="body1">
+            <Typography variant="body1" mb={1}>
               Blogs
             </Typography>
-            <Typography variant="body1">
+            <Typography variant="body1" mb={1}>
               Privacy Policy
             </Typography>
-            <Typography variant="body1">
+            <Typography variant="body1" mb={1}>
               FAQ
             </Typography>
           </Grid>
@@ -38,11 +38,13 @@ const Footer = () => {
             <Typography variant="h6" gutterBottom>
               Contact Us
             </Typography>
-            <Typography variant="body1">
-              Email: info@visaapply.com<br />
-              Phone: +1 123-456-7890<br />
+            <Typography variant="body1"  mb={1}>
+              Email: info@visaapply.com</Typography>
+            <Typography variant="body1"  mb={1}>
+              Phone: +1 123-456-7890</Typography>
+            <Typography variant="body1"  mb={1}>
               Address: 123 Visa Street, City, Country
-            </Typography>
+              </Typography>
           </Grid>
         </Grid>
         <Typography variant="body2" style={{ marginTop: 20, borderTop: '2px solid white', paddingTop: 20 }} align="center">

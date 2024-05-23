@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Box, Container, Typography, Grid } from '@mui/material';
 import '../component/custom.css';
-import Header_img from '../assets/header_img.png';
+import About_img_bg from '../assets/aboutbg.png';
 import About_img from '../assets/about.png';
 import Apply from '../assets/apply-online.png';
 import Pay from '../assets/pay.png';
@@ -10,39 +10,14 @@ import Checkpost from '../assets/checkpost.png';
 import Blogcard from './card';
 import HeaderNavbar from './navbar';
 
-function LandingPage() {
+function AboutPage() {
 
     return (
         <HeaderNavbar>
             <Box>
-                <img src={Header_img} className='header_img' alt="" />
+                <img src={About_img_bg} className='about_header_img' alt="" />
                 <Container maxWidth="xl">
-                    <Box>
-                        <Typography variant='h4' mt={10} style={{ textAlign: 'center' }}>eVisa Application Process</Typography>
-                        <Box className='process_box'>
-                            <Box>
-                                <img src={Apply} alt="" />
-                                <Typography variant='h6'>Apply Online</Typography>
-                                <Typography>Upload Photo & Passport Page</Typography>
-                            </Box>
-                            <Box>
-                                <img src={Pay} alt="" />
-                                <Typography variant='h6'>Pay eVisa Fee Online</Typography>
-                                <Typography>Using Debit Card / Credit Card / Payment Wallet</Typography>
-                            </Box>
-                            <Box>
-                                <img src={ETA} alt="" />
-                                <Typography variant='h6'>Receive ETA Online</Typography>
-                                <Typography>Electronic Travel Authorization/ETA will be sent to your e-mail</Typography>
-                            </Box>
-                            <Box>
-                                <img src={Checkpost} alt="" />
-                                <Typography variant='h6'>Fly</Typography>
-                                <Typography>Print ETA and present at immigration check post where eVisa will be Stamped on passport</Typography>
-                            </Box>
-                        </Box>
-                    </Box>
-                    <Grid container spacing={5} mt={10}>
+                    <Grid container spacing={5} mt={10} mb={10}>
                         <Grid item xs={12} md={7}>
                             <Typography variant="h4" align="center" gutterBottom>
                                 About Us
@@ -65,18 +40,9 @@ function LandingPage() {
                             <img src={About_img} className='about_img' alt="" />
                         </Grid>
                     </Grid>
-                    <Box mt={10} mb={10}>
-                        <Typography variant='h4' style={{ textAlign: 'center', marginBottom: 50 }}>Blogs</Typography>
-                        <Box className='blog-card-box'>
-                            <Blogcard />
-                            <Blogcard />
-                            <Blogcard />
-                            <Blogcard />
-                        </Box>
-                    </Box>
                 </Container>
             </Box>
         </HeaderNavbar>
     );
 }
-export default LandingPage;
+export default AboutPage;
