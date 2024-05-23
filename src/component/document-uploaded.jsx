@@ -15,7 +15,7 @@ import Typography from '@mui/material/Typography';
 import ProfileImage from '../assets/profile.png';
 import Logo from '../assets/logo.png';
 import SwipeRightAltIcon from '@mui/icons-material/SwipeRightAlt';
-import { Link, useLocation, useParams } from 'react-router-dom';
+import { Link, Navigate, useLocation, useNavigate, useParams } from 'react-router-dom';
 import PdfUploadAndViewer from './pdfUpload';
 import CustomizedSteppers from './stepper';
 import EnhancedTable from './applied-data-table';
@@ -100,6 +100,7 @@ function DocumentUploaded(props) {
     };
 
     const container = window !== undefined ? () => window().document.body : undefined;
+    const navigate=useNavigate();
     const [profileData, setProfileData] = useState(JSON.parse(localStorage.getItem('profileData')) || null)
     const [formData, setFormData] = useState(JSON.parse(localStorage.getItem('profileData')) || {
         profilePicture: '',
@@ -295,7 +296,8 @@ function DocumentUploaded(props) {
                 const response = await axiosAuthorized.put(`/documentVerify/${JSON.parse(localStorage.getItem('user_id'))}?type=admin&user_id=${location.state.id}`,item);
                 console.log({response})
                 if (response.data.message) {
-                    !isVerified&& setVerifyCancel(false)
+                    !isVerified&& setVerifyCancel(false);
+                    navigate('/appliedvisa')
                 }
 
             }
@@ -468,9 +470,9 @@ function DocumentUploaded(props) {
                     </Grid>
                 </Grid>
 
-                {verifyCancel ? <Box>
+                {verifyCancel ? <Box style={{ display: 'flex', gap: 20, justifyContent: 'end' }}>
                     <TextField variant='standard' onChange={(e) => setReason(e.target.value)} />
-                    <Button variant='contained' color='primary' onClick={() => handleVerified(false)}>Submit</Button>
+                    <Button variant='contained' color='primary' onClick={() => handleVerified(false)}>Submit Reason</Button>
 
                 </Box> : <Box style={{ display: 'flex', gap: 20, justifyContent: 'end' }}>
                     <Button variant='contained' color='error' onClick={() => setVerifyCancel(true)}>Reject</Button>

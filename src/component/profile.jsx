@@ -230,7 +230,6 @@ function ProfilePage(props) {
         temporaryAddress = '',
         presentAddress = ''
     } = profileData || {};
-    console.log(profileData)
     return (
         <Box sx={{ display: 'flex' }}>
             <CssBaseline />
