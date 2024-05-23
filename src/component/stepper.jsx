@@ -13,9 +13,9 @@ import StepConnector, { stepConnectorClasses } from '@mui/material/StepConnector
 import VerifiedIcon from '@mui/icons-material/Verified';
 
 const CustomStepper = styled(Stepper)({
-    '& .MuiStepLabel-label': {
-        textAlign: 'center'
-    }
+  '& .MuiStepLabel-label': {
+    textAlign: 'center'
+  }
 })
 
 const QontoStepIconRoot = styled('div')(({ theme, ownerState }) => ({
@@ -84,8 +84,12 @@ const ColorlibConnector = styled(StepConnector)(({ theme }) => ({
   },
 }));
 
-const ColorlibStepIconRoot = styled('div')(({ theme, ownerState }) => ({
-  backgroundColor: theme.palette.mode === 'dark' ? theme.palette.grey[700] : '#ccc',
+const ColorlibStepIconRoot = styled('div')(({ theme, ownerState }) => 
+  {
+    console.log(ownerState,ownerState.active?"red":theme.palette.mode === 'dark' ? theme.palette.grey[700] : 'red')
+    return (
+  {
+  backgroundColor:!ownerState.verified?"red":theme.palette.mode === 'dark' ? theme.palette.grey[700] : '#ccc',
   zIndex: 1,
   color: '#fff',
   width: 50,
@@ -94,7 +98,7 @@ const ColorlibStepIconRoot = styled('div')(({ theme, ownerState }) => ({
   borderRadius: '50%',
   justifyContent: 'center',
   alignItems: 'center',
-  ...(ownerState.active && {
+  ...(ownerState.active&&ownerState.verified && {
     backgroundImage:
       'linear-gradient(136deg, rgb(25 118 211) 0%, rgb(0 17 33) 50%, rgb(25 118 211) 100%)',
     boxShadow: '0 4px 10px 0 rgba(0,0,0,.25)',
@@ -103,20 +107,20 @@ const ColorlibStepIconRoot = styled('div')(({ theme, ownerState }) => ({
     backgroundImage:
       'linear-gradient(136deg, rgb(25 118 211) 0%, rgb(0 17 33) 50%, rgb(25 118 211) 100%)',
   }),
-}));
+})});
 
 function ColorlibStepIcon(props) {
-  const { active, completed, className } = props;
+  const { active, completed, className ,verified} = props;
 
   const icons = {
     1: <PlayCircleOutlineIcon />,
     2: <AssignmentIcon />,
     3: <HourglassBottomIcon />,
-    4: <VerifiedIcon />,
+    4:  <VerifiedIcon  />, // Use a different icon if not verified
   };
 
   return (
-    <ColorlibStepIconRoot ownerState={{ completed, active }} className={className}>
+    <ColorlibStepIconRoot ownerState={{ completed, active,verified }} className={className}>
       {icons[String(props.icon)]}
     </ColorlibStepIconRoot>
   );
@@ -131,16 +135,18 @@ ColorlibStepIcon.propTypes = {
 
 const steps = ['Apply for visa', 'Documents Uploaded', 'Waiting for Verification', 'Verified/Rejected'];
 
-export default function CustomizedSteppers({activeStep}) {
-  
+export default function CustomizedSteppers({ activeStep, verified }) {
+
   return (
     <Stack sx={{ width: '100%' }} spacing={4}>
       <CustomStepper alternativeLabel activeStep={activeStep} connector={<ColorlibConnector />}>
         {steps.map((label) => (
           <Step key={label}>
-            <StepLabel StepIconComponent={ColorlibStepIcon} style={{textAlign: 'center'}} onClick={(e)=>{
-              console.log(e)
-            }}>{label}</StepLabel>
+            <StepLabel
+              StepIconComponent={(props) => <ColorlibStepIcon {...props} verified={verified} />} // Pass verified prop
+
+              style={{ textAlign: 'center' }} onClick={(e) => {
+              }}>{label === "Verified/Rejected" ? activeStep == 3 && verified ? 'Verified' : activeStep == 3 && !verified ? 'Rejected' : label : label}</StepLabel>
           </Step>
         ))}
       </CustomStepper>

@@ -98,6 +98,7 @@ function ApplyVisa(props) {
     const [lastStep, setLastStep] = useState(null);
     const [groupImageUrl, setGroupImageUrl] = useState([]);
     const [groupActiveStep, setGroupActiveStep] = useState(0);
+    const [isSingleVerified,setIsSingleVerified]=useState(false);
     const handlePersonCountChange = (event) => {
         setPersonCount(event.target.value);
         let arr = []
@@ -240,7 +241,7 @@ function ApplyVisa(props) {
                 const response = await axiosAuthorized.get(`singleVisaUploadUser/${JSON.parse(localStorage.getItem('user_id'))}`);
                 if (response.status === 200 ) {
                     if (response.data.document.isVerified) {
-
+                        setIsSingleVerified(response.data.document.isVerified);
                         setActiveStep(3);
                         setLastStep(response.data.document.reason);
                     } else {
@@ -248,8 +249,9 @@ function ApplyVisa(props) {
                             setIsUpload(false);
                             setActiveStep(0);
                         }else{
-                            setIsUpload(true);
-                            setActiveStep(2);
+                            // setIsUpload(true);
+                            setLastStep(response.data.document.reason);
+                            setActiveStep(3);
                         }
                       
                     }
@@ -266,7 +268,6 @@ function ApplyVisa(props) {
             console.log(error)
         }
     };
-    console.log({images})
     const getGroupDocumentData = async () => {
         try {
             let userId = localStorage.getItem('user_id') || null;
@@ -386,10 +387,7 @@ function ApplyVisa(props) {
             // toast.error("Something went wrong");
         }
     };
-    const handleCancel = (type) => {
-        const { [type]: _, ...rest } = images;
-        setImages(rest); setSelectedFile(null)
-    };
+  
     return (
         <Box sx={{ display: 'flex' }}>
             <CssBaseline />
@@ -501,7 +499,7 @@ function ApplyVisa(props) {
                     <CustomTabPanel value={value} index={0}>
                         <Box style={{ paddingTop: 20, paddingBottom: 40 }}>
                             <Typography style={{ marginBottom: 12 }}>Single Visa Application Progress</Typography>
-                            <CustomizedSteppers activeStep={activeStep} setActiveStep={setActiveStep} images={images} />
+                            <CustomizedSteppers activeStep={activeStep} setActiveStep={setActiveStep} images={images} verified={isSingleVerified}/>
                         </Box>
 
                         {lastStep ? <Box textAlign={'center'} display={'flex'} alignItems={"center"} flexDirection={"column"}><img src={SuccessIcon} width={120} /> <Typography variant='body' textAlign={'center'}>{lastStep}</Typography> </Box> :
@@ -619,6 +617,7 @@ function ApplyVisa(props) {
                             <Typography style={{ marginBottom: 12 }}>Group Visa Application Progress</Typography>
                             <CustomizedSteppers
                                 activeStep={groupActiveStep}
+                                verified={isSingleVerified}
                             />
                         </Box>
                         <Box style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 5, marginBottom: 50 }}>
