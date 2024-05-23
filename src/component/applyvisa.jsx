@@ -83,7 +83,6 @@ function ApplyVisa(props) {
     const [anchorElUser, setAnchorElUser] = React.useState(null);
     const [selectedFile, setSelectedFile] = useState(null);
     const [selectedFile2, setSelectedFile2] = useState(null);
-    const [selectedFile3, setSelectedFile3] = useState(null);
     const [imageUrl, setImageUrl] = React.useState(null);
     const [imageUrl2, setImageUrl2] = React.useState(null);
     const [value, setValue] = React.useState(0);
@@ -561,6 +560,7 @@ function ApplyVisa(props) {
                                     <Grid item xs={12} sm={6} md={4} lg={3}>
                                         <Box style={{ width: '100%', borderRadius: 12, minHeight: '315px', padding: 20, boxShadow: '0px 0px 10px #dcdcdc', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                                             <PdfUploadAndViewer
+                                            value={value}
                                                 handleCancel={handleCancel}
                                                 images={images} setImages={setImages} isUpload={isUpload} activeStep={activeStep} currentTab={value} />
                                         </Box>

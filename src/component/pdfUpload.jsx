@@ -25,7 +25,7 @@ const CustomBox = styled(Box)({
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 
-const PdfUploadAndViewer = ({ currentTab, key, images, setImages, isUpload, handleGroupFileChange, value, activeStep, handleCancel }) => {
+const PdfUploadAndViewer = ({  key, images, setImages, isUpload, handleGroupFileChange, value, activeStep, handleCancel }) => {
   const [selectedFile, setSelectedFile] = useState(null);
 
   const [numPages, setNumPages] = useState(null);
@@ -103,7 +103,7 @@ const PdfUploadAndViewer = ({ currentTab, key, images, setImages, isUpload, hand
           </>}
       </label>
       {((activeStep === 0 && images.singleVisaApplyDocument) || (activeStep === 0 && images.groupVisaApplyDocument)) && <Button variant="contained" component="span" onClick={() => {
-        handleCancel("cancel", images, "groupVisaApplyDocument");
+        value === 0 ? handleCancel('singleVisaApplyDocument') : handleCancel("cancel", images, "groupVisaApplyDocument");
 
         setSelectedFile(null)
       }}>
