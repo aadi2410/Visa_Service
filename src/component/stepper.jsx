@@ -86,10 +86,9 @@ const ColorlibConnector = styled(StepConnector)(({ theme }) => ({
 
 const ColorlibStepIconRoot = styled('div')(({ theme, ownerState }) => 
   {
-    console.log(ownerState,ownerState.active?"red":theme.palette.mode === 'dark' ? theme.palette.grey[700] : 'red')
     return (
   {
-  backgroundColor:!ownerState.verified?"red":theme.palette.mode === 'dark' ? theme.palette.grey[700] : '#ccc',
+  backgroundColor:(!ownerState.verified&&ownerState.activeStep==3)?"red":theme.palette.mode === 'dark' ? theme.palette.grey[700] : '#ccc',
   zIndex: 1,
   color: '#fff',
   width: 50,
@@ -98,9 +97,9 @@ const ColorlibStepIconRoot = styled('div')(({ theme, ownerState }) =>
   borderRadius: '50%',
   justifyContent: 'center',
   alignItems: 'center',
-  ...(ownerState.active&&ownerState.verified && {
+  ...(ownerState.active&& {
     backgroundImage:
-      'linear-gradient(136deg, rgb(25 118 211) 0%, rgb(0 17 33) 50%, rgb(25 118 211) 100%)',
+    ownerState.activeStep!=3?'linear-gradient(136deg, rgb(25 118 211) 0%, rgb(0 17 33) 50%, rgb(25 118 211) 100%)': ownerState.activeStep==3&&ownerState.verified?'linear-gradient(136deg, rgb(25 118 211) 0%, rgb(0 17 33) 50%, rgb(25 118 211) 100%)':'none',
     boxShadow: '0 4px 10px 0 rgba(0,0,0,.25)',
   }),
   ...(ownerState.completed && {
@@ -110,7 +109,7 @@ const ColorlibStepIconRoot = styled('div')(({ theme, ownerState }) =>
 })});
 
 function ColorlibStepIcon(props) {
-  const { active, completed, className ,verified} = props;
+  const { active, completed, className ,verified,activeStep,label} = props;
 
   const icons = {
     1: <PlayCircleOutlineIcon />,
@@ -120,7 +119,7 @@ function ColorlibStepIcon(props) {
   };
 
   return (
-    <ColorlibStepIconRoot ownerState={{ completed, active,verified }} className={className}>
+    <ColorlibStepIconRoot ownerState={{ completed, active,verified,activeStep,label }} className={className}>
       {icons[String(props.icon)]}
     </ColorlibStepIconRoot>
   );
@@ -143,7 +142,7 @@ export default function CustomizedSteppers({ activeStep, verified }) {
         {steps.map((label) => (
           <Step key={label}>
             <StepLabel
-              StepIconComponent={(props) => <ColorlibStepIcon {...props} verified={verified} />} // Pass verified prop
+              StepIconComponent={(props) => <ColorlibStepIcon activeStep={activeStep} {...props} verified={verified} label={label}/>} // Pass verified prop
 
               style={{ textAlign: 'center' }} onClick={(e) => {
               }}>{label === "Verified/Rejected" ? activeStep == 3 && verified ? 'Verified' : activeStep == 3 && !verified ? 'Rejected' : label : label}</StepLabel>
