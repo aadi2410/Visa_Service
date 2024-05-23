@@ -9,6 +9,8 @@ import Footer from './footer';
 import { Link, useNavigate } from 'react-router-dom';
 
 const pages = ['Home', 'Apply for Visa', 'Blog', 'About Us', 'Contact Us'];
+const pageslink = [{name:"Home",path:"/"},{name:"Apply for Visa",path:"/applyvisa"},{name:"Blog",path:"/blog"},{name:"About Us",path:"/about"},{name:"Contact Us",path:"/contact"}];
+
 
 function HeaderNavbar({children}) {
   const navigate=useNavigate();
@@ -46,13 +48,13 @@ function HeaderNavbar({children}) {
   const DrawerList = (
     <Box sx={{ width: 250 }} role="presentation" onClick={toggleDrawer(false)}>
       <List>
-        {pages.map((text, index) => (
+        {pageslink.map((text, index) => (
           <ListItem key={text} disablePadding>
             <ListItemButton>
               <ListItemIcon>
                 {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
               </ListItemIcon>
-              <ListItemText primary={text} />
+              <ListItemText primary={text.name} />
             </ListItemButton>
           </ListItem>
         ))}
@@ -105,14 +107,14 @@ function HeaderNavbar({children}) {
           </Box>
           <img className='logo_img_mobile' src={Logo} alt=""/>
           <Box sx={{ flexGrow: 1, gap: '15px', display: { xs: 'none', md: 'flex' }, justifyContent: 'center' }}>
-            {pages.map((page) => (
+            {pageslink.map((page) => (
               <Button
               className='navbar_items'
                 key={page}
-                onClick={handleCloseNavMenu}
+                onClick={()=>{handleCloseNavMenu();navigate(page.path)}}
                 sx={{ my: 2, color: 'white', display: 'block' }}
               >
-                {page}
+                {page.name}
               </Button>
             ))}
           </Box>

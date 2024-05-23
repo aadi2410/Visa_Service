@@ -13,6 +13,9 @@ import ApplyVisa from './component/applyvisa';
 import AppliedVisa from './component/applied-visa';
 import DocumentUploaded from './component/document-uploaded';
 import FaqPage from './component/faq';
+import BlogPage from './component/blog';
+import AboutPage from './component/about';
+import ContactPage from './component/contact';
 
 function App() {
   const isAuthenticated = localStorage.getItem('loginData') || null;
@@ -25,6 +28,9 @@ function App() {
       <Router>
         <Routes>
           <Route path="/" element={<LandingPage />} />
+          <Route path="/blog" element={<BlogPage />} />
+          <Route path="/about" element={<AboutPage />} />
+          <Route path="/contact" element={<ContactPage />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/login" element={<Login />} />
           <Route exact path='/' element={<PrivateRoute isAuthenticated={isAuthenticated} />}>

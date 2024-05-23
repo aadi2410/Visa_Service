@@ -642,8 +642,8 @@ function ApplyVisa(props) {
                             </Select>
                         </Box>
                         {groupImageUrl.map((img, index) => (
-                            <Grid container spacing={3} key={img.id}>
-                                {img.id}
+                            <Grid container spacing={3} key={img.id} mt={1}>
+                                <div style={{marginTop: 24}}>{img.id}</div>
                                 <Grid item xs={12} sm={6} md={4} lg={3} key={`uploadViewer-${index}`}>
                                     <Box
                                         style={{
