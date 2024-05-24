@@ -33,13 +33,13 @@ const ProfileGrid = styled(Grid)({
 })
 const CustomBox = styled(Box)({
     width: '100%',
-    '& .file_name': {
-        display: '-webkit-box',
-        WebkitLineClamp: 1,
-        '-webkit-box-orient': 'vertical',
-        overflow: 'hidden',
-        height: '30px',
-    }
+    // '& .file_name': {
+    //     display: '-webkit-box',
+    //     WebkitLineClamp: 1,
+    //     '-webkit-box-orient': 'vertical',
+    //     overflow: 'hidden',
+    //     height: '30px',
+    // }
 })
 
 const drawerWidth = 240;

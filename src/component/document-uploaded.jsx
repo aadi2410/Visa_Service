@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useState } from 'react';
 import PropTypes from 'prop-types';
 import AppBar from '@mui/material/AppBar';
-import { Box, MenuItem, Menu, Avatar, Tooltip, Grid, styled, Button, Card, CardMedia, Input, Tab, Tabs, FormControl, InputLabel, Select, TextField } from '@mui/material';
+import { Box, MenuItem, Menu, Avatar, Tooltip, Grid, styled, Button, Card, CardMedia, Input, Tab, Tabs, FormControl, InputLabel, Select, TextField, TextareaAutosize } from '@mui/material';
 import CssBaseline from '@mui/material/CssBaseline';
 import Divider from '@mui/material/Divider';
 import Drawer from '@mui/material/Drawer';
@@ -29,7 +29,7 @@ const PdfBox = styled(Box)({
     },
     '& .pdf_div canvas': {
         width: '100% !important',
-        height: '250px !important',
+        height: '240px !important',
         objectFit: 'contain'
     }
 })
@@ -410,14 +410,14 @@ function DocumentUploaded(props) {
             >
                 <Toolbar />
                 <Grid container spacing={3}>
-                    <Grid item xs={12} md={6}>
-                        <Box style={{ padding: 20, boxShadow: '0px 0px 10px #dcdcdc', width: '100%', borderRadius: 12, display: 'flex', gap: 20, alignItems: 'center' }}>
+                    <Grid item xs={12}>
+                        <Box style={{ padding: 20, boxShadow: '0px 0px 10px #dcdcdc', width: '100%', borderRadius: 12, display: 'flex', gap: 20, alignItems: 'center', justifyContent: 'center' }}>
                             <Box className='profile_div' style={{ position: 'relative' }}>
                                 <img
                                     src={location.state.data.profilePicture}
                                     alt=""
                                     style={{
-                                        maxWidth: 250,
+                                        maxWidth: 200,
                                         width: '100%',
                                         borderRadius: '50%',
                                         objectFit: 'cover',
@@ -431,11 +431,11 @@ function DocumentUploaded(props) {
                                 <Typography style={{ marginTop: 5 }}><b>Name:</b> {location.state.data.full_name}</Typography>
                                 <Typography style={{ marginTop: 5 }}><b>Email:</b> {location.state.data.email} </Typography>
                                 <Typography style={{ marginTop: 5 }}><b>Number:</b> {location.state.data.mobile_no}</Typography>
-                                <Typography style={{ marginTop: 5 }}><b>Address:</b> {location.state.data.presentAddress}</Typography>
+                                <Typography style={{ marginTop: 5, maxWidth: 400 }}><b>Address:</b> {location.state.data.presentAddress}</Typography>
                             </Box>
                         </Box>
                     </Grid>
-                    <Grid item xs={12} md={6}>
+                    <Grid item xs={12}>
                         <Box style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 12, marginBottom: 30 }}>
                             <Box style={{ padding: '10px 20px', minWidth: 290, border: '1px solid #dcdcdc', borderRadius: '8px', flex: 1 }}>
                                 <Typography variant='h6' style={{ textAlign: 'center', marginBottom: 10 }}>Aadhar Back</Typography>
@@ -446,14 +446,9 @@ function DocumentUploaded(props) {
                                 <Typography variant='h6' style={{ textAlign: 'center', marginBottom: 10 }}>Aadhar Front </Typography>
                                 <img src={document.singleVisaApplyAdharFront} style={{ width: "100%", height: "240px", objectFit: "contain", border: '1px solid #dcdcdc', borderRadius: '8px', minHeight: 200 }} alt="" />
                             </Box>
-                            {/* <Box style={{ padding: '10px 20px', minWidth: 290, border: '1px solid #dcdcdc', borderRadius: '8px', flex: 1 }}>
-                                <Typography variant='h6' style={{ textAlign: 'center', marginBottom: 10 }}>Address Proof </Typography>
-                                <img src="" style={{ minWidth: 290, border: '1px solid #dcdcdc', borderRadius: '8px', minHeight: 200 }} alt="" />
-                            </Box>*/}
                             <Box style={{ padding: '10px 20px', minWidth: 290, border: '1px solid #dcdcdc', borderRadius: '8px', flex: 1 }}>
                                 <Typography variant='h6' style={{ textAlign: 'center', marginBottom: 10 }}>Visa Form </Typography>
-
-                                <PdfBox style={{ padding: '10px 20px', border: '1px solid #dcdcdc', borderRadius: '8px', flex: 1 }}>
+                                <PdfBox style={{ border: '1px solid #dcdcdc', borderRadius: '8px', overflow: 'hidden' }}>
                                     <Document
                                         className='pdf_div'
                                         file={document?.singleVisaApplyDocument}
@@ -469,11 +464,15 @@ function DocumentUploaded(props) {
                         </Box>
                     </Grid>
                 </Grid>
-
-                {verifyCancel ? <Box style={{ display: 'flex', gap: 20, justifyContent: 'end' }}>
-                    <TextField variant='standard' onChange={(e) => setReason(e.target.value)} />
-                    <Button variant='contained' color='primary' onClick={() => handleVerified(false)}>Submit Reason</Button>
-
+                {verifyCancel ? <Box className='overlay'>
+                    <Box style={{ textAlign: 'center', width: 300, minHeight: 200, background: 'white', boxShadow: '0 0 15px lightgray', position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', padding: '30px 30px 20px 30px', border: '1px solid gray', borderRadius: 12 }}>
+                    <Box className="cancel-icon"  onClick={() => setVerifyCancel(false)}>
+                        x
+                    </Box>
+                    <label>Reason of rejection</label><br />
+                    <TextareaAutosize minRows={3} variant='outlined' style={{width: '100%', marginTop: 6,marginBottom: 6, padding: '10px'}} onChange={(e) => setReason(e.target.value)} /> <br />
+                    <Button variant='contained' color='primary' onClick={() => handleVerified(false)}>Submit</Button>
+                </Box>
                 </Box> : <Box style={{ display: 'flex', gap: 20, justifyContent: 'end' }}>
                     <Button variant='contained' color='error' onClick={() => setVerifyCancel(true)}>Reject</Button>
                     <Button variant='contained' color='primary' onClick={() => handleVerified(true,"All Document Verified")}>Verified</Button>

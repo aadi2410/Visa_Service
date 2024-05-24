@@ -14,13 +14,13 @@ const PdfBox = styled(Box)({
 })
 const CustomBox = styled(Box)({
   width: '100%',
-  '& .file_name': {
-    display: '-webkit-box',
-    WebkitLineClamp: 1,
-    '-webkit-box-orient': 'vertical',
-    overflow: 'hidden',
-    height: '30px'
-  }
+  // '& .file_name': {
+  //   display: '-webkit-box',
+  //   WebkitLineClamp: 1,
+  //   '-webkit-box-orient': 'vertical',
+  //   overflow: 'hidden',
+  //   height: '30px'
+  // }
 })
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
@@ -57,7 +57,7 @@ const PdfUploadAndViewer = ({  key, images, setImages, isUpload, handleGroupFile
   // };
   console.log(activeStep)
   return (
-    <CustomBox style={{ width: '100%' }} key={key ?? 1}>
+    <CustomBox style={{ width: '100%', textAlign: 'center' }} key={key ?? 1}>
       <Input
         type="file"
         onChange={(e) => {
@@ -73,7 +73,7 @@ const PdfUploadAndViewer = ({  key, images, setImages, isUpload, handleGroupFile
         {(selectedFile || images?.singleVisaApplyDocument || images?.groupVisaApplyDocument) && (
           <Card sx={{ boxShadow: 'none' }}>
             <CardContent style={{ padding: 0 }}>
-              {!isUpload && <p className='file_name'>file: {(selectedFile?.name ?? "") || images?.groupVisaApplyDocument?.name}</p>}
+              {/* {!isUpload && <p className='file_name'>file: {(selectedFile?.name ?? "") || images?.groupVisaApplyDocument?.name}</p>} */}
               {(selectedFile || images.singleVisaApplyDocument || images?.groupVisaApplyDocument) && (
                 <PdfBox>
                   <Document
@@ -94,21 +94,18 @@ const PdfUploadAndViewer = ({  key, images, setImages, isUpload, handleGroupFile
           <>
             <Typography style={{ textAlign: 'center', marginBottom: 10, marginTop: 15 }}>Form Upload</Typography>
             <Box display={'flex'} gap={5} style={{ justifyContent: 'center' }}>
-
               <Button variant="contained" component="span">
                 Upload PDF
               </Button>
-
             </Box>
           </>}
       </label>
-      {((activeStep === 0 && images.singleVisaApplyDocument) || (activeStep === 0 && images.groupVisaApplyDocument)) && <Button variant="contained" component="span" onClick={() => {
+      {((activeStep === 0 && images.singleVisaApplyDocument) || (activeStep === 0 && images.groupVisaApplyDocument)) && <Box className="cancel-icon" onClick={() => {
         value === 0 ? handleCancel('singleVisaApplyDocument') : handleCancel("cancel", images, "groupVisaApplyDocument");
-
         setSelectedFile(null)
       }}>
-        Cancel PDF
-      </Button>}
+        x
+      </Box>}
     </CustomBox>
   );
 };

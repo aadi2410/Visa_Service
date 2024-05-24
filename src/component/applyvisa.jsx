@@ -22,13 +22,14 @@ import { axiosAuthorized } from '../api/apiconfig';
 import { toast } from 'react-toastify';
 const CustomBox = styled(Box)({
     width: '100%',
-    '& .file_name': {
-        display: '-webkit-box',
-        WebkitLineClamp: 1,
-        '-webkit-box-orient': 'vertical',
-        overflow: 'hidden',
-        height: '30px',
-    }
+    textAlign: 'center'
+    // '& .file_name': {
+    //     display: '-webkit-box',
+    //     WebkitLineClamp: 1,
+    //     '-webkit-box-orient': 'vertical',
+    //     overflow: 'hidden',
+    //     height: '30px',
+    // }
 })
 const style = {
     position: 'absolute',
@@ -551,14 +552,16 @@ function ApplyVisa(props) {
                             <Paper elevation={3} sx={{ padding: 10 }}>
                                 <Box textAlign={'center'} display={'flex'} alignItems={"center"} flexDirection={"column"}>
                                     {isSingleVerified && <img src={SuccessIcon} width={120} />}
-                                    <Typography variant='body' textAlign={'center'}>{lastStep}</Typography> </Box>
+                                    <Typography variant='h6' style={{fontWeight: 900}}>Reason of Rejection</Typography>
+                                    <Typography variant='body' mt={2} textAlign={'center'}>{lastStep}</Typography> 
+                                </Box>
                             </Paper>
                             :
 
                             <>
                                 <Grid container spacing={3}>
                                     <Grid item xs={12} sm={6} md={4} lg={3}>
-                                        <Box style={{ width: '100%', borderRadius: 12, minHeight: '315px', padding: 20, boxShadow: '0px 0px 10px #dcdcdc', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                        <Box style={{ width: '100%', borderRadius: 12, minHeight: '315px', position: 'relative', padding: 20, boxShadow: '0px 0px 10px #dcdcdc', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                                             <PdfUploadAndViewer
                                             value={value}
                                                 handleCancel={handleCancel}
@@ -567,7 +570,7 @@ function ApplyVisa(props) {
                                     </Grid>
                                     <Grid item xs={12} sm={6} md={4} lg={3}>
 
-                                        <Box style={{ width: '100%', borderRadius: 12, minHeight: '315px', padding: 20, boxShadow: '0px 0px 10px #dcdcdc', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                        <Box style={{ width: '100%', borderRadius: 12, minHeight: '315px', position: 'relative', padding: 20, boxShadow: '0px 0px 10px #dcdcdc', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                                             <CustomBox>
                                                 <Input
                                                     type="file"
@@ -576,7 +579,7 @@ function ApplyVisa(props) {
                                                     inputProps={{ accept: 'image/*' }}
                                                     id="file-upload"
                                                 />
-                                                {selectedFile && !isUpload && <p className='file_name' style={{ paddingBottom: 10 }}>File Name: {selectedFile.name}</p>}
+                                                {/* {selectedFile && !isUpload && <p className='file_name' style={{ paddingBottom: 10 }}>File Name: {selectedFile.name}</p>} */}
                                                 {images.singleVisaApplyAdharFront && (
                                                     <Card sx={{ width: '100%' }}>
                                                         <CardMedia style={{ height: '250px', objectFit: 'cover', width: '100%' }} component="img" image={images.singleVisaApplyAdharFront instanceof File ? URL.createObjectURL(images.singleVisaApplyAdharFront) : images.singleVisaApplyAdharFront} />
@@ -592,15 +595,15 @@ function ApplyVisa(props) {
                                                         </Box>
 
                                                     </label>
-                                                    {images.singleVisaApplyAdharFront && activeStep == 0 && <Button variant="contained" component="span" onClick={() => handleCancel("singleVisaApplyAdharFront")}>
-                                                        Cancel Image
-                                                    </Button>}
+                                                    {images.singleVisaApplyAdharFront && activeStep == 0 && <Box className="cancel-icon" onClick={() => handleCancel("singleVisaApplyAdharFront")}>
+                                                        x
+                                                    </Box>}
                                                 </>}
                                             </CustomBox>
                                         </Box>
                                     </Grid>
                                     <Grid item xs={12} sm={6} md={4} lg={3}>
-                                        <Box style={{ width: '100%', borderRadius: 12, minHeight: '315px', padding: 20, boxShadow: '0px 0px 10px #dcdcdc', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                        <Box style={{ width: '100%', borderRadius: 12, minHeight: '315px', position: 'relative', padding: 20, boxShadow: '0px 0px 10px #dcdcdc', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                                             <CustomBox>
                                                 <Input
                                                     type="file"
@@ -609,7 +612,7 @@ function ApplyVisa(props) {
                                                     inputProps={{ accept: 'image/*' }}
                                                     id="file-upload2"
                                                 />
-                                                {images.singleVisaApplyAdharBack && <p className='file_name' style={{ paddingBottom: 10 }}>File Name: {selectedFile2?.name}</p>}
+                                                {/* {images.singleVisaApplyAdharBack && <p className='file_name' style={{ paddingBottom: 10 }}>File Name: {selectedFile2?.name}</p>} */}
 
                                                 {images.singleVisaApplyAdharBack && (
                                                     <Card sx={{ width: '100%' }}>
@@ -628,16 +631,16 @@ function ApplyVisa(props) {
 
                                                     </label>
 
-                                                    {images.singleVisaApplyAdharBack && activeStep == 0 && <Button variant="contained" component="span" onClick={() => handleCancel("singleVisaApplyAdharBack")}>
-                                                        Cancel Image
-                                                    </Button>}
+                                                    {images.singleVisaApplyAdharBack && activeStep == 0 && <Box className="cancel-icon" onClick={() => handleCancel("singleVisaApplyAdharBack")}>
+                                                        x
+                                                    </Box>}
                                                 </>}
                                             </CustomBox>
                                         </Box>
                                     </Grid>
                                 </Grid>
 
-                                {activeStep == 0 && <Button variant='contained' style={{ minWidth: 200, paddingBlock: 10 }} onClick={handleSubmit}>Submit</Button>
+                                {activeStep == 0 && <Button variant='contained' style={{ minWidth: 200, paddingBlock: 10, marginTop: 20 }} onClick={handleSubmit}>Submit</Button>
                                 }
                             </>}
                         <Modal
@@ -681,7 +684,7 @@ function ApplyVisa(props) {
                                     <Typography variant='body' textAlign={'center'}>{lastStep}</Typography> </Box>
                             </Paper> :
                             <>
-                                <Box style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 5, marginBottom: 50 }}>
+                                <Box style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 5}}>
                                     <label>Number of Person</label>
                                     <Select
                                         style={{ maxWidth: 150 }}
@@ -709,7 +712,7 @@ function ApplyVisa(props) {
                                                 style={{
                                                     width: '100%',
                                                     borderRadius: 12,
-                                                    minHeight: '315px',
+                                                    minHeight: '315px', position: 'relative',
                                                     padding: 20,
                                                     boxShadow: '0px 0px 10px #dcdcdc',
                                                     display: 'flex',
@@ -735,7 +738,7 @@ function ApplyVisa(props) {
                                                 style={{
                                                     width: '100%',
                                                     borderRadius: 12,
-                                                    minHeight: '315px',
+                                                    minHeight: '315px', position: 'relative',
                                                     padding: 20,
                                                     boxShadow: '0px 0px 10px #dcdcdc',
                                                     display: 'flex',
@@ -754,11 +757,11 @@ function ApplyVisa(props) {
                                                         inputProps={{ accept: 'image/*' }}
                                                         id={`file-upload-${img.id}`}
                                                     />
-                                                    {(img.groupVisaApplyAdharFront && (groupActiveStep != 2 && groupActiveStep != 3)) && (
+                                                    {/* {(img.groupVisaApplyAdharFront && (groupActiveStep != 2 && groupActiveStep != 3)) && (
                                                         <p className="file_name" style={{ paddingBottom: 10 }}>
                                                             File Name: {img.groupVisaApplyAdharFront.name}
                                                         </p>
-                                                    )}
+                                                    )} */}
                                                     {img.groupVisaApplyAdharFront && (
                                                         <Card sx={{ width: '100%' }}>
                                                             <CardMedia
@@ -782,13 +785,11 @@ function ApplyVisa(props) {
                                                                 </Button>
                                                             </Box>
                                                         </label>
-                                                        {(groupActiveStep === 0 && img.groupVisaApplyAdharFront) && <Button
-                                                            variant="contained"
-                                                            component="span"
+                                                        {(groupActiveStep === 0 && img.groupVisaApplyAdharFront) && <Box className="cancel-icon"
                                                             onClick={() => handleGroupFileChange("cancel", img, "groupVisaApplyAdharFront")}
                                                         >
-                                                            Cancel Image
-                                                        </Button>}
+                                                            x
+                                                        </Box>}
                                                     </>}
 
                                                 </CustomBox>
@@ -799,7 +800,7 @@ function ApplyVisa(props) {
                                                 style={{
                                                     width: '100%',
                                                     borderRadius: 12,
-                                                    minHeight: '315px',
+                                                    minHeight: '315px', position: 'relative',
                                                     padding: 20,
                                                     boxShadow: '0px 0px 10px #dcdcdc',
                                                     display: 'flex',
@@ -817,11 +818,11 @@ function ApplyVisa(props) {
                                                         inputProps={{ accept: 'image/*' }}
                                                         id={`file-upload2-${img.id}`}
                                                     />
-                                                    {img.groupVisaApplyAdharBack && (groupActiveStep != 2 && groupActiveStep != 3) && (
+                                                    {/* {img.groupVisaApplyAdharBack && (groupActiveStep != 2 && groupActiveStep != 3) && (
                                                         <p className="file_name" style={{ paddingBottom: 10 }}>
                                                             File Name: {img.groupVisaApplyAdharBack.name}
                                                         </p>
-                                                    )}
+                                                    )} */}
                                                     {img.groupVisaApplyAdharBack && (
                                                         <Card sx={{ width: '100%' }}>
                                                             <CardMedia
@@ -844,13 +845,11 @@ function ApplyVisa(props) {
                                                                 </Button>
                                                             </label>
                                                         </>}
-                                                    {(img.groupVisaApplyAdharBack&&groupActiveStep === 0 ) && <Button
-                                                        variant="contained"
-                                                        component="span"
+                                                    {(img.groupVisaApplyAdharBack&&groupActiveStep === 0 ) && <Box className="cancel-icon"
                                                         onClick={() => handleGroupFileChange("cancel", img, "groupVisaApplyAdharBack")}
                                                     >
-                                                        Cancel Image
-                                                    </Button>}
+                                                        x
+                                                    </Box>}
 
                                                 </CustomBox>
                                             </Box>
@@ -858,7 +857,7 @@ function ApplyVisa(props) {
                                     </Grid>
                                 ))}
 
-                                {(groupActiveStep != 2 && groupActiveStep != 3) && <Button variant='contained' onClick={handleGroupSubmit}>Submit</Button>}
+                                {(groupActiveStep != 2 && groupActiveStep != 3) && <Button variant='contained' style={{marginTop: 20}} onClick={handleGroupSubmit}>Submit</Button>}
 
                             </>}
 

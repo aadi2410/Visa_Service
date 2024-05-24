@@ -184,6 +184,32 @@
     text-decoration: none;
     text-align: center;
 }
+.cancel-icon{
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    text-align: center;
+    background-color: #dcdcdc;
+    color: white;
+    font-weight: 700;
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    cursor: pointer;
+}
+
+.overlay{
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0,0,0,0.3);
+    z-index: 999999;
+    cursor: pointer;
+}
 @media (max-width: 899px) {
     .logo_img{
         display: none;
