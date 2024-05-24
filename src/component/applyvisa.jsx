@@ -554,6 +554,7 @@ function ApplyVisa(props) {
                                     {isSingleVerified && <img src={SuccessIcon} width={120} />}
                                     {!isSingleVerified && <Typography variant='h6' style={{fontWeight: 900}}>Reason of Rejection</Typography>}
                                     <Typography variant='body' mt={2} textAlign={'center'}>{lastStep}</Typography> 
+                                    {!isSingleVerified && <Button variant='contained'>Reupload</Button>}
                                 </Box>
                             </Paper>
                             :
