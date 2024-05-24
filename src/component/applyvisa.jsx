@@ -552,7 +552,7 @@ function ApplyVisa(props) {
                             <Paper elevation={3} sx={{ padding: 10 }}>
                                 <Box textAlign={'center'} display={'flex'} alignItems={"center"} flexDirection={"column"}>
                                     {isSingleVerified && <img src={SuccessIcon} width={120} />}
-                                    <Typography variant='h6' style={{fontWeight: 900}}>Reason of Rejection</Typography>
+                                    {!isSingleVerified && <Typography variant='h6' style={{fontWeight: 900}}>Reason of Rejection</Typography>}
                                     <Typography variant='body' mt={2} textAlign={'center'}>{lastStep}</Typography> 
                                 </Box>
                             </Paper>

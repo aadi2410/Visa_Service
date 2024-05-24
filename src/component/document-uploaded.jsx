@@ -437,14 +437,14 @@ function DocumentUploaded(props) {
                     </Grid>
                     <Grid item xs={12}>
                         <Box style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 12, marginBottom: 30 }}>
+                        <Box style={{ padding: '10px 20px', minWidth: 290, border: '1px solid #dcdcdc', borderRadius: '8px', flex: 1 }}>
+                                <Typography variant='h6' style={{ textAlign: 'center', marginBottom: 10 }}>Aadhar Front </Typography>
+                                <img src={document.singleVisaApplyAdharFront} style={{ width: "100%", height: "240px", objectFit: "contain", border: '1px solid #dcdcdc', borderRadius: '8px', minHeight: 200 }} alt="" />
+                            </Box>
                             <Box style={{ padding: '10px 20px', minWidth: 290, border: '1px solid #dcdcdc', borderRadius: '8px', flex: 1 }}>
                                 <Typography variant='h6' style={{ textAlign: 'center', marginBottom: 10 }}>Aadhar Back</Typography>
                                 <img src={document.singleVisaApplyAdharBack}
                                     style={{ width: "100%", border: '1px solid #dcdcdc', borderRadius: '8px', height: "240px", objectFit: "contain", minHeight: 200 }} alt="" />
-                            </Box>
-                            <Box style={{ padding: '10px 20px', minWidth: 290, border: '1px solid #dcdcdc', borderRadius: '8px', flex: 1 }}>
-                                <Typography variant='h6' style={{ textAlign: 'center', marginBottom: 10 }}>Aadhar Front </Typography>
-                                <img src={document.singleVisaApplyAdharFront} style={{ width: "100%", height: "240px", objectFit: "contain", border: '1px solid #dcdcdc', borderRadius: '8px', minHeight: 200 }} alt="" />
                             </Box>
                             <Box style={{ padding: '10px 20px', minWidth: 290, border: '1px solid #dcdcdc', borderRadius: '8px', flex: 1 }}>
                                 <Typography variant='h6' style={{ textAlign: 'center', marginBottom: 10 }}>Visa Form </Typography>
