@@ -414,7 +414,7 @@ function DocumentUploaded(props) {
                         <Box style={{ padding: 20, boxShadow: '0px 0px 10px #dcdcdc', width: '100%', borderRadius: 12, display: 'flex', gap: 20, alignItems: 'center', justifyContent: 'center' }}>
                             <Box className='profile_div' style={{ position: 'relative' }}>
                                 <img
-                                    src={location.state.data.profilePicture}
+                                    src={location.state.data.imageUrl}
                                     alt=""
                                     style={{
                                         maxWidth: 200,
