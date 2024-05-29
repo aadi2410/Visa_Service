@@ -143,7 +143,7 @@ function ProfilePage(props) {
                 const { user } = response.data;
                 setFormData({ ...formData, firstName: user.firstName, lastName: user.lastName, mobile_no: user.mobile_no, email: user.email })
                 setProfileData({ ...profileData, firstName: user.firstName, lastName: user.lastName, mobile_no: user.mobile_no, email: user.email, presentAddress: user.presentAddress });
-                setImageUrl(user.profilePicture);
+                setImageUrl(user?.imageUrl??user.profilePicture);
                 setSelectedFile(user.profileFileName)
             }
 
