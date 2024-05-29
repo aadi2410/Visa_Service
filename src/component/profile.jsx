@@ -111,7 +111,7 @@ function ProfilePage(props) {
 
                 })
                 setProfileData({ ...profileData, presentAddress: user.presentAddress,firstName: user.firstName?user.firstName:user.full_name, lastName: user.lastName, mobile_no: user.mobile_no, email: user.email });
-                setImageUrl(user.profilePicture);
+                setImageUrl(user?.imageUrl??user.profilePicture);
                 setSelectedFile(user.profileFileName)
             }
 
